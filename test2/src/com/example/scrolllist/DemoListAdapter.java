@@ -25,13 +25,15 @@ import java.util.List;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.test.Tweet;
+
 /**
  * A customized list adapter to work with infinite scroll list view demo
  */
 public class DemoListAdapter extends InfiniteScrollListAdapter {
 
 	// A placeholder for all the data points
-	private List<String> entries = new ArrayList<String>();
+	private List<Tweet> entries = new ArrayList<Tweet>();
 	private NewPageListener newPageListener;
 	
 	// A demo listener to pass actions from view to adapter
@@ -40,11 +42,16 @@ public class DemoListAdapter extends InfiniteScrollListAdapter {
 		public abstract View getInfiniteScrollListView(int position, View convertView, ViewGroup parent);
 	}
 
-	public DemoListAdapter(NewPageListener newPageListener) {
-		this.newPageListener = newPageListener;
+	public DemoListAdapter() {
+
+	}
+	
+	public void setPageListener(NewPageListener newPageListener)
+	{
+		this.newPageListener = newPageListener; 
 	}
 
-	public void addEntriesToTop(List<String> entries) {
+	public void addEntriesToTop(List<Tweet> entries) {
 		// Add entries in reversed order to achieve a sequence used in most of messaging/chat apps
 		if (entries != null) {
 			Collections.reverse(entries);
@@ -54,7 +61,7 @@ public class DemoListAdapter extends InfiniteScrollListAdapter {
 		notifyDataSetChanged();
 	}
 	
-	public void addEntriesToBottom(List<String> entries) {
+	public void addEntriesToBottom(List<Tweet> entries) {
 		// Add entries to the bottom of the list
 		this.entries.addAll(entries);
 		notifyDataSetChanged();
@@ -82,7 +89,7 @@ public class DemoListAdapter extends InfiniteScrollListAdapter {
 	}
 
 	@Override
-	protected void onScrollNext() {
+	public void onScrollNext() {
 		if (newPageListener != null) {
 			newPageListener.onScrollNext();
 		}

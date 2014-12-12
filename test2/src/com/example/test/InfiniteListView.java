@@ -1,7 +1,6 @@
 package com.example.test;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.ListActivity;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
-import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 
 

@@ -1,45 +1,64 @@
 package com.example.test;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ListActivity;
-import android.content.Intent;
+import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Pair;
+import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.scrolllist.BogusRemoteService;
+import com.example.scrolllist.DemoListAdapter;
+import com.example.scrolllist.DemoListAdapter.NewPageListener;
 import com.example.scrolllist.InfiniteScrollListView;
-import com.example.scrolllist.InfiniteScrollListViewDemoActivity;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
-import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
+import com.yagnasri.bitmaps.R;
 
 
 
-public class AllInOneActivity extends ListActivity
+public class AllInOneActivity extends Activity
 {
+	private static final int SEVER_SIDE_BATCH_SIZE = 10;
 	
 	private MobileServiceClient mClient;
 	
 	private InfiniteScrollListView demoListView;
+	
+	private DemoListAdapter demoListAdapter;
+	private BogusRemoteService bogusRemoteService;
+	
+	private Handler handler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
+		//Set the Layout
 		setContentView(R.layout.activity_demo);
-		
 		demoListView = (InfiniteScrollListView) this.findViewById(R.id.infinite_listview_infinitescrolllistview);
 		
+		//These variables are for doing optimized image loading.
+        mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+        mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
+		
+
+		
+
+        // Initialize the demo client here and use it all over.
+        
 		try {
 			mClient = new MobileServiceClient(
 				      "https://tweetcotest.azure-mobile.net/",
@@ -50,125 +69,42 @@ public class AllInOneActivity extends ListActivity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+        
+        
+        
+        
+        
+ 
+        
+        setContentView(R.layout.activity_demo);
+		handler = new Handler();
+
+		demoListView = (InfiniteScrollListView) this.findViewById(R.id.infinite_listview_infinitescrolllistview);
+
+		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		demoListView.setLoadingView(layoutInflater.inflate(R.layout.loading_view_demo, null));
+		demoListAdapter = new DemoListAdapter();
+		PageLoader loader = new PageLoader(this, demoListAdapter, mClient);
+		demoListAdapter.setPageListener(loader);
 		
 		
-		Item item = new Item();
-		item.Text = "Awesome item";
-		mClient.getTable(Item.class).insert(item, new TableOperationCallback<Item>() {
-		      public void onCompleted(Item entity, Exception exception, ServiceFilterResponse response) {
-		            if (exception == null) {
-		                  // Insert succeeded
-		            } else {
-		                  // Insert failed
-		            }
-		      }
+		demoListView.setAdapter(demoListAdapter);
+		// Display a toast when a list item is clicked
+		demoListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(AllInOneActivity.this, demoListAdapter.getItem(position) + " " + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
 		});
 		
-		String[] list = new String[] { "first","second"};
-        // Creates the backing adapter for the ListView.
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getApplicationContext(), R.layout.noteslist_item, list);
-        
-        // Sets the ListView's adapter to be the cursor adapter that was just created.
-        setListAdapter(adapter);
-        
-        this.getListView().setOnItemClickListener( new AdapterView.OnItemClickListener() 
-        {
-            public void onItemClick(AdapterView<?> adapterView , View view , int position ,long arg3) 
-            {
-                Log.i("Item clicked","tushar:itemclicked") ;
-                tweetusers item = new tweetusers();
-                item.username = "IronMan";
-//        		mClient.getTable(tweetusers.class).insert(item, new TableOperationCallback<tweetusers>() {
-//        		      public void onCompleted(tweetusers entity, Exception exception, ServiceFilterResponse response) {
-//        		            if (exception == null) {
-//        		                Log.i("Item clicked","first inserted") ;
-//        		            } else {
-//        		                Log.i("Item clicked","first insertion faileder") ;
-//        		            }
-//        		      }
-//        		});
-        		
-//        		mClient.getTable(tweetusers.class).where().execute(new TableQueryCallback<tweetusers>() {
-//					
-//					@Override
-//					public void onCompleted(List<tweetusers> UsersList, int arg1, Exception arg2,
-//							ServiceFilterResponse arg3) {
-//						for(tweetusers users:UsersList)
-//						{
-//							Log.i("Item clicked",users.displayname+"") ;
-//							Log.i("Item clicked",users.userid+"") ;
-//							Log.i("Item clicked",users.username+"") ;
-//							Log.i("Item clicked","") ;
-//							Log.i("Item clicked","") ;
-//							Log.i("Item clicked","") ;
-//							
-//						}
-//						
-//					}
-//				});
-        		
-                mClient.invokeApi("getusers", "GET", new ArrayList<Pair<String,String>>(), new ApiJsonOperationCallback() {
-					
-					@Override
-					public void onCompleted(JsonElement arg0, Exception arg1,
-							ServiceFilterResponse arg2) {
-						
-		                Log.i("Item clicked","tushar:itemclicked") ;
-						
-					}
-				});
-
-//        		List<Pair<String,String>> params = new ArrayList<Pair<String,String>>();
-//        		params.add(new Pair<String, String>("kRequestingUserKey", "tweetbot"));
-//        		params.add(new Pair<String, String>("kFeedTypeKey", "homefeed"));
-        		JsonObject obj = new JsonObject();
-        		obj.addProperty("requestingUser", "tweetbot");
-        		obj.addProperty("feedtype", "homefeed");
-        		mClient.invokeApi("gettweetsforuser", obj, new ApiJsonOperationCallback() {
-					
-					@Override
-					public void onCompleted(JsonElement arg0, Exception arg1,
-							ServiceFilterResponse arg2) {
-					      Log.i("Item clicked","Json received") ;
-						
-					}
-				});
-        		
-        		
-//				JsonObject element = new JsonObject();
-//				element.addProperty("tweetowner", TweetCo.getAccount().getUsername());
-//				element.addProperty("tweetcontent", mTweetContent.getEditableText().toString());
-//				mClient.invokeApi("PostTweet", element, new ApiJsonOperationCallback() {
-//					
-//					@Override
-//					public void onCompleted(JsonElement element, Exception exception,
-//							ServiceFilterResponse arg2) {
-//						if(exception != null)
-//						{
-//							Log.d("postTweet", "TweetPosted");
-//						}
-//						else
-//						{
-//							Log.e("postTweet", "TweetPost failed");
-//						}
-//						
-//					}
-//				});
-//			} 
-//			catch (MalformedURLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-
-        		
-        		
-        		
-        		Intent intent = new Intent();
-        		intent.setClass(AllInOneActivity.this, InfiniteScrollListViewDemoActivity.class);
-        		AllInOneActivity.this.startActivity(intent);
-
-            }
-        });
+		
+		
+		
         
 
 	}
@@ -177,6 +113,9 @@ public class AllInOneActivity extends ListActivity
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		
+		// Load the first page to start demo
+		demoListAdapter.onScrollNext();
 	}
 
 	@Override

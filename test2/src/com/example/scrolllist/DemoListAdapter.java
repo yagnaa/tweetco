@@ -25,7 +25,7 @@ import java.util.List;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.test.Tweet;
+import com.yagnasri.displayingbitmaps.ui.Tweet;
 
 /**
  * A customized list adapter to work with infinite scroll list view demo

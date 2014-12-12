@@ -24,6 +24,8 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.yagnasri.displayingbitmaps.ui.InfiniteScrollListPageListener;
+
 /**
  * A ListView with upward/downward infinite scrolling capability, with a customizable view
  * to be displayed at the top/bottom of the list as the loading indicator

@@ -24,6 +24,8 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 
+import com.yagnasri.displayingbitmaps.ui.InfiniteScrollListPageListener;
+
 /**
  * A customized list adapter to work with infinite scroll list view
  */

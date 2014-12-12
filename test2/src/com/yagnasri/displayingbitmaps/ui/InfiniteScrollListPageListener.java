@@ -16,7 +16,7 @@
  * 
  */
 
-package com.example.scrolllist;
+package com.yagnasri.displayingbitmaps.ui;
 
 /**
  * A listener to pass actions from view to adapter

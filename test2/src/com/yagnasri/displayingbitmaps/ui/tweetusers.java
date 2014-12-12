@@ -1,4 +1,4 @@
-package com.example.test;
+package com.yagnasri.displayingbitmaps.ui;
 
 public class tweetusers
 {

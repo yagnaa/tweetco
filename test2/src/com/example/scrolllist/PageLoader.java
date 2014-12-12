@@ -1,4 +1,4 @@
-package com.example.test;
+package com.example.scrolllist;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.scrolllist.DemoListAdapter;
-import com.example.scrolllist.DemoListAdapter.NewPageListener;
+import com.example.test.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,10 +18,12 @@ import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.yagnasri.displayingbitmaps.ui.Tweet;
+import com.yagnasri.displayingbitmaps.ui.TweetAdapter.NewPageLoader;
 
 
 
-public class PageLoader extends NewPageListener
+public class PageLoader extends NewPageLoader
 {
 	private static final int SEVER_SIDE_BATCH_SIZE = 10;
 	DemoListAdapter mDemoListAdapter = null;
@@ -140,30 +141,30 @@ public class PageLoader extends NewPageListener
 		}
 		
 		
-		@Override
-		public View getInfiniteScrollListView(int position, View convertView, ViewGroup parent) {
-			// Customize the row for list view
-			if(convertView == null) {
-				LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				convertView = layoutInflater.inflate(R.layout.tweet, null);
-			}
-			Tweet tweet = (Tweet) mDemoListAdapter.getItem(position);
-			if (tweet != null) {
-				
-				TextView handle = (TextView) convertView.findViewById(R.id.textView1);
-				ImageView rowPhoto = (ImageView) convertView.findViewById(R.id.imageView1);
-				TextView userName = (TextView) convertView.findViewById(R.id.textView2);
-				TextView tweetContent = (TextView) convertView.findViewById(R.id.textView3);
-				
-				handle.setText(tweet.tweetowner);
-				handle.setText(tweet.tweetowner);
-				handle.setText(tweet.tweetcontent);
-				rowPhoto.setImageResource(R.drawable.ic_launcher);
-	
-				
-			}
-			return convertView;
-		}
+//		@Override
+//		public View getInfiniteScrollListView(int position, View convertView, ViewGroup parent) {
+//			// Customize the row for list view
+//			if(convertView == null) {
+//				LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//				convertView = layoutInflater.inflate(R.layout.tweet, null);
+//			}
+//			Tweet tweet = (Tweet) mDemoListAdapter.getItem(position);
+//			if (tweet != null) {
+//				
+//				TextView handle = (TextView) convertView.findViewById(R.id.textView1);
+//				ImageView rowPhoto = (ImageView) convertView.findViewById(R.id.imageView1);
+//				TextView userName = (TextView) convertView.findViewById(R.id.textView2);
+//				TextView tweetContent = (TextView) convertView.findViewById(R.id.textView3);
+//				
+//				handle.setText(tweet.tweetowner);
+//				handle.setText(tweet.tweetowner);
+//				handle.setText(tweet.tweetcontent);
+//				rowPhoto.setImageResource(R.drawable.ic_launcher);
+//	
+//				
+//			}
+//			return convertView;
+//		}
 	
 	
 }

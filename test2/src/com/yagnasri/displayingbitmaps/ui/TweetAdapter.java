@@ -47,9 +47,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 
     private final Context mContext;
     private int mItemHeight = 0;
-    private int mNumColumns = 1;
     private int mActionBarHeight = 0;
-    private GridView.LayoutParams mImageViewLayoutParams;
     private ImageFetcher mImageFetcher; //Fetches the images
     
     private NewPageLoader mNewPageLoader; //Fetches the tweets
@@ -84,8 +82,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
         super();
         mContext = context;
         mImageFetcher = imageFetcher;
-        mImageViewLayoutParams = new ListView.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         // Calculate ActionBar height
         TypedValue tv = new TypedValue();
         if (context.getTheme().resolveAttribute(
@@ -126,29 +122,28 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 //        }
 
         // Size + number of columns for top empty row
-        return tweetsList.size() + mNumColumns;
+        return tweetsList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return position < mNumColumns ?
-                null : tweetsList.get(position - mNumColumns);
+        return tweetsList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return position < mNumColumns ? 0 : position - mNumColumns;
+        return position < 0 ? 0 : position;
     }
 
     @Override
     public int getViewTypeCount() {
         // Two types of views, the normal ImageView and the top row of empty views
-        return 2;
+        return 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position < mNumColumns) ? 1 : 0;
+        return 1;
     }
 
     @Override
@@ -184,19 +179,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 //		}
 //		return convertView;
 		
-		
-		
-        //BEGIN_INCLUDE(load_gridview_item)
-        // First check if this is the top row
-        if (position < mNumColumns) {
-            if (convertView == null) {
-                convertView = new View(mContext);
-            }
-            // Set empty view with height of ActionBar
-            convertView.setLayoutParams(new AbsListView.LayoutParams(
-                    LayoutParams.MATCH_PARENT, mActionBarHeight));
-            return convertView;
-        }
+
 
         // Now handle the main ImageView thumbnails
         ImageView imageView;
@@ -208,7 +191,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
         	
             imageView = (ImageView)convertView.findViewById(R.id.imageView1);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setLayoutParams(mImageViewLayoutParams);
+
         } else { // Otherwise re-use the converted view
         	imageView = (ImageView)convertView.findViewById(R.id.imageView1);
         }
@@ -217,23 +200,23 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 		Tweet tweet = (Tweet) getItem(position);
 		if (tweet != null) {
 			
-			TextView handle = (TextView) convertView.findViewById(R.id.textView1);
-			TextView userName = (TextView) convertView.findViewById(R.id.textView2);
-			TextView tweetContent = (TextView) convertView.findViewById(R.id.textView3);
+			TextView handle = (TextView) convertView.findViewById(R.id.handle);
+			TextView userName = (TextView) convertView.findViewById(R.id.username);
+			TextView tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);
 			
 			handle.setText(tweet.tweetowner);
 			userName.setText(tweet.tweetowner);
 			tweetContent.setText(tweet.tweetcontent);		
 		}
 
-        // Check the height matches our calculated column width
-        if (imageView.getLayoutParams().height != mItemHeight) {
-            imageView.setLayoutParams(mImageViewLayoutParams);
-        }
+//        // Check the height matches our calculated column width
+//        if (imageView.getLayoutParams().height != mItemHeight) {
+//            imageView.setLayoutParams(mImageViewLayoutParams);
+//        }
 
         // Finally load the image asynchronously into the ImageView, this also takes care of
         // setting a placeholder image while the background thread runs
-        mImageFetcher.loadImage(tweetsList.get(position - mNumColumns).imageurl, imageView);
+        mImageFetcher.loadImage(tweetsList.get(position).imageurl, imageView);
         return convertView;
         //END_INCLUDE(load_gridview_item)
     }
@@ -245,22 +228,14 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
      * @param height
      */
     public void setItemHeight(int height) {
-        if (height == mItemHeight) {
-            return;
-        }
-        mItemHeight = height;
-        mImageViewLayoutParams =
-                new GridView.LayoutParams(LayoutParams.MATCH_PARENT, mItemHeight);
-        mImageFetcher.setImageSize(height);
+//        if (height == mItemHeight) {
+//            return;
+//        }
+//        mItemHeight = height;
+//        mImageViewLayoutParams =
+//                new GridView.LayoutParams(LayoutParams.MATCH_PARENT, mItemHeight);
+//        mImageFetcher.setImageSize(height);
         notifyDataSetChanged();
-    }
-
-    public void setNumColumns(int numColumns) {
-        mNumColumns = numColumns;
-    }
-
-    public int getNumColumns() {
-        return mNumColumns;
     }
     
     //This notifies that the list has ended

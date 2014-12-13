@@ -152,26 +152,26 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
                     @TargetApi(VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onGlobalLayout() {
-                        if (mAdapter.getNumColumns() == 0) {
-                            final int numColumns = (int) Math.floor(
-                            		mListView.getWidth() / (mImageThumbSize + mImageThumbSpacing));
-                            if (numColumns > 0) {
-                                final int columnWidth =
-                                        (mListView.getWidth() / numColumns) - mImageThumbSpacing;
-                                mAdapter.setNumColumns(numColumns);
-                                mAdapter.setItemHeight(columnWidth);
-                                if (BuildConfig.DEBUG) {
-                                    Log.d(TAG, "onCreateView - numColumns set to " + numColumns);
-                                }
-                                if (Utils.hasJellyBean()) {
-                                	mListView.getViewTreeObserver()
-                                            .removeOnGlobalLayoutListener(this);
-                                } else {
-                                    mListView.getViewTreeObserver()
-                                            .removeGlobalOnLayoutListener(this);
-                                }
-                            }
-                        }
+//                        if (mAdapter.getNumColumns() == 0) {
+//                            final int numColumns = (int) Math.floor(
+//                            		mListView.getWidth() / (mImageThumbSize + mImageThumbSpacing));
+//                            if (numColumns > 0) {
+//                                final int columnWidth =
+//                                        (mListView.getWidth() / numColumns) - mImageThumbSpacing;
+//                                mAdapter.setNumColumns(numColumns);
+//                                mAdapter.setItemHeight(columnWidth);
+//                                if (BuildConfig.DEBUG) {
+//                                    Log.d(TAG, "onCreateView - numColumns set to " + numColumns);
+//                                }
+//                                if (Utils.hasJellyBean()) {
+//                                	mListView.getViewTreeObserver()
+//                                            .removeOnGlobalLayoutListener(this);
+//                                } else {
+//                                    mListView.getViewTreeObserver()
+//                                            .removeGlobalOnLayoutListener(this);
+//                                }
+//                            }
+//                        }
                     }
                 });
 

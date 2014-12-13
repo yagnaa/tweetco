@@ -38,7 +38,7 @@ import com.example.test.BuildConfig;
  * ImageView. It handles things like using a memory and disk cache, running the work in a background
  * thread and setting a placeholder image.
  */
-public abstract class ImageWorker {
+public abstract class TweetUserWorker {
     private static final String TAG = "ImageWorker";
     private static final int FADE_IN_TIME = 200;
 

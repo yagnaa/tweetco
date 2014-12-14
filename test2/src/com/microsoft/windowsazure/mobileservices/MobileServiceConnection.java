@@ -144,7 +144,7 @@ class MobileServiceConnection {
 	 * @param request
 	 *            The request to configure
 	 */
-	private void configureHeadersOnRequest(ServiceFilterRequest request) {
+	public void configureHeadersOnRequest(ServiceFilterRequest request) {
 		// Add the authentication header if the user is logged in
 		MobileServiceUser user = mClient.getCurrentUser();
 		if (user != null && user.getAuthenticationToken() != "") {

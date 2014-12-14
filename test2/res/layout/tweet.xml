@@ -25,17 +25,18 @@
 
     <com.yagnasri.displayingbitmaps.ui.RecyclingImageView
         android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentTop="true"
-        android:src="@drawable/ic_launcher" />
+        android:scaleType="fitXY"
+        android:src="@drawable/batman" />
 
     <TextView
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/imageView1"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -44,8 +45,8 @@
         android:id="@+id/handle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
         android:layout_toRightOf="@+id/username"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -54,8 +55,8 @@
         android:id="@+id/tweetcontent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/imageView1"
         android:layout_below="@+id/handle"
+        android:layout_toRightOf="@+id/imageView1"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -64,8 +65,8 @@
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/imageView1"
         android:layout_below="@+id/tweetcontent"
+        android:layout_toRightOf="@+id/imageView1"
         android:src="@drawable/ic_launcher" />
 
     <ImageView
@@ -73,8 +74,8 @@
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/favourite"
         android:layout_below="@+id/tweetcontent"
+        android:layout_toRightOf="@+id/favourite"
         android:src="@drawable/ic_launcher" />
 
 </RelativeLayout>

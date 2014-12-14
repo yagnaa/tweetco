@@ -19,13 +19,8 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.example.scrolllist.InfiniteScrollListView;
 
 /**
  * A ListView with upward/downward infinite scrolling capability, with a customizable view

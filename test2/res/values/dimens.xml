@@ -7,4 +7,73 @@
         <dimen name="image_thumbnail_size">100dp</dimen>
     <dimen name="image_thumbnail_spacing">1dp</dimen>
 
+    <dimen name="chip_padding">8dip</dimen>
+    <dimen name="chip_height">30dip</dimen>
+    <dimen name="chip_text_size">15sp</dimen>
+    <dimen name="line_spacing_extra">4dip</dimen>
+    <dimen name="audio_chip_height">40dip</dimen>
+    <dimen name="delete_chip_height">30dip</dimen>
+    <dimen name="tag_chip_padding">12dp</dimen>
+
+    <!-- TextSize -->
+    <dimen name="text_big">21sp</dimen>
+    <dimen name="text_big2">26sp</dimen>
+    <dimen name="text_moderate5">19sp</dimen>
+    <dimen name="text_moderate4">18sp</dimen>
+    <dimen name="text_moderate3">17sp</dimen>
+  	<dimen name="text_moderate2">16sp</dimen>
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_13sp">13sp</dimen>
+    <dimen name="text_20sp">20sp</dimen>
+    <dimen name="text_15sp">15sp</dimen>
+    
+    <dimen name="list_item_height">58dp</dimen>
+    
+    <!-- dashboard -->
+    <dimen name="footer_right_spacing">11dp</dimen>
+    <dimen name="footer_height">52dp</dimen>
+    
+    <!-- NoteBookList -->
+     <dimen name="notebook_list_height">60dp</dimen>
+     <dimen name="notebook_create_height">44dp</dimen>
+     
+     
+     <!-- Sliding menu -->
+     <dimen name="shadow_width">15dp</dimen>
+     <dimen name="slidingmenu_offset">60dp</dimen>
+     
+     <!-- TagList -->
+      <dimen name="tag_list_header_height">30dp</dimen>
+      <dimen name="tag_list_header_spacing">15dp</dimen>
+      
+      <!-- Search bar -->
+      <dimen name="side_margin">32dp</dimen>      
+      <dimen name="one_pixel">1px</dimen>
+      
+      <!-- Pull tp refresh -->
+      <dimen name="threshold_pull_to_refresh">80dp</dimen>
+      <dimen name="threshold_release_to_refresh">160dp</dimen>
+      
+      <!-- Sort -->
+      <dimen name="sort_option_layout_height">48dp</dimen>
+      
+      <!-- Move To Notebook -->
+      <dimen name="move_to_top_spacing">24dp</dimen>
+      <dimen name="move_to_layout_height">44dp</dimen>  
+      
+      <!-- FTU  -->
+      <dimen name="ftu_main_text_top_spacing">66dp</dimen>
+       <dimen name="ftu_username_top_spacing">25dp</dimen>
+       
+       <!-- RTE -->
+       <dimen name="rte_color_vertical_spacing">25dp</dimen>
+       <dimen name="rte_item_size">30dp</dimen>
+       <dimen name="tags_layout_height">44dp</dimen>
+
+       <!-- Bubble up -->
+       <dimen name="triage_touch_slop">20dp</dimen>
+       <dimen name="config_viewConfigurationTouchSlop">12dp</dimen>
+       <dimen name="triage_view_margin">30dp</dimen>
+    
 </resources>
+

@@ -1,30 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.test"
+    package="com.tweetco"
     android:versionCode="1"
     android:versionName="1.0" >
 
+        <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:name="com.tweetco.TweetCo"
+        android:icon="@drawable/icon_main"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
         <activity
-            android:name="com.yagnasri.displayingbitmaps.ui.AllInOneActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="sensor" >
+            android:name="com.tweetco.activities.LauncherActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name="com.yagnasri.displayingbitmaps.ui.AllInOneActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="sensor" >
+        </activity>
+        
+        <activity
+            android:name="com.tweetco.activities.FTUActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" 
+            android:screenOrientation="portrait">
+        </activity>
+        
+         <activity
+            android:name="com.tweetco.activities.ServiceDirectedLoginFTUActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" 
+            android:screenOrientation="portrait">
+        </activity>
+        
+         <activity
+            android:name="com.tweetco.activities.PostTweetActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        
+          <provider
+            android:name="com.tweetco.provider.TweetCoProvider"
+            android:authorities="com.tweetco.provider"
+            android:multiprocess="true"
+            android:label="@string/app_name"
+            android:exported="false"/>
     </application>
 
 </manifest>

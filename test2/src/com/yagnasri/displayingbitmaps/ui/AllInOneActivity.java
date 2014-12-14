@@ -6,11 +6,7 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
-import com.example.scrolllist.BogusRemoteService;
-import com.example.scrolllist.DemoListAdapter;
-import com.example.scrolllist.InfiniteScrollListView;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
 
 
@@ -20,11 +16,6 @@ public class AllInOneActivity extends FragmentActivity
     private static final String IMAGE_CACHE_DIR = "thumbs"; //Name of directory where images are saved
 	
 	public static MobileServiceClient mClient;
-	
-	private InfiniteScrollListView demoListView;
-	
-	private DemoListAdapter demoListAdapter;
-	private BogusRemoteService bogusRemoteService;
 	
 	private Handler handler;
 	

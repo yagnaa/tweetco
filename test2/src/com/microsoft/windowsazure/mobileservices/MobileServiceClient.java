@@ -535,8 +535,9 @@ public class MobileServiceClient {
 	public <E> void invokeApi(
 			String apiName, 
 			Class<E> clazz,
-			ApiOperationCallback<E> callback) {
-		invokeApi(apiName, null, HttpPost.METHOD_NAME, null, clazz, callback);
+			ApiOperationCallback<E> callback,
+			boolean withoutAsync) {
+		invokeApi(apiName, null, HttpPost.METHOD_NAME, null, clazz, callback, withoutAsync);
 	}
 	
 	/**
@@ -550,8 +551,9 @@ public class MobileServiceClient {
 			String apiName, 
 			Object body,
 			Class<E> clazz,
-			ApiOperationCallback<E> callback) {
-		invokeApi(apiName, body, HttpPost.METHOD_NAME, null, clazz, callback);
+			ApiOperationCallback<E> callback,
+			boolean withoutAsync) {
+		invokeApi(apiName, body, HttpPost.METHOD_NAME, null, clazz, callback, withoutAsync);
 	}
 
 	/**
@@ -567,8 +569,9 @@ public class MobileServiceClient {
 			String httpMethod, 
 			List<Pair<String, String>> parameters,
 			Class<E> clazz,
-			ApiOperationCallback<E> callback) {
-		invokeApi(apiName, null, httpMethod, parameters, clazz, callback);
+			ApiOperationCallback<E> callback,
+			boolean withoutAsync) {
+		invokeApi(apiName, null, httpMethod, parameters, clazz, callback, withoutAsync);
 	}
 
 	/**
@@ -586,7 +589,8 @@ public class MobileServiceClient {
 			String httpMethod, 
 			List<Pair<String, String>> parameters,
 			final Class<E> clazz,
-			final ApiOperationCallback<E> callback) {
+			final ApiOperationCallback<E> callback,
+			boolean withoutAsync) {
 		if (clazz == null) {
 			if (callback != null) {
 				callback.onCompleted(null, new IllegalArgumentException("clazz cannot be null"), null);
@@ -628,7 +632,7 @@ public class MobileServiceClient {
 					}
 				}
 			}
-		});
+		},withoutAsync);
 	}
 
 
@@ -637,8 +641,8 @@ public class MobileServiceClient {
 	 * @param apiName The API name
 	 * @param callback The callback to invoke after the API execution
 	 */
-	public void invokeApi(String apiName, ApiJsonOperationCallback callback) {
-		invokeApi(apiName, null, callback);
+	public void invokeApi(String apiName, ApiJsonOperationCallback callback,boolean withoutAsync) {
+		invokeApi(apiName, null, callback,withoutAsync);
 	}
 	
 	/**
@@ -647,8 +651,8 @@ public class MobileServiceClient {
 	 * @param body The json element to send as the request body
 	 * @param callback The callback to invoke after the API execution
 	 */
-	public void invokeApi(String apiName, JsonElement body, ApiJsonOperationCallback callback) {
-		invokeApi(apiName, body, HttpPost.METHOD_NAME, null, callback);
+	public void invokeApi(String apiName, JsonElement body, ApiJsonOperationCallback callback,boolean withoutAsync) {
+		invokeApi(apiName, body, HttpPost.METHOD_NAME, null, callback, withoutAsync);
 	}
 	
 	/**
@@ -662,8 +666,8 @@ public class MobileServiceClient {
 			String apiName, 
 			String httpMethod, 
 			List<Pair<String, String>> parameters, 
-			ApiJsonOperationCallback callback) {
-		invokeApi(apiName, null, httpMethod, parameters, callback);
+			ApiJsonOperationCallback callback,boolean withoutAsync) {
+		invokeApi(apiName, null, httpMethod, parameters, callback, withoutAsync);
 	}
 	
 	/**
@@ -679,7 +683,8 @@ public class MobileServiceClient {
 			JsonElement body, 
 			String httpMethod, 
 			List<Pair<String, String>> parameters,
-			final ApiJsonOperationCallback callback) {
+			final ApiJsonOperationCallback callback,
+			boolean withoutAsync) {
 		
 		byte[] content = null;
 		if (body != null) {
@@ -713,7 +718,7 @@ public class MobileServiceClient {
 					}
 				}
 			}
-		});
+		}, withoutAsync);
 	}
 	
 	/**
@@ -731,101 +736,10 @@ public class MobileServiceClient {
 			String httpMethod, 
 			List<Pair<String, String>> requestHeaders, 
 			List<Pair<String, String>> parameters, 
-			final ServiceFilterResponseCallback callback) {
+			final ServiceFilterResponseCallback callback,
+			boolean withoutAsync) {
 	
-		invokeApiInternal(apiName, content, httpMethod, requestHeaders, parameters, CUSTOM_API_URL, callback);
-	}
-	
-	/**
-	 * 
-	 * @param apiName The API name
-	 * @param content The byte array to send as the request body
-	 * @param httpMethod The HTTP Method used to invoke the API
-	 * @param requestHeaders The extra headers to send in the request
-	 * @param parameters The query string parameters sent in the request
-	 * @param apiBaseURL The base URL for api requests
-	 * @param callback The callback to invoke after the API execution
-	 */
-	void invokeApiInternal(
-			String apiName, 
-			byte[] content, 
-			String httpMethod, 
-			List<Pair<String, String>> requestHeaders, 
-			List<Pair<String, String>> parameters,
-			String apiBaseURL,
-			final ServiceFilterResponseCallback callback) {
-		
-		if (apiName == null || apiName.trim().equals("")) {
-			if (callback != null) {
-				callback.onResponse(null, new IllegalArgumentException("apiName cannot be null"));
-			}
-			return;
-		}
-		
-		if (httpMethod == null || httpMethod.trim().equals("")) {
-			if (callback != null) {
-				callback.onResponse(null, new IllegalArgumentException("httpMethod cannot be null"));
-			}
-			return;
-		}
-		
-		Uri.Builder uriBuilder = Uri.parse(getAppUrl().toString()).buildUpon();
-		uriBuilder.path(apiBaseURL + apiName);
-		
-		if (parameters != null && parameters.size() > 0) {
-			for (Pair<String, String> parameter : parameters) {
-				uriBuilder.appendQueryParameter(parameter.first, parameter.second);
-			}
-		}
-		
-		ServiceFilterRequest request;
-		String url = uriBuilder.build().toString();
-		
-		if (httpMethod.equalsIgnoreCase(HttpGet.METHOD_NAME)) {
-			request = new ServiceFilterRequestImpl(new HttpGet(url), getAndroidHttpClientFactory());
-		} else if (httpMethod.equalsIgnoreCase(HttpPost.METHOD_NAME)) {
-			request = new ServiceFilterRequestImpl(new HttpPost(url), getAndroidHttpClientFactory());
-		} else if (httpMethod.equalsIgnoreCase(HttpPut.METHOD_NAME)) {
-			request = new ServiceFilterRequestImpl(new HttpPut(url), getAndroidHttpClientFactory());
-		} else if (httpMethod.equalsIgnoreCase(HttpPatch.METHOD_NAME)) {
-			request = new ServiceFilterRequestImpl(new HttpPatch(url), getAndroidHttpClientFactory());
-		} else if (httpMethod.equalsIgnoreCase(HttpDelete.METHOD_NAME)) {
-			request = new ServiceFilterRequestImpl(new HttpDelete(url), getAndroidHttpClientFactory());
-		} else {
-			if (callback != null) {
-				callback.onResponse(null, new IllegalArgumentException("httpMethod not supported"));
-			}
-			return;
-		}
-		
-		if (requestHeaders != null && requestHeaders.size() > 0) {
-			for (Pair<String, String> header: requestHeaders) {
-				request.addHeader(header.first, header.second);
-			}
-		}
-		
-		if (content != null) {
-			try {
-				request.setContent(content);
-			} catch (Exception e) {
-				if (callback != null) {
-					callback.onResponse(null, e);
-				}
-				return;
-			}
-		}
-		
-		MobileServiceConnection conn = createConnection();
-		
-		// Create AsyncTask to execute the request and parse the results
-		new RequestAsyncTask(request, conn) {
-			@Override
-			protected void onPostExecute(ServiceFilterResponse response) {
-				if (callback != null) {
-					callback.onResponse(response, mTaskException);
-				}
-			}
-		}.executeTask();	
+		invokeApiInternal(apiName, content, httpMethod, requestHeaders, parameters, CUSTOM_API_URL, callback,withoutAsync);
 	}
 	
 	
@@ -911,15 +825,34 @@ public class MobileServiceClient {
 		
 		MobileServiceConnection conn = createConnection();
 		
-		// Create AsyncTask to execute the request and parse the results
-		new RequestAsyncTask(request, conn) {
-			@Override
-			protected void onPostExecute(ServiceFilterResponse response) {
-				if (callback != null) {
-					callback.onResponse(response, mTaskException);
+		if(withoutAsync)
+		{
+			//This will execute in the same thread . Which gives an option for caller to implement known patterns
+			// Call start method that executes the request
+			conn.start(request, new ServiceFilterResponseCallback() {
+	
+				@Override
+				public void onResponse(ServiceFilterResponse response, Exception exception) {
+					
+					if (callback != null) {
+						callback.onResponse(response, exception);
+					}
 				}
-			}
-		}.executeTask();	
+			});
+		}
+		else
+		{
+		
+			// Create AsyncTask to execute the request and parse the results
+			new RequestAsyncTask(request, conn) {
+				@Override
+				protected void onPostExecute(ServiceFilterResponse response) {
+					if (callback != null) {
+						callback.onResponse(response, mTaskException);
+					}
+				}
+			}.executeTask();	
+		}
 	}
 
 	/**
@@ -1035,7 +968,7 @@ public class MobileServiceClient {
 	 * 
 	 * @return MobileServiceConnection
 	 */
-	MobileServiceConnection createConnection() {
+	public MobileServiceConnection createConnection() {
 		return new MobileServiceConnection(this);
 	}
 

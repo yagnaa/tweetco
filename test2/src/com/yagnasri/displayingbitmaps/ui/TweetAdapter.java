@@ -4,6 +4,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,17 +13,12 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.scrolllist.InfiniteScrollListView;
-import com.example.test.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,6 +26,8 @@ import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.tweetco.R;
+import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 
 
@@ -52,6 +51,8 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
     
     private NewPageLoader mNewPageLoader; //Fetches the tweets
     
+    private TweetUserLoader tweetUserLoader; //Loads user data
+    
     protected InfiniteScrollListPageListener mInfiniteListPageListener; 
     
 	// A lock to prevent another scrolling event to be triggered if one is already in session
@@ -60,7 +61,10 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 	protected boolean rowEnabled = true;
     
     //All the tweets that we are currently holding in memory
-    private List<Tweet> tweetsList = new ArrayList<Tweet>();
+    private List<Tweet> tweetsList = Collections.synchronizedList(new ArrayList<Tweet>());
+    
+    //All the tweets that we are currently holding in memory
+    private Map<String,TweetUser> tweetUsers = new ConcurrentHashMap<String, TweetUser>();
     
 	public void lock() {
 		canScroll = false;
@@ -69,14 +73,15 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 		canScroll = true;
 	}
 	
-    @Override
-    public boolean isEnabled(int position) {
-    	return rowEnabled; 
-    }
-	public void setRowEnabled(boolean rowEabled) {
-		this.rowEnabled = rowEabled;
+	public List<Tweet> getTweetList()
+	{
+		return tweetsList;
 	}
-
+	
+	public Map<String,TweetUser> getTweetUsersList()
+	{
+		return tweetUsers;
+	}
 
     public TweetAdapter(Context context,ImageFetcher imageFetcher) {
         super();
@@ -90,6 +95,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
                     tv.data, context.getResources().getDisplayMetrics());
         }
         mNewPageLoader = new PageLoader(context, this);
+        tweetUserLoader = new TweetUserLoader(this);
     }
     
 	public void addEntriesToTop(List<Tweet> entries) {
@@ -112,6 +118,19 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 		// Clear all the data points
 		this.tweetsList.clear();
 		notifyDataSetChanged();
+	}
+	
+	public void addUsers(Map<String,TweetUser> tweetUsers) 
+	{
+		// Clear all the data points
+		this.tweetUsers.putAll(tweetUsers);
+		notifyDataSetChanged();
+	}
+	
+	public void addUser(String user,TweetUser userInfo) 
+	{
+		// Clear all the data points
+		this.tweetUsers.put(user, userInfo);
 	}
 
     @Override
@@ -198,8 +217,9 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
         
         //Load TextFields here
 		Tweet tweet = (Tweet) getItem(position);
+		TweetUser tweeter = null;
 		if (tweet != null) {
-			
+			tweeter = (TweetUser) tweetUsers.get(tweet.tweetowner);
 			TextView handle = (TextView) convertView.findViewById(R.id.handle);
 			TextView userName = (TextView) convertView.findViewById(R.id.username);
 			TextView tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);
@@ -216,7 +236,10 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 
         // Finally load the image asynchronously into the ImageView, this also takes care of
         // setting a placeholder image while the background thread runs
-        mImageFetcher.loadImage(tweetsList.get(position).imageurl, imageView);
+		if(tweeter!=null)
+		{
+			mImageFetcher.loadImage(tweeter.profileimageurl, imageView);
+		}
         return convertView;
         //END_INCLUDE(load_gridview_item)
     }
@@ -267,14 +290,14 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 	 */
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		if (view instanceof InfiniteScrollListView) {
+
 
 			// In scroll-to-bottom-to-load mode, when the sum of first visible position and visible count equals the total number
 			// of items in the adapter it reaches the bottom
 			if (firstVisibleItem + visibleItemCount - 1 == getCount() && canScroll) {
 				onScrollNext();
 			}
-		}
+		
 	}
 	
 	
@@ -341,6 +364,8 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 								tweetAdapter.notifyHasMore();
 							}
 							
+							tweetAdapter.tweetUserLoader.load();
+							
 						}
 						else
 						{
@@ -348,73 +373,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 						}
 						
 					}
-				});
-				
-				
-//				new AsyncTask<Void, Void, List<Tweet>>() {
-//					@Override
-//					protected void onPreExecute() {
-//						// Loading lock to allow only one instance of loading
-//						mDemoListAdapter.lock();
-//					}
-//					@Override
-//					protected List<Tweet> doInBackground(Void ... params) {
-//						List<Tweet> result = null;
-//						
-//		        		JsonObject obj = new JsonObject();
-//		        		obj.addProperty("requestingUser", "tweetbot");
-//		        		obj.addProperty("feedtype", "homefeed");
-//		        		mClient.invokeApi("gettweetsforuser", obj, new ApiJsonOperationCallback() {
-//							
-//							@Override
-//							public void onCompleted(JsonElement arg0, Exception arg1,
-//									ServiceFilterResponse arg2) {
-//								if(arg1 == null)
-//								{
-//									Gson gson = new Gson();
-//									Tweet[] tweetArray = gson.fromJson(arg0, Tweet[].class);
-//							      Log.e("Item clicked","Json received") ;
-//								}
-//								else
-//								{
-//									Log.e("Item clicked","Json received") ;
-//								}
-//								
-//								
-//								
-//							}
-//						});
-	//
-//						return result;
-//					}
-//					@Override
-//					protected void onPostExecute(List<Tweet> result) {
-//						if (isCancelled() || result == null || result.isEmpty()) {
-//							mDemoListAdapter.notifyEndOfList();
-//						} else {
-//							// Add data to the placeholder
-	//
-//							mDemoListAdapter.addEntriesToBottom(result);
-//							
-//							// Add or remove the loading view depend on if there might be more to load
-//							if (result.size() < SEVER_SIDE_BATCH_SIZE) {
-//								mDemoListAdapter.notifyEndOfList();
-//							} else {
-//								mDemoListAdapter.notifyHasMore();
-//							}
-//						}
-//					};
-//					@Override
-//					protected void onCancelled() {
-//						// Tell the adapter it is end of the list when task is cancelled
-//						mDemoListAdapter.notifyEndOfList();
-//					}
-//				}.execute();
-			}
-			
-			
-
-		
-		
+				},false);
+			}	
 	}
 }

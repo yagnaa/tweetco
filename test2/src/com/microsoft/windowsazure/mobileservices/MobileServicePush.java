@@ -34,16 +34,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.http.Header;
 import org.apache.http.protocol.HTTP;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Pair;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 /**
  * The notification hub client
@@ -419,7 +420,7 @@ public class MobileServicePush {
 					return;
 				}
 			}
-		});
+		}, false);
 	}
 
 	/**
@@ -669,7 +670,7 @@ public class MobileServicePush {
 					}
 				}
 			}
-		});
+		}, false);
 	}
 
 	/**
@@ -721,7 +722,7 @@ public class MobileServicePush {
 					return;
 				}
 			}
-		});
+		}, false);
 	}
 
 	/**
@@ -760,7 +761,7 @@ public class MobileServicePush {
 				return;
 
 			}
-		});
+		}, false);
 	}
 
 	/**

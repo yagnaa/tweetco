@@ -26,16 +26,19 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.commons.io.IOUtils;
+
+import android.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.test.BuildConfig;
-import com.example.test.R;
+import com.tweetco.BuildConfig;
 
 /**
  * A simple subclass of {@link ImageResizer} that fetches and resizes images fetched from a URL.
@@ -48,9 +51,11 @@ public class ImageFetcher extends ImageResizer {
 
     private DiskLruCache mHttpDiskCache;
     private File mHttpCacheDir;
+    private boolean mImageBase64Encoded = false;
     private boolean mHttpDiskCacheStarting = true;
     private final Object mHttpDiskCacheLock = new Object();
     private static final int DISK_CACHE_INDEX = 0;
+    
 
     /**
      * Initialize providing a target image width and height for the processing images.
@@ -59,8 +64,9 @@ public class ImageFetcher extends ImageResizer {
      * @param imageWidth
      * @param imageHeight
      */
-    public ImageFetcher(Context context, int imageWidth, int imageHeight) {
+    public ImageFetcher(Context context, int imageWidth, int imageHeight,boolean imageBase64Encoded) {
         super(context, imageWidth, imageHeight);
+        mImageBase64Encoded = imageBase64Encoded;
         init(context);
     }
 
@@ -70,8 +76,9 @@ public class ImageFetcher extends ImageResizer {
      * @param context
      * @param imageSize
      */
-    public ImageFetcher(Context context, int imageSize) {
+    public ImageFetcher(Context context, int imageSize, boolean imageBase64Encoded) {
         super(context, imageSize);
+        mImageBase64Encoded = imageBase64Encoded;
         init(context);
     }
 
@@ -173,7 +180,7 @@ public class ImageFetcher extends ImageResizer {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if (networkInfo == null || !networkInfo.isConnectedOrConnecting()) {
-            Toast.makeText(context, R.string.no_network_connection_toast, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "No network connection", Toast.LENGTH_LONG).show();
             Log.e(TAG, "checkConnection - no connection found");
         }
     }
@@ -274,11 +281,22 @@ public class ImageFetcher extends ImageResizer {
             urlConnection = (HttpURLConnection) url.openConnection();
             in = new BufferedInputStream(urlConnection.getInputStream(), IO_BUFFER_SIZE);
             out = new BufferedOutputStream(outputStream, IO_BUFFER_SIZE);
-
-            int b;
-            while ((b = in.read()) != -1) {
-                out.write(b);
+            
+            if(mImageBase64Encoded)
+            {
+            	byte[] bytes = IOUtils.toByteArray(in);
+            	String s = new String(bytes);
+            	byte[] decodeByteArray = Base64.decode(s, Base64.DEFAULT);
+            	out.write(decodeByteArray);
             }
+            else
+            {
+                int b;
+                while ((b = in.read()) != -1) {
+                    out.write(b);
+                }
+            }
+      
             return true;
         } catch (final IOException e) {
             Log.e(TAG, "Error in downloadBitmap - " + e);

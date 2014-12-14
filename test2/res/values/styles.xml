@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -17,4 +17,88 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
+    <item name="android:windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+	</style>
+    
+    <style name="Invisible" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">#FCCC</item>
+    </style>
+
+    <style name="NoteTitleAppearance" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">21sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <!--
+    <style name="NotesActionBar" parent="android:style/Widget.Holo.Light.ActionBar">
+    	<item name="android:background">@color/white</item>
+    	<item name="android:backgroundSplit">@color/white</item>
+	</style>
+    -->
+    <style name="NoActionBar" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="actionBarOverflowStyleDark" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_bar_overflow_dark</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">48dp</item>
+    </style>
+
+    <style name="NotesTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowBackground">@color/solid_background_color</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionOverflowButtonStyle">@style/actionBarOverflowStyleDark</item>
+        <item name="android:homeAsUpIndicator">@drawable/back_btn_bg</item>
+        <item name="android:icon">@android:color/transparent</item>
+        <item name="android:selectableItemBackground">@color/transparent</item>
+    </style>
+
+    <style name="ViewTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="FontNormal">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="FontLight">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="refresh_header">
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="ColorSelectorRadioButton" parent="@android:style/Widget.CompoundButton.RadioButton">
+
+        <!--
+        		<item name="android:layout_height">wrap_content</item>
+   		<item name="android:layout_width">wrap_content</item>
+        -->
+        <item name="android:layout_gravity">center</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="ThemeWithCorners" parent="android:Theme.Dialog">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:windowBackground">@drawable/rounded_corners</item>
+    </style>
+    
 </resources>

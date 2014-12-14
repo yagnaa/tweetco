@@ -1,6 +1,7 @@
-package com.yagnasri.displayingbitmaps.ui;
+package com.yagnasri.dao;
 
-public class tweetusers
+
+public class TweetUser
 {
     public String Id;
 	public String username;
@@ -10,5 +11,7 @@ public class tweetusers
 	public String profileimageurl;
 	public String profilebgurl;
 	public String bookmarkedtweets;
-	public String displayname;	
+	public String displayname;
+	public String interesttags;
+
 }

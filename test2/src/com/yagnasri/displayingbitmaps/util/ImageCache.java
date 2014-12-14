@@ -46,7 +46,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.util.LruCache;
 
-import com.example.test.BuildConfig;
+import com.tweetco.BuildConfig;
 
 /**
  * This class handles disk and memory caching of bitmaps in conjunction with the

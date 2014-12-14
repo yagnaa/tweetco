@@ -16,11 +16,11 @@
 
 package com.yagnasri.displayingbitmaps.ui;
 
+
 import android.annotation.TargetApi;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,8 +32,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.test.BuildConfig;
-import com.example.test.R;
+import com.tweetco.R;
 import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 import com.yagnasri.displayingbitmaps.util.Utils;
@@ -75,7 +74,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
         cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
 
         // The ImageFetcher takes care of loading images into our ImageView children asynchronously
-        mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
+        mImageFetcher = new ImageFetcher(getActivity(), 60,60, true);
         mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
         mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
         mAdapter = new TweetAdapter(getActivity(),mImageFetcher);

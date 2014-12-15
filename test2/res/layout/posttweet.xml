@@ -4,17 +4,30 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <LinearLayout 
+    <ScrollView android:layout_width="fill_parent" android:layout_height="0dip" android:layout_weight="1">
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
+        <LinearLayout 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
     
-    <EditText android:id="@+id/tweetContent" android:layout_height="wrap_content" android:layout_width="0dip" android:layout_weight="1" android:hint="What's on your mind?"/>
+    <EditText android:id="@+id/tweetContent" android:layout_height="150dp" android:layout_width="0dip" android:layout_weight="1" android:hint="What's on your mind?"/>
     <TextView android:id="@+id/charCount" android:layout_height="wrap_content" android:layout_width="wrap_content" android:hint="140"/>
-        
-        
         </LinearLayout>
+        <ImageView android:id="@+id/tweetImaage" android:layout_height="wrap_content" android:layout_width="fill_parent"/>    
+  
         
+    </LinearLayout>
+          
+    </ScrollView>
+    
+        
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
     <Button android:id="@+id/sendTweetButton" android:text="Send" android:layout_height="wrap_content" android:layout_width="wrap_content"/>
-   
+    <Button android:id="@+id/imageGalleryButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gallery"/>   
+    <Button android:id="@+id/imageCameraButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Camera"/>   
+    
+    </LinearLayout>
+        
+    
 </LinearLayout>

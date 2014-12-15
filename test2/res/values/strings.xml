@@ -5,4 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="strConnectionDialogMsg">Please wait&#8230;</string>
     
+
+    <string name="hello_world">Hello world!</string>
+    <string name="choose_picture_dialog_title">Choose picture</string>
+    
 </resources>

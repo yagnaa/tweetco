@@ -8,6 +8,7 @@ import com.tweetco.R;
 import com.tweetco.TweetCo;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
+import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 
 public class LauncherActivity extends TweetCoBaseActivity 
 {
@@ -36,7 +37,7 @@ public class LauncherActivity extends TweetCoBaseActivity
 						else
 						{
 							TweetCo.setAccount(account);
-							startActivity(new Intent(getApplicationContext(), PostTweetActivity.class));
+							startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
 						}
 					}
 				} catch (InterruptedException e) {

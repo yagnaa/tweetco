@@ -34,6 +34,7 @@ import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.utility.AlertDialogUtility;
 import com.tweetco.utility.UiUtility;
+import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 
 public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity 
 {
@@ -101,15 +102,7 @@ public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity
 										String username = null;
 										if(userObj.has("username"))
 										{
-											String upn = userObj.get("username").getAsString();
-											if(!TextUtils.isEmpty(upn) && upn.indexOf("@") != -1)
-											{
-												username = upn.substring(0, upn.indexOf("@"));
-											}
-											else
-											{
-												username = mobileServiceClient.getCurrentUser().getUserId();
-											}
+											username = userObj.get("username").getAsString();
 										}
 										else
 										{
@@ -145,7 +138,7 @@ public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity
 															{
 																TweetCo.setAccount(account);
 																
-																startActivity(new Intent(getApplicationContext(), PostTweetActivity.class));
+																startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
 															}
 														}
 													}

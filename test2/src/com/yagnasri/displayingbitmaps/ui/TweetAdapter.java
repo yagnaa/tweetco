@@ -27,6 +27,7 @@ import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
+import com.tweetco.TweetCo;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 
@@ -341,7 +342,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 				List<Tweet> result = null;
 				
 	    		JsonObject obj = new JsonObject();
-	    		obj.addProperty("requestingUser", "tweetbot");
+	    		obj.addProperty("requestingUser", TweetCo.getAccount().getUsername());
 	    		obj.addProperty("feedtype", "homefeed");
 	    		mClient.invokeApi("gettweetsforuser", obj, new ApiJsonOperationCallback() {
 					

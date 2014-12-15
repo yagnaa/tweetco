@@ -133,7 +133,7 @@ public class PostTweetActivity extends Activity
 							}
 							
 						}
-					});
+					}, false);
 				} 
 				catch (MalformedURLException e) {
 					// TODO Auto-generated catch block

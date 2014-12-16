@@ -18,9 +18,12 @@ package com.yagnasri.displayingbitmaps.ui;
 
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +36,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.tweetco.R;
+import com.tweetco.activities.UserProfileFragment;
+import com.tweetco.tweets.TweetCommonData;
+import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
 import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 import com.yagnasri.displayingbitmaps.util.Utils;
@@ -51,7 +57,6 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
     private int mImageThumbSize;
     private int mImageThumbSpacing;
     private TweetAdapter mAdapter;
-    private ImageFetcher mImageFetcher;
 
     /**
      * Empty constructor as per the Fragment documentation
@@ -74,10 +79,36 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
         cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
 
         // The ImageFetcher takes care of loading images into our ImageView children asynchronously
-        mImageFetcher = new ImageFetcher(getActivity(), 60,60, true);
-        mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
-        mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-        mAdapter = new TweetAdapter(getActivity(),mImageFetcher);
+        TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), 60,60, true);
+        TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
+        TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
+        mAdapter = new TweetAdapter(getActivity(),TweetCommonData.mImageFetcher, new OnProfilePicClick() {
+			
+			@Override
+			public void onItemClick(int position) {
+				//Show user profile view
+        		Tweet tweet = (Tweet)mAdapter.getItem(position);
+        		if(tweet != null)
+        		{
+        			String owner = tweet.tweetowner;
+        			if(!TextUtils.isEmpty(owner))
+            		{
+//            			UserProfileFragment fragment = new UserProfileFragment();
+//            			Bundle bundle = new Bundle();
+//            			bundle.putString("username", owner);
+//            			fragment.setArguments(bundle);
+//                        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//                        ft.add(android.R.id.content, fragment, TAG);
+//                        ft.commit();
+        				
+        				Intent intent = new Intent(getActivity(), UserProfileFragment.class);
+        				intent.putExtra("username", owner);
+        				getActivity().startActivity(intent);
+                    }
+        		}
+        		
+			}
+		});
     }
 
     @Override
@@ -129,10 +160,10 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
                     // Before Honeycomb pause image loading on scroll to help with performance
                     if (!Utils.hasHoneycomb()) {
-                        mImageFetcher.setPauseWork(true);
+                    	TweetCommonData.mImageFetcher.setPauseWork(true);
                     }
                 } else {
-                    mImageFetcher.setPauseWork(false);
+                	TweetCommonData.mImageFetcher.setPauseWork(false);
                 }
             }
 
@@ -181,22 +212,22 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
     public void onResume() {
         super.onResume();
         mAdapter.onScrollNext();
-        mImageFetcher.setExitTasksEarly(false);
+        TweetCommonData.mImageFetcher.setExitTasksEarly(false);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mImageFetcher.setPauseWork(false);
-        mImageFetcher.setExitTasksEarly(true);
-        mImageFetcher.flushCache();
+        TweetCommonData.mImageFetcher.setPauseWork(false);
+        TweetCommonData.mImageFetcher.setExitTasksEarly(true);
+        TweetCommonData.mImageFetcher.flushCache();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mImageFetcher.closeCache();
+        TweetCommonData.mImageFetcher.closeCache();
     }
 
     @TargetApi(VERSION_CODES.JELLY_BEAN)
@@ -215,6 +246,19 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 //            startActivity(i);
 //        }
     	//TODO when a tweet is clicked
+    	if(v.getTag() != null)
+    	{
+    		String tag = v.getTag().toString();
+        	if("image".equals(tag))
+        	{
+        		
+        	}
+    	}
+    	else
+    	{
+    		//Show tweet's detailed view
+    	}
+    	
     }
 
     @Override

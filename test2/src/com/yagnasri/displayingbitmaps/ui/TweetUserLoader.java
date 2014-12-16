@@ -2,8 +2,6 @@ package com.yagnasri.displayingbitmaps.ui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,6 +13,7 @@ import com.google.gson.JsonSyntaxException;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.util.AsyncTask;
 
@@ -54,9 +53,9 @@ public  class TweetUserLoader
 	{
 		List<String> usersToLoad = new ArrayList<String>();
 
-		List<Tweet> tweetsList = adapter.getTweetList();
+		List<Tweet> tweetsList = TweetCommonData.tweetsList;
 
-		Map<String,TweetUser> tweetUsersList = adapter.getTweetUsersList();
+		Map<String,TweetUser> tweetUsersList = TweetCommonData.tweetUsers;
 
 		for(Tweet tweet:tweetsList)
 		{

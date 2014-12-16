@@ -1,17 +1,18 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -28,6 +29,8 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
 import com.tweetco.TweetCo;
+import com.tweetco.activities.UserProfileFragment;
+import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 
@@ -44,6 +47,11 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 	public static abstract class NewPageLoader {
 		public abstract void onScrollNext();
 	}
+	
+	public interface OnProfilePicClick
+	{
+		void onItemClick(int position);
+	}
 
     private final Context mContext;
     private int mItemHeight = 0;
@@ -54,6 +62,8 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
     
     private TweetUserLoader tweetUserLoader; //Loads user data
     
+    private OnProfilePicClick mOnProfilePicClickCallback;
+    
     protected InfiniteScrollListPageListener mInfiniteListPageListener; 
     
 	// A lock to prevent another scrolling event to be triggered if one is already in session
@@ -61,33 +71,19 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 	// A flag to enable/disable row clicks
 	protected boolean rowEnabled = true;
     
-    //All the tweets that we are currently holding in memory
-    private List<Tweet> tweetsList = Collections.synchronizedList(new ArrayList<Tweet>());
-    
-    //All the tweets that we are currently holding in memory
-    private Map<String,TweetUser> tweetUsers = new ConcurrentHashMap<String, TweetUser>();
-    
-	public void lock() {
+    public void lock() {
 		canScroll = false;
 	}	
 	public void unlock() {
 		canScroll = true;
 	}
 	
-	public List<Tweet> getTweetList()
-	{
-		return tweetsList;
-	}
-	
-	public Map<String,TweetUser> getTweetUsersList()
-	{
-		return tweetUsers;
-	}
-
-    public TweetAdapter(Context context,ImageFetcher imageFetcher) {
+    public TweetAdapter(Context context,ImageFetcher imageFetcher, OnProfilePicClick onProfilePicClickCallback) 
+    {
         super();
         mContext = context;
         mImageFetcher = imageFetcher;
+        mOnProfilePicClickCallback = onProfilePicClickCallback;
         // Calculate ActionBar height
         TypedValue tv = new TypedValue();
         if (context.getTheme().resolveAttribute(
@@ -105,33 +101,33 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 			Collections.reverse(entries);
 		}
 		// Add entries to the top of the list
-		this.tweetsList.addAll(0, entries);
+		TweetCommonData.tweetsList.addAll(0, entries);
 		notifyDataSetChanged();
 	}
 	
 	public void addEntriesToBottom(List<Tweet> entries) {
 		// Add entries to the bottom of the list
-		this.tweetsList.addAll(entries);
+		TweetCommonData.tweetsList.addAll(entries);
 		notifyDataSetChanged();
 	}
 	
 	public void clearEntries() {
 		// Clear all the data points
-		this.tweetsList.clear();
+		TweetCommonData.tweetsList.clear();
 		notifyDataSetChanged();
 	}
 	
 	public void addUsers(Map<String,TweetUser> tweetUsers) 
 	{
 		// Clear all the data points
-		this.tweetUsers.putAll(tweetUsers);
+		TweetCommonData.tweetUsers.putAll(tweetUsers);
 		notifyDataSetChanged();
 	}
 	
 	public void addUser(String user,TweetUser userInfo) 
 	{
 		// Clear all the data points
-		this.tweetUsers.put(user, userInfo);
+		TweetCommonData.tweetUsers.put(user, userInfo);
 	}
 
     @Override
@@ -142,12 +138,12 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 //        }
 
         // Size + number of columns for top empty row
-        return tweetsList.size();
+    	return TweetCommonData.tweetsList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return tweetsList.get(position);
+        return TweetCommonData.tweetsList.get(position);
     }
 
     @Override
@@ -216,11 +212,20 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
         	imageView = (ImageView)convertView.findViewById(R.id.imageView1);
         }
         
+        imageView.setTag(position);
+        imageView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				int position = Integer.parseInt(v.getTag().toString());
+        		mOnProfilePicClickCallback.onItemClick(position);
+			}
+		});
         //Load TextFields here
 		Tweet tweet = (Tweet) getItem(position);
 		TweetUser tweeter = null;
 		if (tweet != null) {
-			tweeter = (TweetUser) tweetUsers.get(tweet.tweetowner);
+			tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner);
 			TextView handle = (TextView) convertView.findViewById(R.id.handle);
 			TextView userName = (TextView) convertView.findViewById(R.id.username);
 			TextView tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);

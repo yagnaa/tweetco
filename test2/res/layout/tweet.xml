@@ -29,7 +29,7 @@
         android:layout_height="60dp"
         android:layout_alignParentTop="true"
         android:scaleType="fitXY"
-        android:src="@drawable/batman" />
+        android:src="@drawable/batman" android:clickable="true" />
 
     <TextView
         android:id="@+id/username"

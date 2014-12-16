@@ -34,7 +34,7 @@ import com.tweetco.utility.ClientHelper;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
 
-public class PostTweetActivity extends Activity 
+public class PostTweetActivity extends TweetCoBaseActivity 
 {
 	private static final int TWEET_MAX_CHARS = 140;
 	private static final int REQUEST_CODE_IMAGE_SELECT = 100;

@@ -81,90 +81,54 @@ public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity
 				{
 					if(exception == null)
 					{
-						mobileServiceClient.invokeApi(CREATE_USER_API, "POST", new ArrayList<Pair<String, String>>(), new ApiJsonOperationCallback() 
-						{
+						new AddAccountTask(getApplicationContext(), new AddAccountTaskParams(mobileServiceClient), asyncTaskEventHandler, new AddAccountTaskCompletionCallback() {
 
 							@Override
-							public void onCompleted(JsonElement user, Exception exception,
-									ServiceFilterResponse arg2) {
-								if(exception != null)
-								{
-									Log.e(TAG, "Get identitiy failed");
-								}
-								else
-								{
-									Log.d(TAG, "Get identitiy success");
+							public void onAddAccountTaskSuccess(Uri accountUri) 
+							{
+								asyncTaskEventHandler.dismiss();
 
-									JsonArray userArray = user.getAsJsonArray();
-									if(userArray != null && userArray.size() > 0)
+								new Thread(new Runnable() {
+
+									@Override
+									public void run() 
 									{
-										JsonObject userObj = userArray.get(0).getAsJsonObject();
-										String username = null;
-										if(userObj.has("username"))
+										if(!bActvityDestroyed)
 										{
-											username = userObj.get("username").getAsString();
+											Account account = null;
+											Cursor c = getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
+											if(c.moveToFirst())
+											{
+												account = new Account();
+												account.restoreFromCursor(c);
+											}
+
+											if(account != null)
+											{
+												TweetCo.setAccount(account);
+												
+												startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
+											}
 										}
-										else
-										{
-											username = mobileServiceClient.getCurrentUser().getUserId();
-										}
-										Account account = new Account();
-										account.setUsername(username);
-										account.setAuthToken(mobileServiceClient.getCurrentUser().getAuthenticationToken());
-
-										new AddAccountTask(getApplicationContext(), new AddAccountTaskParams(account), asyncTaskEventHandler, new AddAccountTaskCompletionCallback() {
-
-											@Override
-											public void onAddAccountTaskSuccess(Uri accountUri) 
-											{
-												asyncTaskEventHandler.dismiss();
-
-												new Thread(new Runnable() {
-
-													@Override
-													public void run() 
-													{
-														if(!bActvityDestroyed)
-														{
-															Account account = null;
-															Cursor c = getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
-															if(c.moveToFirst())
-															{
-																account = new Account();
-																account.restoreFromCursor(c);
-															}
-
-															if(account != null)
-															{
-																TweetCo.setAccount(account);
-																
-																startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
-															}
-														}
-													}
-												}).start();
-											}
-
-											@Override
-											public void onAddAccountTaskFailure() 
-											{
-												asyncTaskEventHandler.dismiss();
-												Log.e(TAG, "Add account failed");
-												getAddAccountFailedDialog("Add account failed.").show();
-											}
-
-											@Override
-											public void onAccountCreationCancelled() 
-											{
-												asyncTaskEventHandler.dismiss();
-												finish();
-											}
-										}).execute();
 									}
-
-								}
+								}).start();
 							}
-						}, false);
+
+							@Override
+							public void onAddAccountTaskFailure() 
+							{
+								asyncTaskEventHandler.dismiss();
+								Log.e(TAG, "Add account failed");
+								getAddAccountFailedDialog("Add account failed.").show();
+							}
+
+							@Override
+							public void onAccountCreationCancelled() 
+							{
+								asyncTaskEventHandler.dismiss();
+								finish();
+							}
+						}).execute();
 					}
 					else
 					{

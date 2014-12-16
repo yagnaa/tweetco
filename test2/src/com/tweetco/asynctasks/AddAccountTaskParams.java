@@ -1,18 +1,19 @@
 package com.tweetco.asynctasks;
 
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.tweetco.database.dao.Account;
 
 public class AddAccountTaskParams 
 {
-	private Account mAccount;
+	private MobileServiceClient mClient;
 	
-	public AddAccountTaskParams(Account account) 
+	public AddAccountTaskParams(MobileServiceClient client) 
 	{
-		mAccount = account;
+		mClient = client;
 	}
 	
-	public Account getAccount()
+	public MobileServiceClient getClient()
 	{
-		return mAccount;
+		return mClient;
 	}
 }

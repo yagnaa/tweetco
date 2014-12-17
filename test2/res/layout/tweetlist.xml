@@ -1,8 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/listView"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:verticalSpacing="@dimen/image_thumbnail_spacing" >
+    <com.tweetco.activities.QuickReturnListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:verticalSpacing="@dimen/image_thumbnail_spacing" />
 
-</ListView>
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="horizontal"
+              android:background="#333333"
+        android:gravity="center"
+        android:paddingBottom="8dip"
+        android:paddingLeft="16dip"
+        android:paddingRight="16dip"
+        android:paddingTop="8dip" >
+
+        <EditText
+            android:id="@+id/typeTweet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/typeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+    </LinearLayout>
+
+</RelativeLayout>

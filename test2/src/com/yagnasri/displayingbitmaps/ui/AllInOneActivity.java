@@ -4,9 +4,12 @@ import java.net.MalformedURLException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.tweetco.R;
 
 
 
@@ -21,13 +24,16 @@ public class AllInOneActivity extends FragmentActivity
 	
 	private static final String TAG = "ImageGridActivity";
 	
+	private ViewPager mViewPager;
+	private CustomFragmentPagerAdapter mPagerAdapter = null;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 
-		
+		setContentView(R.layout.all_in_one_activity_layout);
 
         // Initialize the demo client here and use it all over.
         
@@ -44,19 +50,48 @@ public class AllInOneActivity extends FragmentActivity
 
         
         
-        if (getSupportFragmentManager().findFragmentByTag(TAG) == null) {
-            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(android.R.id.content, new TweetListFragment(), TAG);
-            ft.commit();
-        }
+//        if (getSupportFragmentManager().findFragmentByTag(TAG) == null) {
+//            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.add(android.R.id.content, new TweetListFragment(), TAG);
+//            ft.commit();
+//        }
         
+        initializePager();
 
-		
-		
-		
-		
-     
+	}
+	
+	public void initializePager()
+	{	
+		// init pager
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setOnPageChangeListener(new OnPageChangeListener()
+		{
 
+			@Override
+			public void onPageScrollStateChanged(int state)
+			{
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2)
+			{
+			}
+
+			@Override
+			public void onPageSelected(int position)
+			{
+			}
+		});
+		
+		mPagerAdapter = new CustomFragmentPagerAdapter(this.getApplicationContext(), getSupportFragmentManager());
+		mViewPager.setAdapter(mPagerAdapter);
+		mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount() - 1);
+		mViewPager.setCurrentItem(0);
+	}
+	
+	public FragmentStatePagerAdapter getPagerAdapter()
+	{
+		return mPagerAdapter;
 	}
 
 	@Override

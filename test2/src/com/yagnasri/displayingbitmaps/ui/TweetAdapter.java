@@ -43,6 +43,7 @@ import com.yagnasri.displayingbitmaps.util.ImageFetcher;
  */
 public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 	
+
 	// A demo listener to pass actions from view to adapter
 	public static abstract class NewPageLoader {
 		public abstract void onScrollNext();
@@ -70,6 +71,9 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 	protected boolean canScroll = false;
 	// A flag to enable/disable row clicks
 	protected boolean rowEnabled = true;
+	
+	
+	private int oldCount = 0;
     
     public void lock() {
 		canScroll = false;
@@ -100,6 +104,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 		if (entries != null) {
 			Collections.reverse(entries);
 		}
+		oldCount = TweetCommonData.tweetsList.size();
 		// Add entries to the top of the list
 		TweetCommonData.tweetsList.addAll(0, entries);
 		notifyDataSetChanged();
@@ -107,12 +112,14 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 	
 	public void addEntriesToBottom(List<Tweet> entries) {
 		// Add entries to the bottom of the list
+		oldCount = TweetCommonData.tweetsList.size();
 		TweetCommonData.tweetsList.addAll(entries);
 		notifyDataSetChanged();
 	}
 	
 	public void clearEntries() {
 		// Clear all the data points
+		oldCount = TweetCommonData.tweetsList.size();
 		TweetCommonData.tweetsList.clear();
 		notifyDataSetChanged();
 	}
@@ -202,7 +209,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
         if (convertView == null) { // if it's not recycled, instantiate and initialize
         	
 			LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = layoutInflater.inflate(R.layout.tweet, null);
+			convertView = layoutInflater.inflate(R.layout.tweet, container, false);
         	
         	
             imageView = (ImageView)convertView.findViewById(R.id.imageView1);
@@ -285,6 +292,24 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 		if (mInfiniteListPageListener != null) {
 			mInfiniteListPageListener.hasMore();
 		}
+	}
+	
+	
+	@Override
+	public void notifyDataSetChanged() {
+		
+		int count = getCount();
+		// TODO Auto-generated method stub
+		super.notifyDataSetChanged();
+		if((oldCount==0 && count!=0) || (oldCount!=0 && count==0))
+		{
+			
+		}
+	}
+	@Override
+	public void notifyDataSetInvalidated() {
+		// TODO Auto-generated method stub
+		super.notifyDataSetInvalidated();
 	}
 	
 	/**

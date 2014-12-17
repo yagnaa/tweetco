@@ -1,6 +1,7 @@
 package com.tweetco.utility;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 public class UiUtility 
@@ -11,6 +12,11 @@ public class UiUtility
     @SuppressWarnings("unchecked")
     public static <T extends View> T getView(Activity parent, int viewId) {
         return (T) parent.findViewById(viewId);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T extends View> T getView(Fragment parent, int viewId) {
+        return (T) parent.getView().findViewById(viewId);
     }
     
 	/**

@@ -16,8 +16,8 @@
 -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="40dp"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
     android:orientation="vertical"
     android:paddingBottom="3dip"
     android:paddingLeft="6dip"
@@ -27,7 +27,7 @@
         android:id="@+id/imageView1"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
         android:scaleType="fitXY"
         android:src="@drawable/batman" android:clickable="true" />
 

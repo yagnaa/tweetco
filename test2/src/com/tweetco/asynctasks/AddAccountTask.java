@@ -3,8 +3,6 @@ package com.tweetco.asynctasks;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -16,8 +14,6 @@ import com.google.gson.JsonObject;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.tweetco.TweetCo;
-import com.tweetco.activities.TweetersListActivity;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
 import com.tweetco.database.dao.Account;

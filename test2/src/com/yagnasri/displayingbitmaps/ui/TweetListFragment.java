@@ -19,10 +19,10 @@ package com.yagnasri.displayingbitmaps.ui;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,11 +31,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.tweetco.R;
+import com.tweetco.activities.PostTweetActivity;
+import com.tweetco.activities.QuickReturnListView;
 import com.tweetco.activities.UserProfileFragment;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
@@ -51,12 +55,26 @@ import com.yagnasri.displayingbitmaps.util.Utils;
  * quickly if, for example, the user rotates the device.
  */
 public class TweetListFragment extends Fragment implements AdapterView.OnItemClickListener {
-    private static final String TAG = "ImageGridFragment";
+
+
+	private static final String TAG = "ImageGridFragment";
     private static final String IMAGE_CACHE_DIR = "thumbs";
 
     private int mImageThumbSize;
     private int mImageThumbSpacing;
     private TweetAdapter mAdapter;
+    
+    //Scrolling from bottom
+	private QuickReturnListView mListView;
+	private LinearLayout mQuickReturnView;
+	private int mQuickReturnHeight;
+	private static final int STATE_ONSCREEN = 0;
+	private static final int STATE_OFFSCREEN = 1;
+	private static final int STATE_RETURNING = 2;
+	private int mState = STATE_ONSCREEN;
+	private int mScrollY;
+	private int mMinRawY = 0;
+	private TranslateAnimation anim;
 
     /**
      * Empty constructor as per the Fragment documentation
@@ -110,12 +128,40 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 			}
 		});
     }
+    
+    @Override
+	public void onActivityCreated(Bundle savedInstanceState) 
+    {
+		super.onActivityCreated(savedInstanceState);
+		this.getView().findViewById(R.id.typeTweet).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) 
+			{
+				launchPostTweetActivity();
+			}
+		});
+		this.getView().findViewById(R.id.typeButton).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) 
+			{
+				launchPostTweetActivity();
+			}
+		});
+	}
+    
+    public void launchPostTweetActivity()
+    {
+    	Intent intent = new Intent(this.getActivity().getApplicationContext(),PostTweetActivity.class);
+    	this.startActivity(intent);
+    }
+    
 
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	
-    	
+
     	
     	
 		//Set the Layout
@@ -150,8 +196,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		
 
         final View v = inflater.inflate(R.layout.tweetlist, container, false);
-        final ListView mListView = (ListView) v.findViewById(R.id.listView);
+    	
+		mQuickReturnView = (LinearLayout) v.findViewById(R.id.footer);
+        mListView = (QuickReturnListView) v.findViewById(R.id.listView);
         mListView.setAdapter(mAdapter);
+
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -170,6 +219,70 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem,
                     int visibleItemCount, int totalItemCount) {
+            	
+
+
+				mScrollY = 0;
+				int translationY = 0;
+
+				if (mListView.scrollYIsComputed()) {
+					mScrollY = mListView.getComputedScrollY();
+				}
+
+				int rawY = mScrollY;
+
+				switch (mState) {
+				case STATE_OFFSCREEN:
+					if (rawY >= mMinRawY) {
+						mMinRawY = rawY;
+					} else {
+						mState = STATE_RETURNING;
+					}
+					translationY = rawY;
+					break;
+
+				case STATE_ONSCREEN:
+					if (rawY > mQuickReturnHeight) {
+						mState = STATE_OFFSCREEN;
+						mMinRawY = rawY;
+					}
+					translationY = rawY;
+					break;
+
+				case STATE_RETURNING:
+
+					translationY = (rawY - mMinRawY) + mQuickReturnHeight;
+
+					System.out.println(translationY);
+					if (translationY < 0) {
+						translationY = 0;
+						mMinRawY = rawY + mQuickReturnHeight;
+					}
+
+					if (rawY == 0) {
+						mState = STATE_ONSCREEN;
+						translationY = 0;
+					}
+
+					if (translationY > mQuickReturnHeight) {
+						mState = STATE_OFFSCREEN;
+						mMinRawY = rawY;
+					}
+					break;
+				}
+
+				/** this can be used if the build is below honeycomb **/
+				if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) {
+					anim = new TranslateAnimation(0, 0, translationY,
+							translationY);
+					anim.setFillAfter(true);
+					anim.setDuration(0);
+					mQuickReturnView.startAnimation(anim);
+				} else {
+					mQuickReturnView.setTranslationY(translationY);
+				}
+
+			
             }
         });
 
@@ -182,6 +295,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
                     @TargetApi(VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onGlobalLayout() {
+                    	
+                    	mQuickReturnHeight = mQuickReturnView.getHeight();
+						mListView.computeScrollY();
+                    	
+
 //                        if (mAdapter.getNumColumns() == 0) {
 //                            final int numColumns = (int) Math.floor(
 //                            		mListView.getWidth() / (mImageThumbSize + mImageThumbSpacing));

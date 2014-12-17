@@ -17,6 +17,9 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -35,7 +38,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.tweetco.R;
 import com.tweetco.activities.PostTweetActivity;
@@ -63,6 +65,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
     private int mImageThumbSize;
     private int mImageThumbSpacing;
     private TweetAdapter mAdapter;
+
     
     //Scrolling from bottom
 	private QuickReturnListView mListView;
@@ -75,6 +78,10 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	private int mScrollY;
 	private int mMinRawY = 0;
 	private TranslateAnimation anim;
+
+    private String mUsername;
+    private boolean mTweetsByUser = false;
+
 
     /**
      * Empty constructor as per the Fragment documentation
@@ -89,7 +96,14 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
         mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
         mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
 
+        mUsername = getArguments().getString("username");
+        mTweetsByUser = getArguments().getBoolean("gettweetsbyuser");
         
+        List<Tweet> tweetsList = TweetCommonData.tweetsMap.get(mUsername);
+        if(tweetsList == null)
+        {
+        	TweetCommonData.tweetsMap.put(mUsername, new ArrayList<Tweet>());
+        }
 
         ImageCache.ImageCacheParams cacheParams =
                 new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
@@ -100,7 +114,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
         TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), 60,60, true);
         TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
         TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-        mAdapter = new TweetAdapter(getActivity(),TweetCommonData.mImageFetcher, new OnProfilePicClick() {
+        mAdapter = new TweetAdapter(getActivity(), mUsername, mTweetsByUser, TweetCommonData.mImageFetcher, new OnProfilePicClick() {
 			
 			@Override
 			public void onItemClick(int position) {
@@ -111,14 +125,6 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
         			String owner = tweet.tweetowner;
         			if(!TextUtils.isEmpty(owner))
             		{
-//            			UserProfileFragment fragment = new UserProfileFragment();
-//            			Bundle bundle = new Bundle();
-//            			bundle.putString("username", owner);
-//            			fragment.setArguments(bundle);
-//                        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//                        ft.add(android.R.id.content, fragment, TAG);
-//                        ft.commit();
-        				
         				Intent intent = new Intent(getActivity(), UserProfileFragment.class);
         				intent.putExtra("username", owner);
         				getActivity().startActivity(intent);
@@ -322,6 +328,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 //                        }
                     }
                 });
+        
 
         return v;
     }
@@ -331,6 +338,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
         super.onResume();
         mAdapter.onScrollNext();
         TweetCommonData.mImageFetcher.setExitTasksEarly(false);
+        TweetCommonData.tweetsMap.get(mUsername).clear();
         mAdapter.notifyDataSetChanged();
     }
 

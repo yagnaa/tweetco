@@ -27,5 +27,5 @@
 	    </LinearLayout>
 	</LinearLayout>
     
-	<fragment android:name="com.yagnasri.displayingbitmaps.ui.TweetListFragment" android:layout_width="fill_parent" android:layout_height="0dip" android:layout_weight="0.7"/>
+	<FrameLayout android:id="@+id/tweetsListFragmentContainer" android:layout_width="fill_parent" android:layout_height="0dip" android:layout_weight="0.7"/>
 </LinearLayout>

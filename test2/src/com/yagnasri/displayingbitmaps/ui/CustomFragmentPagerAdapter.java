@@ -1,10 +1,12 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.tweetco.TweetCo;
 import com.tweetco.activities.LeaderboardFragment;
 
 public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
@@ -39,7 +41,12 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 		switch(i)
 		{
 		case 0:
-			return new TweetListFragment();
+			Fragment fragment = new TweetListFragment();
+			Bundle bundle = new Bundle();
+            bundle.putString("username", TweetCo.getAccount().getUsername());
+            bundle.putBoolean("gettweetsbyuser", false);
+            fragment.setArguments(bundle);
+			return fragment;
 		case 1:
 			return new LeaderboardFragment();
 		case 2:

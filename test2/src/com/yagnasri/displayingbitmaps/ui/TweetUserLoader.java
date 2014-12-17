@@ -22,10 +22,12 @@ import com.yagnasri.displayingbitmaps.util.AsyncTask;
 public  class TweetUserLoader
 {
 	TweetAdapter adapter = null;
+	String mUsername = null;
 
-	public TweetUserLoader(TweetAdapter adapter)
+	public TweetUserLoader(TweetAdapter adapter, String username)
 	{
 		this.adapter = adapter;
+		mUsername = username;
 	}
 
 	public void load(List<Tweet> tweetsList,Map<String, TweetUser> users)
@@ -53,7 +55,7 @@ public  class TweetUserLoader
 	{
 		List<String> usersToLoad = new ArrayList<String>();
 
-		List<Tweet> tweetsList = TweetCommonData.tweetsList;
+		List<Tweet> tweetsList = TweetCommonData.tweetsMap.get(mUsername);
 
 		Map<String,TweetUser> tweetUsersList = TweetCommonData.tweetUsers;
 

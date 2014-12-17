@@ -47,14 +47,6 @@ public class AllInOneActivity extends FragmentActivity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-        
-        
-//        if (getSupportFragmentManager().findFragmentByTag(TAG) == null) {
-//            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.add(android.R.id.content, new TweetListFragment(), TAG);
-//            ft.commit();
-//        }
         
         initializePager();
 

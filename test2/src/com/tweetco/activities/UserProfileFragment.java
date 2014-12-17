@@ -2,14 +2,17 @@ package com.tweetco.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tweetco.R;
+import com.tweetco.TweetCo;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.TweetUser;
+import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
 public class UserProfileFragment extends FragmentActivity 
 {
@@ -59,6 +62,18 @@ public class UserProfileFragment extends FragmentActivity
     			followersCount = user.followers.split(";").length - 1;
     		}
     		mFollowerCount.setText(String.valueOf(followersCount));
+    		
+    		if(UiUtility.getView(this, R.id.tweetsListFragmentContainer) != null)
+    		{
+    			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                TweetListFragment tweetListFragment = new TweetListFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("username", mUserName);
+                bundle.putBoolean("gettweetsbyuser", true);
+                tweetListFragment.setArguments(bundle);
+                ft.add(R.id.tweetsListFragmentContainer, tweetListFragment);
+                ft.commit();
+    		}
     		
     	}
     }

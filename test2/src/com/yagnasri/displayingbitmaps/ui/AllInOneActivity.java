@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.tweetco.TweetCo;
 
 
 
@@ -46,7 +47,12 @@ public class AllInOneActivity extends FragmentActivity
         
         if (getSupportFragmentManager().findFragmentByTag(TAG) == null) {
             final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(android.R.id.content, new TweetListFragment(), TAG);
+            TweetListFragment tweetListFragment = new TweetListFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("username", TweetCo.getAccount().getUsername());
+            bundle.putBoolean("gettweetsbyuser", false);
+            tweetListFragment.setArguments(bundle);
+            ft.add(android.R.id.content, tweetListFragment, TAG);
             ft.commit();
         }
         

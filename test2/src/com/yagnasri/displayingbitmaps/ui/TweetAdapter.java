@@ -1,6 +1,7 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
     private int mItemHeight = 0;
     private int mActionBarHeight = 0;
     private ImageFetcher mImageFetcher; //Fetches the images
+    public String mUsername;
     
     private NewPageLoader mNewPageLoader; //Fetches the tweets
     
@@ -78,11 +80,12 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 		canScroll = true;
 	}
 	
-    public TweetAdapter(Context context,ImageFetcher imageFetcher, OnProfilePicClick onProfilePicClickCallback) 
+    public TweetAdapter(Context context, String username, boolean bGetTweetsByUser, ImageFetcher imageFetcher, OnProfilePicClick onProfilePicClickCallback) 
     {
         super();
         mContext = context;
         mImageFetcher = imageFetcher;
+        mUsername = username;
         mOnProfilePicClickCallback = onProfilePicClickCallback;
         // Calculate ActionBar height
         TypedValue tv = new TypedValue();
@@ -91,8 +94,10 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
             mActionBarHeight = TypedValue.complexToDimensionPixelSize(
                     tv.data, context.getResources().getDisplayMetrics());
         }
-        mNewPageLoader = new PageLoader(context, this);
-        tweetUserLoader = new TweetUserLoader(this);
+        mNewPageLoader = new PageLoader(context, this, bGetTweetsByUser);
+        tweetUserLoader = new TweetUserLoader(this, mUsername);
+        
+        TweetCommonData.tweetsMap.get(mUsername).clear();
     }
     
 	public void addEntriesToTop(List<Tweet> entries) {
@@ -101,19 +106,19 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 			Collections.reverse(entries);
 		}
 		// Add entries to the top of the list
-		TweetCommonData.tweetsList.addAll(0, entries);
+		TweetCommonData.tweetsMap.get(mUsername).addAll(0, entries);
 		notifyDataSetChanged();
 	}
 	
 	public void addEntriesToBottom(List<Tweet> entries) {
 		// Add entries to the bottom of the list
-		TweetCommonData.tweetsList.addAll(entries);
+		TweetCommonData.tweetsMap.get(mUsername).addAll(entries);
 		notifyDataSetChanged();
 	}
 	
 	public void clearEntries() {
 		// Clear all the data points
-		TweetCommonData.tweetsList.clear();
+		TweetCommonData.tweetsMap.get(mUsername).clear();
 		notifyDataSetChanged();
 	}
 	
@@ -138,12 +143,12 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 //        }
 
         // Size + number of columns for top empty row
-    	return TweetCommonData.tweetsList.size();
+    	return TweetCommonData.tweetsMap.get(mUsername).size();
     }
 
     @Override
     public Object getItem(int position) {
-        return TweetCommonData.tweetsList.get(position);
+        return TweetCommonData.tweetsMap.get(mUsername).get(position);
     }
 
     @Override
@@ -330,12 +335,14 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 		Context mContext = null;
 		private MobileServiceClient mClient;
 		TweetAdapter tweetAdapter;
+		private boolean mbGetTweetsByUser = false;
 		
-		public PageLoader(Context context,TweetAdapter tweetAdapter)
+		public PageLoader(Context context,TweetAdapter tweetAdapter, boolean bGetTweetsByUser)
 		{
 			mContext = context;
 			this.tweetAdapter =  tweetAdapter;
 			mClient = AllInOneActivity.mClient;
+			mbGetTweetsByUser = bGetTweetsByUser;
 		}
 
 			@Override
@@ -347,7 +354,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 				List<Tweet> result = null;
 				
 	    		JsonObject obj = new JsonObject();
-	    		obj.addProperty("requestingUser", TweetCo.getAccount().getUsername());
+	    		obj.addProperty("requestingUser", tweetAdapter.mUsername);
 	    		obj.addProperty("feedtype", "homefeed");
 	    		mClient.invokeApi("gettweetsforuser", obj, new ApiJsonOperationCallback() {
 					
@@ -360,6 +367,22 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 							
 							Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
 							List<Tweet> list = gson.fromJson(arg0, collectionType);
+							List<Tweet> removeTweetsList = new ArrayList<Tweet>();
+							if(mbGetTweetsByUser)
+							{
+								for (Tweet tweet : list) 
+								{
+									if(!tweet.tweetowner.equalsIgnoreCase(tweetAdapter.mUsername))
+									{
+										removeTweetsList.add(tweet);
+									}
+								}
+							}
+							
+							if(!removeTweetsList.isEmpty())
+							{
+								list.removeAll(removeTweetsList);
+							}
 
 							tweetAdapter.addEntriesToBottom(list);
 							

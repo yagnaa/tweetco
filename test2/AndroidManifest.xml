@@ -39,6 +39,12 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="sensor" >
         </activity>
+        
+        <activity
+            android:name="com.tweetco.activities.LeaderboardActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="sensor" ></activity>
+        
         <activity
             android:name="com.tweetco.activities.FTUActivity"
             android:screenOrientation="portrait"

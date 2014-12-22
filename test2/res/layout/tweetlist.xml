@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ListView
+    <com.tweetco.activities.QuickReturnListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,13 +16,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:orientation="horizontal"
-              android:background="#333333"
+        android:background="@color/post_tweet_color"
         android:gravity="center"
-        android:paddingBottom="8dip"
-        android:paddingLeft="16dip"
-        android:paddingRight="16dip"
-        android:paddingTop="8dip" >
+        android:orientation="horizontal"
+        android:paddingBottom="3dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="8dp" >
 
         <EditText
             android:id="@+id/typeTweet"
@@ -34,11 +33,20 @@
             <requestFocus />
         </EditText>
 
-        <Button
-            android:id="@+id/typeButton"
+        <ImageView
+            android:id="@+id/gallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:src="@drawable/gallery"  />
+
+        <ImageView
+            android:id="@+id/camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/camera" />
+        
     </LinearLayout>
 
 </RelativeLayout>

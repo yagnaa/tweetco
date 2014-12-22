@@ -110,7 +110,6 @@
     
     <!-- Tweet List -->
     <color name="display_name_color">#0066FF</color>
+    <color name="post_tweet_color">#CFCDCA</color>
     
-    
-
 </resources>

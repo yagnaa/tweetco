@@ -38,10 +38,10 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.tweetco.R;
 import com.tweetco.activities.PostTweetActivity;
-import com.tweetco.activities.QuickReturnListView;
 import com.tweetco.activities.UserProfileFragment;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
@@ -68,7 +68,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
     
     //Scrolling from bottom
-	private QuickReturnListView mListView;
+	private ListView mListView;
 	private LinearLayout mQuickReturnView;
 	private int mQuickReturnHeight;
 	private static final int STATE_ONSCREEN = 0;
@@ -204,7 +204,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
         final View v = inflater.inflate(R.layout.tweetlist, container, false);
     	
 		mQuickReturnView = (LinearLayout) v.findViewById(R.id.footer);
-        mListView = (QuickReturnListView) v.findViewById(R.id.listView);
+        mListView = (ListView) v.findViewById(R.id.listView);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(this);
@@ -224,71 +224,71 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem,
-                    int visibleItemCount, int totalItemCount) {
-            	
-
-
-				mScrollY = 0;
-				int translationY = 0;
-
-				if (mListView.scrollYIsComputed()) {
-					mScrollY = mListView.getComputedScrollY();
-				}
-
-				int rawY = mScrollY;
-
-				switch (mState) {
-				case STATE_OFFSCREEN:
-					if (rawY >= mMinRawY) {
-						mMinRawY = rawY;
-					} else {
-						mState = STATE_RETURNING;
-					}
-					translationY = rawY;
-					break;
-
-				case STATE_ONSCREEN:
-					if (rawY > mQuickReturnHeight) {
-						mState = STATE_OFFSCREEN;
-						mMinRawY = rawY;
-					}
-					translationY = rawY;
-					break;
-
-				case STATE_RETURNING:
-
-					translationY = (rawY - mMinRawY) + mQuickReturnHeight;
-
-					System.out.println(translationY);
-					if (translationY < 0) {
-						translationY = 0;
-						mMinRawY = rawY + mQuickReturnHeight;
-					}
-
-					if (rawY == 0) {
-						mState = STATE_ONSCREEN;
-						translationY = 0;
-					}
-
-					if (translationY > mQuickReturnHeight) {
-						mState = STATE_OFFSCREEN;
-						mMinRawY = rawY;
-					}
-					break;
-				}
-
-				/** this can be used if the build is below honeycomb **/
-				if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) {
-					anim = new TranslateAnimation(0, 0, translationY,
-							translationY);
-					anim.setFillAfter(true);
-					anim.setDuration(0);
-					mQuickReturnView.startAnimation(anim);
-				} else {
-					mQuickReturnView.setTranslationY(translationY);
-				}
-
-			
+                   int visibleItemCount, int totalItemCount) {
+//            	
+//
+//
+//				mScrollY = 0;
+//				int translationY = 0;
+//
+//				if (mListView.scrollYIsComputed()) {
+//					mScrollY = mListView.getComputedScrollY();
+//				}
+//
+//				int rawY = mScrollY;
+//
+//				switch (mState) {
+//				case STATE_OFFSCREEN:
+//					if (rawY >= mMinRawY) {
+//						mMinRawY = rawY;
+//					} else {
+//						mState = STATE_RETURNING;
+//					}
+//					translationY = rawY;
+//					break;
+//
+//				case STATE_ONSCREEN:
+//					if (rawY > mQuickReturnHeight) {
+//						mState = STATE_OFFSCREEN;
+//						mMinRawY = rawY;
+//					}
+//					translationY = rawY;
+//					break;
+//
+//				case STATE_RETURNING:
+//
+//					translationY = (rawY - mMinRawY) + mQuickReturnHeight;
+//
+//					System.out.println(translationY);
+//					if (translationY < 0) {
+//						translationY = 0;
+//						mMinRawY = rawY + mQuickReturnHeight;
+//					}
+//
+//					if (rawY == 0) {
+//						mState = STATE_ONSCREEN;
+//						translationY = 0;
+//					}
+//
+//					if (translationY > mQuickReturnHeight) {
+//						mState = STATE_OFFSCREEN;
+//						mMinRawY = rawY;
+//					}
+//					break;
+//				}
+//
+//				/** this can be used if the build is below honeycomb **/
+//				if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) {
+//					anim = new TranslateAnimation(0, 0, translationY,
+//							translationY);
+//					anim.setFillAfter(true);
+//					anim.setDuration(0);
+//					mQuickReturnView.startAnimation(anim);
+//				} else {
+//					mQuickReturnView.setTranslationY(translationY);
+//				}
+//
+//			
             }
         });
 
@@ -303,7 +303,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
                     public void onGlobalLayout() {
                     	
                     	mQuickReturnHeight = mQuickReturnView.getHeight();
-						mListView.computeScrollY();
+	//					mListView.computeScrollY();
                     	
 
 //                        if (mAdapter.getNumColumns() == 0) {

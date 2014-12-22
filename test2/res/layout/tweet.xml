@@ -17,8 +17,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:paddingBottom="3dip"
     android:paddingLeft="6dip"
     android:paddingRight="6dip" >
@@ -28,54 +27,84 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_centerVertical="true"
+        android:clickable="true"
         android:scaleType="fitXY"
-        android:src="@drawable/batman" android:clickable="true" />
+        android:src="@drawable/batman" />
 
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/tweet_user_info"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/imageView1"
-        android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp" >
 
-    <TextView
-        android:id="@+id/handle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
-        android:layout_toRightOf="@+id/username"
-        android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/display_name_color"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/purple_theme_color"
+            android:textSize="12dp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tweetcontent"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/handle"
+        android:layout_below="@+id/tweet_user_info"
         android:layout_toRightOf="@+id/imageView1"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <ImageView
-        android:id="@+id/favourite"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+    <LinearLayout
+        android:id="@+id/tweet_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/tweetcontent"
         android:layout_toRightOf="@+id/imageView1"
-        android:src="@drawable/ic_launcher" />
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp" >
 
-    <ImageView
-        android:id="@+id/bookmark"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/tweetcontent"
-        android:layout_toRightOf="@+id/favourite"
-        android:src="@drawable/ic_launcher" />
+        <ImageView
+            android:id="@+id/upvote"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="40dp"
+            android:clickable="true"
+            android:src="@drawable/upvote_selector" />
+
+        <ImageView
+            android:id="@+id/bookmark"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="60dp"
+            android:clickable="true"
+            android:src="@drawable/flag_selector" />
+    </LinearLayout>
 
 </RelativeLayout>

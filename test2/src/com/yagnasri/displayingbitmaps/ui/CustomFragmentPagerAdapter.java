@@ -51,7 +51,12 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 			return new LeaderboardFragment();
 		case 2:
 		default:	
-			return new TweetListFragment();
+			fragment = new TweetListFragment();
+			bundle = new Bundle();
+            bundle.putString("username", TweetCo.getAccount().getUsername());
+            bundle.putBoolean("gettweetsbyuser", false);
+            fragment.setArguments(bundle);
+			return fragment;
 		}
 	}
 

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -230,8 +233,14 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
         		mOnProfilePicClickCallback.onItemClick(position);
 			}
 		});
+        
+        
+
+        
+        
+        
         //Load TextFields here
-		Tweet tweet = (Tweet) getItem(position);
+		final Tweet tweet = (Tweet) getItem(position);
 		TweetUser tweeter = null;
 		if (tweet != null) {
 			tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner);
@@ -240,8 +249,64 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 			TextView tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);
 			
 			handle.setText(tweet.tweetowner);
-			userName.setText(tweet.tweetowner);
-			tweetContent.setText(tweet.tweetcontent);		
+			if(tweeter!=null && !TextUtils.isEmpty(tweeter.displayname))
+			{
+				userName.setText(tweeter.displayname);
+			}
+			else
+			{
+				userName.setText(tweet.tweetowner);
+			}
+			tweetContent.setText(tweet.tweetcontent);	
+			Linkify.addLinks(tweetContent, Linkify.WEB_URLS);
+			tweetContent.setMovementMethod(new LinkMovementMethod());
+			
+			
+			//UpVote ImageView
+	        ImageView upvoteView = (ImageView) convertView.findViewById(R.id.upvote);
+	        upvoteView.setTag(position);
+	        setUpVoteFlag(upvoteView,mUsername);
+	        upvoteView.setOnClickListener(new OnClickListener() 
+	        {	
+				@Override
+				public void onClick(View v) 
+				{
+					Integer position = (Integer)v.getTag();
+					//Show user profile view
+	        		Tweet linkedTweet = (Tweet)getItem(position);
+	        		if(linkedTweet != null)
+	        		{
+	        			String owner = linkedTweet.tweetowner;
+	        			if(!TextUtils.isEmpty(owner))
+	            		{
+	        				upVote(v,mUsername, linkedTweet.iterator, owner);
+	                    }
+	        		}
+				}
+			});
+	        
+	        ImageView bookmarkView = (ImageView) convertView.findViewById(R.id.bookmark);
+	        bookmarkView.setTag(position);
+	        setBookMarkFlag(bookmarkView,mUsername);
+	        bookmarkView.setOnClickListener(new OnClickListener() 
+	        {	
+				@Override
+				public void onClick(View v) 
+				{
+					Integer position = (Integer)v.getTag();
+					//Show user profile view
+	        		Tweet linkedTweet = (Tweet)getItem(position);
+	        		if(linkedTweet != null)
+	        		{
+	        			String owner = linkedTweet.tweetowner;
+	        			if(!TextUtils.isEmpty(owner))
+	            		{
+	        				upVote(v,mUsername, linkedTweet.iterator, owner);
+	                    }
+	        		}
+				}
+			});
+	        
 		}
 
 //        // Check the height matches our calculated column width
@@ -255,8 +320,38 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 		{
 			mImageFetcher.loadImage(tweeter.profileimageurl, imageView);
 		}
+		
+
+        
+        
         return convertView;
         //END_INCLUDE(load_gridview_item)
+    }
+    
+    
+    private void setUpVoteFlag(ImageView imageView,String userName)
+    {
+		Integer position = (Integer)imageView.getTag();
+		//Show user profile view
+		Tweet linkedTweet = (Tweet)getItem(position);
+		if(linkedTweet != null)
+		{
+	        boolean isCurrentUserUpVoted  = TweetUtils.isStringPresent(linkedTweet.upvoters, userName);
+	        imageView.setPressed(isCurrentUserUpVoted);
+		}
+    }
+    
+    private void setBookMarkFlag(ImageView imageView,String userName)
+    {
+		Integer position = (Integer)imageView.getTag();
+		//Show user profile view
+		Tweet linkedTweet = (Tweet)getItem(position);
+		if(linkedTweet != null)
+		{
+	        boolean didCurrentUserBookmark = TweetUtils.isStringPresent(linkedTweet.bookmarkers, userName);
+	        imageView.setPressed(didCurrentUserBookmark);
+		}
+
     }
 
     /**
@@ -350,6 +445,68 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 	}
 	
 	
+	
+	public void upVote(final View upvoteView,final String requestingUser,int iterator,String tweetOwner)
+	{
+		MobileServiceClient mClient = AllInOneActivity.mClient;
+		JsonObject obj = new JsonObject();
+		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
+		obj.addProperty(ApiInfo.kIteratorKey, iterator);
+		obj.addProperty(ApiInfo.kTweetOwner, tweetOwner);
+		mClient.invokeApi(ApiInfo.UPVOTE, obj, new ApiJsonOperationCallback() {
+			
+			@Override
+			public void onCompleted(JsonElement arg0, Exception arg1,
+					ServiceFilterResponse arg2) {
+				if(arg1 == null)
+				{
+					if(upvoteView!=null && (upvoteView instanceof ImageView))
+					{
+						setUpVoteFlag( (ImageView)upvoteView, requestingUser);
+					}
+				}
+				else
+				{
+					Log.e("Item clicked","Exception upVoting a tweet") ;
+					arg1.printStackTrace();
+				}
+				
+			}
+		},false);
+	}
+	
+	public void bookmark(final View bookmarkView,final String requestingUser,int iterator,String tweetOwner)
+	{
+		MobileServiceClient mClient = AllInOneActivity.mClient;
+		JsonObject obj = new JsonObject();
+		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
+		obj.addProperty(ApiInfo.kIteratorKey, iterator);
+		obj.addProperty(ApiInfo.kTweetOwner, tweetOwner);
+		mClient.invokeApi(ApiInfo.BOOKMARK, obj, new ApiJsonOperationCallback() 
+		{
+			
+			@Override
+			public void onCompleted(JsonElement arg0, Exception arg1,
+					ServiceFilterResponse arg2) 
+			{
+				if(arg1 == null)
+				{
+					if(bookmarkView!=null && (bookmarkView instanceof ImageView))
+					{
+						setBookMarkFlag( (ImageView)bookmarkView, requestingUser);
+					}
+				}
+				else
+				{
+					Log.e("Item clicked","Exception bookmarking a tweet") ;
+					arg1.printStackTrace();
+				}
+				
+			}
+		},false);
+	}
+	
+	
 	//TODO this has to be moved to a separate class
 	public static class PageLoader extends NewPageLoader
 	{
@@ -372,8 +529,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener {
 				
 				// Loading lock to allow only one instance of loading
 				tweetAdapter.lock();
-				
-				List<Tweet> result = null;
 				
 	    		JsonObject obj = new JsonObject();
 	    		obj.addProperty("requestingUser", tweetAdapter.mUsername);

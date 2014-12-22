@@ -107,5 +107,10 @@
 
     <!-- Dialog -->
     <color name="delete_dialog_grey_txt">#4d4d4d</color>
+    
+    <!-- Tweet List -->
+    <color name="display_name_color">#0066FF</color>
+    
+    
 
 </resources>

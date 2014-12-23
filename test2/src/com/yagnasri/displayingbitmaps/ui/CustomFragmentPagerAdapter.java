@@ -8,10 +8,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.tweetco.TweetCo;
 import com.tweetco.activities.LeaderboardFragment;
+import com.tweetco.activities.TrendingFragment;
+import com.tweetco.activities.UsersListFragment;
 
 public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 {
-	public static final int FRAGMENT_COUNT = 3;
+	public static final int FRAGMENT_COUNT = 4;
 	
 
 	private Context m_Context = null;
@@ -36,6 +38,23 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 
 
 	@Override
+	public CharSequence getPageTitle(int position) {
+		
+		switch(position)
+		{
+		case 0:
+			return "Tweets";
+		case 1:
+			return "LeaderBoard";
+		case 2:
+			return "Users";
+		case 3:
+			return "Trending";
+		}
+		return null;
+	}
+
+	@Override
 	public Fragment getItem(int i)
 	{
 		switch(i)
@@ -49,15 +68,13 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 			return fragment;
 		case 1:
 			return new LeaderboardFragment();
-		case 2:
-		default:	
-			fragment = new TweetListFragment();
-			bundle = new Bundle();
-            bundle.putString("username", TweetCo.getAccount().getUsername());
-            bundle.putBoolean("gettweetsbyuser", false);
-            fragment.setArguments(bundle);
+		case 2:	
+			fragment = new UsersListFragment();
 			return fragment;
+		case 3:
+			return new TrendingFragment();
 		}
+		return null;
 	}
 
 	@Override

@@ -1,12 +1,15 @@
 package com.yagnasri.displayingbitmaps.ui;
 import java.net.MalformedURLException;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.tweetco.R;
@@ -39,8 +42,8 @@ public class AllInOneActivity extends FragmentActivity
         
 		try {
 			mClient = new MobileServiceClient(
-				      "https://tweetcotest.azure-mobile.net/",
-				      "PImqNtOVaoZFzGrQDAcrXwQnpLuZCf69",
+				      "https://tweetcosap.azure-mobile.net/",
+				      "GeDacEmoZtCjASmINhXiLWpBujCtJI48", 
 				      this
 				);
 		} catch (MalformedURLException e) {
@@ -50,6 +53,16 @@ public class AllInOneActivity extends FragmentActivity
         
         initializePager();
 
+	}
+	
+	private void hideKeyboard() 
+	{   
+	    // Check if no view has focus:
+	    View view = this.getCurrentFocus();
+	    if (view != null) {
+	        InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+	        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	    }
 	}
 	
 	public void initializePager()
@@ -72,6 +85,7 @@ public class AllInOneActivity extends FragmentActivity
 			@Override
 			public void onPageSelected(int position)
 			{
+				hideKeyboard();
 			}
 		});
 		

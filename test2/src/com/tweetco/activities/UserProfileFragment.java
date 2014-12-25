@@ -68,8 +68,7 @@ public class UserProfileFragment extends FragmentActivity
     			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 TweetListFragment tweetListFragment = new TweetListFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString("username", mUserName);
-                bundle.putBoolean("gettweetsbyuser", true);
+                bundle.putString(TweetListFragment.USERNAME, mUserName);
                 tweetListFragment.setArguments(bundle);
                 ft.add(R.id.tweetsListFragmentContainer, tweetListFragment);
                 ft.commit();

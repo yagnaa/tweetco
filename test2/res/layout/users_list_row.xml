@@ -18,7 +18,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="80dp"
+    android:minHeight="70dp"
     android:paddingBottom="3dip"
     android:paddingLeft="6dip"
     android:paddingRight="6dip" >
@@ -49,12 +49,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:paddingLeft="15dp"
+            android:layout_marginLeft="16dp"
             android:text="Small Text"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#000000"
-            android:textSize="18dp"
-            android:textStyle="bold" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/display_name_color"
+            android:textSize="16dp" />
 
         <TextView
             android:id="@+id/handle"
@@ -62,12 +61,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:paddingLeft="15dp"
+            android:layout_marginLeft="16dp"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#000000"
-            android:textSize="18dp"
-            android:textStyle="bold" />
+            android:textColor="@color/purple_theme_color"
+            android:textSize="14dp" />
+
     </LinearLayout>
 
     <Button
@@ -75,9 +74,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:background="@color/purple_theme_color"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
+        android:layout_marginRight="8dp"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:text="Follow"

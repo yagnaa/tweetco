@@ -1,5 +1,7 @@
 package com.tweetco.activities.adapter;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
@@ -7,112 +9,77 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tweetco.R;
+import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.LeaderboardUser;
-import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 
-public class LeaderboardAdapter extends BaseAdapter 
+public class LeaderboardAdapter extends ArrayAdapter<LeaderboardUser> 
 {
 	public interface OnProfilePicClick
 	{
 		void onItemClick(int position);
 	}
 
-    private Context mContext = null;
-	private TweetUser[] mTweetUsers = null;
+	private Context mContext = null;
 	private OnProfilePicClick mOnProfilePicClickCallback = null;
 	private ImageFetcher mImageFetcher; //Fetches the images
-    
-	
-	public LeaderboardAdapter(Activity context, ImageFetcher imageFetcher, TweetUser[] tweetUsers, OnProfilePicClick onProfilePicClickCallback)
+
+
+	public LeaderboardAdapter(Activity context, int resoureId, OnProfilePicClick onProfilePicClickCallback)
 	{
+		super(context, resoureId);
 		mContext = context;
-		mTweetUsers = tweetUsers;
 		mOnProfilePicClickCallback = onProfilePicClickCallback;
-		mImageFetcher = imageFetcher;
+		mImageFetcher = TweetCommonData.mImageFetcher;
 	}
-	
-	@Override
-    public int getCount() 
-	{
-       	return mTweetUsers.length;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return mTweetUsers[position];
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position < 0 ? 0 : position;
-    }
-
-    @Override
-    public int getViewTypeCount() 
-    {
-        // Two types of views, the normal ImageView and the top row of empty views
-        return 1;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return 1;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) 
 	{
-		ImageView imageView;
-        if (convertView == null) { // if it's not recycled, instantiate and initialize
-        	
+		if (convertView == null) 
+		{	
 			LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = layoutInflater.inflate(R.layout.leaderview, null);
-        	
-        	
-            imageView = (ImageView)convertView.findViewById(R.id.leaderProfilePic);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+			convertView = layoutInflater.inflate(R.layout.leaderview, parent,false);
+		}
 
-        } else { // Otherwise re-use the converted view
-        	imageView = (ImageView)convertView.findViewById(R.id.leaderProfilePic);
-        }
-        
-        imageView.setTag(position);
-        imageView.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				int position = Integer.parseInt(v.getTag().toString());
-        		mOnProfilePicClickCallback.onItemClick(position);
-			}
-		});
-        
-        LeaderboardUser user = (LeaderboardUser)getItem(position);
-        if(user != null)
-        {
-        	TextView leaderDisplayName = UiUtility.getView(convertView, R.id.leaderDisplayName);
-        	TextView likesCount = UiUtility.getView(convertView, R.id.leaderLikesCount);
-        	TextView bookmarkedCount = UiUtility.getView(convertView, R.id.leaderBookmarkedCount);
-        	
-        	leaderDisplayName.setText((!TextUtils.isEmpty(user.displayname)?user.displayname: user.username));
-        	likesCount.setText((!TextUtils.isEmpty(user.upvotes)?user.upvotes: "0"));
-        	bookmarkedCount.setText((!TextUtils.isEmpty(user.bookmarks)?user.bookmarks: "0"));
-        	mImageFetcher.loadImage(user.profileimageurl, imageView);
-        	
-        }
-        
-        return convertView;
+
+		LeaderboardUser user = (LeaderboardUser)getItem(position);
+		if(user != null)
+		{
+
+			ImageView profilePic = (ImageView)convertView.findViewById(R.id.leaderProfilePic);
+			profilePic.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+			profilePic.setTag(position);
+			profilePic.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) 
+				{
+					int position = Integer.parseInt(v.getTag().toString());
+					mOnProfilePicClickCallback.onItemClick(position);
+				}
+			});
+
+			TextView leaderDisplayName = UiUtility.getView(convertView, R.id.leaderDisplayName);
+			TextView leaderHandle = UiUtility.getView(convertView, R.id.handle);
+			TextView likesCount = UiUtility.getView(convertView, R.id.leaderLikesCount);
+			TextView bookmarkedCount = UiUtility.getView(convertView, R.id.leaderBookmarkedCount);
+
+			leaderDisplayName.setText((!TextUtils.isEmpty(user.displayname)?user.displayname: user.username));
+			leaderHandle.setText(user.username);
+			likesCount.setText((!TextUtils.isEmpty(user.upvotes)?user.upvotes: "0"));
+			bookmarkedCount.setText((!TextUtils.isEmpty(user.bookmarks)?user.bookmarks: "0"));
+			mImageFetcher.loadImage(user.profileimageurl, profilePic);
+		}
+
+		return convertView;
 	}
 
 }

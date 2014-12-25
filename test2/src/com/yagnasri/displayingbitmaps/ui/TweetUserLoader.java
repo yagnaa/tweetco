@@ -18,7 +18,6 @@ import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.util.AsyncTask;
 
 
-
 public  class TweetUserLoader
 {
 	TweetAdapter adapter = null;
@@ -55,7 +54,7 @@ public  class TweetUserLoader
 	{
 		List<String> usersToLoad = new ArrayList<String>();
 
-		List<Tweet> tweetsList = TweetCommonData.tweetsMap.get(mUsername);
+		List<Tweet> tweetsList = TweetCommonData.tweetsList;
 
 		Map<String,TweetUser> tweetUsersList = TweetCommonData.tweetUsers;
 
@@ -76,17 +75,23 @@ public  class TweetUserLoader
 				task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			}
 		}
+		
+		if(usersToLoad!=null && !usersToLoad.isEmpty())
+		{
+			adapter.notifyDataSetChanged();
+		}
+				
 	}
 
 	public static class TweetUserAsyncTask extends AsyncTask<Void, Void, TweetUser>
 	{
 		MobileServiceClient mClient = AllInOneActivity.mClient;
-		String mUserName = null;
+		String mUserForWhomDataIsBeingLoaded = null;
 		TweetAdapter adapter = null;
 
 		public TweetUserAsyncTask(String userName,TweetAdapter adapter)
 		{
-			mUserName = userName;
+			mUserForWhomDataIsBeingLoaded = userName;
 			this.adapter = adapter;
 		}
 
@@ -94,7 +99,7 @@ public  class TweetUserLoader
 		protected TweetUser doInBackground(Void... params) {
 
 			JsonObject obj = new JsonObject();
-			obj.addProperty("user", mUserName);
+			obj.addProperty("user", mUserForWhomDataIsBeingLoaded);
 			mClient.invokeApi("getuserinfo", obj, new ApiJsonOperationCallback() {
 
 				@Override
@@ -107,8 +112,7 @@ public  class TweetUserLoader
 						try
 						{
 							TweetUser[] tweetUser = gson.fromJson(arg0, TweetUser[].class);
-							adapter.addUser(mUserName,tweetUser[0]);
-							
+							adapter.addUser(mUserForWhomDataIsBeingLoaded,tweetUser[0]);
 						}
 						catch(JsonSyntaxException exception)
 						{
@@ -127,16 +131,6 @@ public  class TweetUserLoader
 			
 			return null;	
 		}
-		
-		
-		@Override
-	    protected void onPostExecute(TweetUser result) 
-		{
-			if(adapter!=null)
-			{
-				adapter.notifyDataSetChanged();
-			}
-	    }
 
 	}
 }

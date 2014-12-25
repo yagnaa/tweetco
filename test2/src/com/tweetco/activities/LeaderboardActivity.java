@@ -32,58 +32,58 @@ public class LeaderboardActivity extends TweetCoBaseActivity
 		mListView = UiUtility.getView(this, R.id.leaderboardList);
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Getting Leaderboard");
 		
-		new GetLeaderboardTask(this, asyncTaskEventHandler, new GetLeaderboardTaskCompletionCallback() {
-			
-			@Override
-			public void onGetLeaderboardTaskSuccess(LeaderboardUser[] users) 
-			{
-				asyncTaskEventHandler.dismiss();
-				
-				mAdapter = new LeaderboardAdapter(LeaderboardActivity.this, TweetCommonData.mImageFetcher, users, new OnProfilePicClick() {
-					
-					@Override
-					public void onItemClick(int position) {
-						//Show user profile view
-						LeaderboardUser user = (LeaderboardUser)mAdapter.getItem(position);
-		        		if(user != null)
-		        		{
-		        			String owner = user.username;
-		        			if(!TextUtils.isEmpty(owner))
-		            		{
-//		            			UserProfileFragment fragment = new UserProfileFragment();
-//		            			Bundle bundle = new Bundle();
-//		            			bundle.putString("username", owner);
-//		            			fragment.setArguments(bundle);
-//		                        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//		                        ft.add(android.R.id.content, fragment, TAG);
-//		                        ft.commit();
-		        				
-		        				Intent intent = new Intent(LeaderboardActivity.this, UserProfileFragment.class);
-		        				intent.putExtra("username", owner);
-		        				LeaderboardActivity.this.startActivity(intent);
-		                    }
-		        		}
-		        		
-					}
-				});
-				
-				mListView.setAdapter(mAdapter);
-			}
-			
-			@Override
-			public void onGetLeaderboardTaskFailure() 
-			{
-				asyncTaskEventHandler.dismiss();
-				Log.e("LeaderboardTask", "Failed");
-			}
-			
-			@Override
-			public void onGetLeaderboardTaskCancelled() 
-			{
-				asyncTaskEventHandler.dismiss();
-				
-			}
-		}).execute();
+//		new GetLeaderboardTask(this, asyncTaskEventHandler, new GetLeaderboardTaskCompletionCallback() {
+//			
+//			@Override
+//			public void onGetLeaderboardTaskSuccess(LeaderboardUser[] users) 
+//			{
+//				asyncTaskEventHandler.dismiss();
+//				
+////				mAdapter = new LeaderboardAdapter(LeaderboardActivity.this, TweetCommonData.mImageFetcher, users, new OnProfilePicClick() {
+////					
+////					@Override
+////					public void onItemClick(int position) {
+////						//Show user profile view
+////						LeaderboardUser user = (LeaderboardUser)mAdapter.getItem(position);
+////		        		if(user != null)
+////		        		{
+////		        			String owner = user.username;
+////		        			if(!TextUtils.isEmpty(owner))
+////		            		{
+//////		            			UserProfileFragment fragment = new UserProfileFragment();
+//////		            			Bundle bundle = new Bundle();
+//////		            			bundle.putString("username", owner);
+//////		            			fragment.setArguments(bundle);
+//////		                        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//////		                        ft.add(android.R.id.content, fragment, TAG);
+//////		                        ft.commit();
+////		        				
+////		        				Intent intent = new Intent(LeaderboardActivity.this, UserProfileFragment.class);
+////		        				intent.putExtra("username", owner);
+////		        				LeaderboardActivity.this.startActivity(intent);
+////		                    }
+////		        		}
+////		        		
+////					}
+////				});
+//				
+//				mListView.setAdapter(mAdapter);
+//			}
+//			
+//			@Override
+//			public void onGetLeaderboardTaskFailure() 
+//			{
+//				asyncTaskEventHandler.dismiss();
+//				Log.e("LeaderboardTask", "Failed");
+//			}
+//			
+//			@Override
+//			public void onGetLeaderboardTaskCancelled() 
+//			{
+//				asyncTaskEventHandler.dismiss();
+//				
+//			}
+//		}).execute();
 		
 		
 		

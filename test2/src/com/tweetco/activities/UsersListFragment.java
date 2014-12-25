@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +29,8 @@ import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
-import com.yagnasri.displayingbitmaps.ui.Tweet;
 import com.yagnasri.displayingbitmaps.ui.TweetUtils;
 import com.yagnasri.displayingbitmaps.util.AsyncTask;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 
 public class UsersListFragment extends ListFragment
 {
@@ -246,7 +243,7 @@ public class UsersListFragment extends ListFragment
 						if(user!=null)
 						{
 							Intent intent = new Intent(UserListAdapter.this.getContext(), UserProfileFragment.class);
-							intent.putExtra("username", user.userid);
+							intent.putExtra("username", user.username);
 							UsersListFragment.this.startActivity(intent);
 						}
 					}
@@ -258,13 +255,14 @@ public class UsersListFragment extends ListFragment
 		        textView.setText(user.displayname);
 		        
 		        TextView handle = (TextView)convertView.findViewById(R.id.handle);
-		        handle.setText(user.userid);
+		        handle.setText(user.username);
 		        
 		        
 		        Button button = (Button)convertView.findViewById(R.id.follow_button);
 		        button.isPressed();
-		        button.setOnClickListener(new View.OnClickListener() {
-					
+		        button.setTag(position);
+		        button.setOnClickListener(new View.OnClickListener() 
+		        {	
 					@Override
 					public void onClick(View v) 
 					{
@@ -273,7 +271,7 @@ public class UsersListFragment extends ListFragment
 						TweetUser user = (TweetUser)getItem(position);
 		        		if(user != null)
 		        		{
-		        			followUser(v, mUserName, user.userid, ((Button)v).isPressed());
+		        			followUser(v, mUserName, user.username, ((Button)v).isPressed());
 		        		}						
 					}
 				});

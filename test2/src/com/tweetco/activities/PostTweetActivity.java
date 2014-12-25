@@ -29,10 +29,11 @@ import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
-import com.tweetco.TweetCo;
+import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ClientHelper;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
+import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 
 public class PostTweetActivity extends TweetCoBaseActivity 
 {
@@ -104,8 +105,8 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				{
 					MobileServiceClient client = ClientHelper.getMobileClient(PostTweetActivity.this);
 					JsonObject element = new JsonObject();
-					element.addProperty("tweetowner", TweetCo.getAccount().getUsername());
-					element.addProperty("tweetcontent", mTweetContent.getEditableText().toString());
+					element.addProperty(ApiInfo.kTweetOwner, TweetCommonData.getUserName());
+					element.addProperty(ApiInfo.kTweetContentKey, mTweetContent.getEditableText().toString());
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();  
 					BitmapDrawable drawable = (BitmapDrawable) mTweetImage.getDrawable();
 					
@@ -118,7 +119,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 						element.addProperty("image", image);
 						
 					}
-					client.invokeApi("PostTweet", element, new ApiJsonOperationCallback() {
+					client.invokeApi(ApiInfo.POST_TWEET, element, new ApiJsonOperationCallback() {
 						
 						@Override
 						public void onCompleted(JsonElement element, Exception exception,

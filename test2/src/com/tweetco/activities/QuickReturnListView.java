@@ -23,7 +23,7 @@ import android.widget.ListView;
 
 public class QuickReturnListView extends ListView {
 
-    
+
 	private int mItemCount;
 	private int mItemOffsetY[];
 	private boolean scrollIsComputed = false;
@@ -40,54 +40,62 @@ public class QuickReturnListView extends ListView {
 	public int getListHeight() {
 		return mHeight;
 	}
-	
-	@Override
-	public void requestLayout ()
-	{
-		super.requestLayout();
-	}
-	
-	@Override
-	protected void layoutChildren() {
-		super.layoutChildren();
-	//	computeScrollY();
-	}
 
-	public void computeScrollY() {
+//	public void computeScrollY() {
+//		mHeight = 0;
+//		mItemCount = getAdapter().getCount();
+//		if (mItemCount!=0) {
+//			mItemOffsetY = new int[mItemCount];
+//		}
+//		else
+//		{
+//			mItemOffsetY = null;
+//		}
+//		for (int i = 0; i < mItemCount; ++i) {
+//			View view = getAdapter().getView(i, null, this);
+//			view.measure(
+//					MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+//					MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+//			mItemOffsetY[i] = mHeight;
+//			mHeight += view.getMeasuredHeight();
+//			System.out.println(mHeight);
+//		}
+//		scrollIsComputed = true;
+//	}
+//
+//	public boolean scrollYIsComputed() {
+//		return scrollIsComputed;
+//	}
+
+	public int getComputedScrollY() {
 		mHeight = 0;
-		mItemCount = getAdapter().getCount();
-		if (mItemCount!=0) {
-			mItemOffsetY = new int[mItemCount];
+		int pos, nScrollY = 0, nItemY;
+		View view = null;
+		pos = getFirstVisiblePosition();
+		view = getChildAt(0);
+		int childCount = this.getChildCount();
+
+		if(childCount>0)
+		{
+			mItemOffsetY = new int[childCount];
+			for (int i = 0; i < childCount; ++i) {
+				View child = getAdapter().getView(i, null, this);
+				child.measure(
+						MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+						MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+				mItemOffsetY[i] = mHeight;
+				mHeight += child.getMeasuredHeight();
+			}
 		}
 		else
 		{
 			mItemOffsetY = null;
 		}
-		for (int i = 0; i < mItemCount; ++i) {
-			View view = getAdapter().getView(i, null, this);
-			view.measure(
-					MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-					MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-			mItemOffsetY[i] = mHeight;
-			mHeight += view.getMeasuredHeight();
-			System.out.println(mHeight);
-		}
-		scrollIsComputed = true;
-	}
-
-	public boolean scrollYIsComputed() {
-		return scrollIsComputed;
-	}
-
-	public int getComputedScrollY() {
-		int pos, nScrollY = 0, nItemY;
-		View view = null;
-		pos = getFirstVisiblePosition();
-		view = getChildAt(0);
+		
 		if(view != null && mItemOffsetY!=null)
 		{
 			nItemY = view.getTop();
-			nScrollY = mItemOffsetY[pos] - nItemY;
+			nScrollY = mItemOffsetY[0] - nItemY;
 		}
 		return nScrollY;
 	}

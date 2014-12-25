@@ -1,7 +1,11 @@
 package com.tweetco.asynctasks;
 
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.client.methods.HttpGet;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
@@ -24,12 +29,14 @@ import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.utility.ClientHelper;
 import com.yagnasri.dao.LeaderboardUser;
 import com.yagnasri.dao.TweetUser;
+import com.yagnasri.displayingbitmaps.ui.ApiInfo;
+import com.yagnasri.displayingbitmaps.ui.Tweet;
 
-public class GetLeaderboardTask extends AsyncTask <Void, Void, LeaderboardUser[]>
+public class GetLeaderboardTask extends AsyncTask <Void, Void, List<LeaderboardUser>>
 {
 	public static interface GetLeaderboardTaskCompletionCallback
 	{
-		public void onGetLeaderboardTaskSuccess(LeaderboardUser[] users);
+		public void onGetLeaderboardTaskSuccess(List<LeaderboardUser> users);
 		public void onGetLeaderboardTaskFailure ();
 		public void onGetLeaderboardTaskCancelled();
 	}
@@ -39,7 +46,8 @@ public class GetLeaderboardTask extends AsyncTask <Void, Void, LeaderboardUser[]
 	private GetLeaderboardTaskCompletionCallback m_completioncallback;
 	private UIEventSink m_uicallback;
 	private Activity mActivity;
-	LeaderboardUser[] result;
+	private List<LeaderboardUser> result = null;
+
 	
 	public GetLeaderboardTask(Activity activity, UIEventSink uiCallback, GetLeaderboardTaskCompletionCallback callback)
 	{
@@ -67,28 +75,25 @@ public class GetLeaderboardTask extends AsyncTask <Void, Void, LeaderboardUser[]
 	}
 	
 	@Override
-	protected LeaderboardUser[] doInBackground(Void... arg0)
+	protected List<LeaderboardUser> doInBackground(Void... arg0)
 	{
 		try 
 		{
 			MobileServiceClient mobileServiceClient = ClientHelper.getMobileClient(mActivity);
-		
-			mobileServiceClient.invokeApi("getleaderboard", "GET", new ArrayList<Pair<String, String>>(), new ApiJsonOperationCallback() 
+			mobileServiceClient.invokeApi(ApiInfo.LEADERBOARD, HttpGet.METHOD_NAME, new ArrayList<Pair<String, String>>(), new ApiJsonOperationCallback() 
 			{
 				@Override
-				public void onCompleted(JsonElement arg0, Exception arg1,
-						ServiceFilterResponse arg2) {
+				public void onCompleted(JsonElement arg0, Exception arg1, ServiceFilterResponse arg2) 
+				{					
 					if(arg1 == null)
 					{
-						Gson gson = new Gson();
-
 						try
 						{
-							result = gson.fromJson(arg0, LeaderboardUser[].class);
-							
-							
-							
+							Gson gson = new Gson();
+							Type collectionType = new TypeToken<List<LeaderboardUser>>(){}.getType();
+							result = gson.fromJson(arg0, collectionType);
 						}
+						//TODO need to add this exception in all other places too.
 						catch(JsonSyntaxException exception)
 						{
 							exception.printStackTrace();
@@ -103,8 +108,9 @@ public class GetLeaderboardTask extends AsyncTask <Void, Void, LeaderboardUser[]
 
 				}
 			}, true);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (MalformedURLException e) 
+		{
 			e.printStackTrace();
 		}
 		return result;
@@ -112,7 +118,7 @@ public class GetLeaderboardTask extends AsyncTask <Void, Void, LeaderboardUser[]
 	}
 
 	@Override
-	protected void onPostExecute(LeaderboardUser[] result)
+	protected void onPostExecute(List<LeaderboardUser> result)
 	{
 		if(result != null)
 		{

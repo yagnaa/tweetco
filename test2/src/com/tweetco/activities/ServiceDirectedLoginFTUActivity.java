@@ -1,24 +1,17 @@
 package com.tweetco.activities;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
@@ -32,6 +25,7 @@ import com.tweetco.asynctasks.AddAccountTask.AddAccountTaskCompletionCallback;
 import com.tweetco.asynctasks.AddAccountTaskParams;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
+import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.AlertDialogUtility;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
@@ -105,7 +99,7 @@ public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity
 
 											if(account != null)
 											{
-												TweetCo.setAccount(account);
+												TweetCommonData.setAccount(account);
 												
 												startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
 											}

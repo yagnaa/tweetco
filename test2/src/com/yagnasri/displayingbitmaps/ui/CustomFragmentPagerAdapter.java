@@ -10,6 +10,7 @@ import com.tweetco.TweetCo;
 import com.tweetco.activities.LeaderboardFragment;
 import com.tweetco.activities.TrendingFragment;
 import com.tweetco.activities.UsersListFragment;
+import com.tweetco.tweets.TweetCommonData;
 
 public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 {
@@ -62,8 +63,7 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 		case 0:
 			Fragment fragment = new TweetListFragment();
 			Bundle bundle = new Bundle();
-            bundle.putString("username", TweetCo.getAccount().getUsername());
-            bundle.putBoolean("gettweetsbyuser", false);
+            bundle.putString(TweetListFragment.USERNAME, TweetCommonData.getUserName());
             fragment.setArguments(bundle);
 			return fragment;
 		case 1:

@@ -17,21 +17,23 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GestureDetectorCompat;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.TranslateAnimation;
@@ -56,9 +58,9 @@ import com.yagnasri.displayingbitmaps.util.Utils;
  * cache is retained over configuration changes like orientation change so the images are populated
  * quickly if, for example, the user rotates the device.
  */
-public class TweetListFragment extends Fragment implements AdapterView.OnItemClickListener {
-
-
+public class TweetListFragment extends Fragment implements AdapterView.OnItemClickListener 
+{
+	public static final String USERNAME = "username";//Constant to be used in intent for username
 	private static final String TAG = "ImageGridFragment";
 	private static final String IMAGE_CACHE_DIR = "thumbs";
 
@@ -66,6 +68,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	private int mImageThumbSpacing;
 	private TweetAdapter mAdapter;
 
+	private GestureDetectorCompat mDetector; 
 
 	//Scrolling from bottom
 	private QuickReturnListView mListView;
@@ -75,12 +78,15 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	private static final int STATE_OFFSCREEN = 1;
 	private static final int STATE_RETURNING = 2;
 	private int mState = STATE_ONSCREEN;
-	private int mScrollY;
+	private int mScrollY= 0;
 	private int mMinRawY = 0;
+	int translationY = 0;
+	private boolean prevSign = false;
 	private TranslateAnimation anim;
 
+
+
 	private String mUsername;
-	private boolean mTweetsByUser = false;
 
 
 	/**
@@ -97,16 +103,12 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
 
 		mUsername = getArguments().getString("username");
-		mTweetsByUser = getArguments().getBoolean("gettweetsbyuser");
 
-		List<Tweet> tweetsList = TweetCommonData.tweetsMap.get(mUsername);
-		if(tweetsList == null)
-		{
-			TweetCommonData.tweetsMap.put(mUsername, new ArrayList<Tweet>());
-		}
 
 		ImageCache.ImageCacheParams cacheParams =
 				new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
+
+		mDetector = new GestureDetectorCompat(this.getActivity().getApplicationContext(), new MyGestureListener());
 
 		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
 
@@ -114,7 +116,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), 60,60, true);
 		TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
 		TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-		mAdapter = new TweetAdapter(getActivity(), mUsername, mTweetsByUser, TweetCommonData.mImageFetcher, new OnProfilePicClick() {
+		mAdapter = new TweetAdapter(getActivity(), mUsername, TweetCommonData.mImageFetcher, new OnProfilePicClick() {
 
 			@Override
 			public void onItemClick(int position) {
@@ -165,6 +167,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				launchPostTweetActivity();
 			}
 		});
+		TweetCommonData.tweetsList.clear();
+		mAdapter.onScrollNext();
 	}
 
 	public void launchPostTweetActivity()
@@ -235,70 +239,84 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 			@Override
 			public void onScroll(AbsListView absListView, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
-				            	
-				
-				
-								mScrollY = 0;
-								int translationY = 0;
-				
-								if (mListView.scrollYIsComputed()) {
-									mScrollY = mListView.getComputedScrollY();
-								}
-				
-								int rawY = mScrollY;
-				
-								switch (mState) {
-								case STATE_OFFSCREEN:
-									if (rawY >= mMinRawY) {
-										mMinRawY = rawY;
-									} else {
-										mState = STATE_RETURNING;
-									}
-									translationY = rawY;
-									break;
-				
-								case STATE_ONSCREEN:
-									if (rawY > mQuickReturnHeight) {
-										mState = STATE_OFFSCREEN;
-										mMinRawY = rawY;
-									}
-									translationY = rawY;
-									break;
-				
-								case STATE_RETURNING:
-				
-									translationY = (rawY - mMinRawY) + mQuickReturnHeight;
-				
-									System.out.println(translationY);
-									if (translationY < 0) {
-										translationY = 0;
-										mMinRawY = rawY + mQuickReturnHeight;
-									}
-				
-									if (rawY == 0) {
-										mState = STATE_ONSCREEN;
-										translationY = 0;
-									}
-				
-									if (translationY > mQuickReturnHeight) {
-										mState = STATE_OFFSCREEN;
-										mMinRawY = rawY;
-									}
-									break;
-								}
-				
-								/** this can be used if the build is below honeycomb **/
-								if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) {
-									anim = new TranslateAnimation(0, 0, translationY,
-											translationY);
-									anim.setFillAfter(true);
-									anim.setDuration(0);
-									mQuickReturnView.startAnimation(anim);
-								} else {
-									mQuickReturnView.setTranslationY(translationY);
-								}
-				
-							
+
+				//Start Loading tweets in the backing adapter
+				mAdapter.onScroll(absListView, firstVisibleItem, visibleItemCount, totalItemCount);
+
+				//End Loading tweets in the backing adapter
+
+				//Loading the Quick return View - begin
+
+				mScrollY = 0;
+
+
+
+				mScrollY = mListView.getComputedScrollY();
+				int diff = mScrollY - mMinRawY;
+				boolean abrupt = Math.abs(mScrollY - mMinRawY) > 50;
+				boolean currentSign = (mScrollY < mMinRawY) ;
+
+				if(!abrupt)
+				{
+					switch (mState) {
+
+					case STATE_ONSCREEN:
+						if((diff > 0) )
+						{
+							mState = STATE_RETURNING;
+							translationY = diff;
+						}
+						else
+						{
+							translationY = 0;
+						}
+						break;
+
+					case STATE_OFFSCREEN:
+						if(currentSign!=prevSign)
+						{
+							mState = STATE_RETURNING;
+						}
+						translationY = mQuickReturnHeight;
+						break;
+
+
+					case STATE_RETURNING:
+
+						translationY += diff;
+
+						if (translationY < 0) 
+						{
+							translationY = 0;
+							mState = STATE_ONSCREEN;
+						}
+
+
+						if (translationY > mQuickReturnHeight) 
+						{
+							mState = STATE_OFFSCREEN;
+						}
+						break;
+					}
+					prevSign = currentSign;
+				}
+
+				mMinRawY = mScrollY;
+
+				/** this can be used if the build is below honeycomb **/
+				if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) 
+				{
+					anim = new TranslateAnimation(0, 0, translationY,
+							translationY);
+					anim.setFillAfter(true);
+					anim.setDuration(0);
+					mQuickReturnView.startAnimation(anim);
+				} else {
+					mQuickReturnView.setTranslationY(translationY);
+				}
+
+				//Loading the Quick return View - end
+
 			}
 		});
 
@@ -310,50 +328,34 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				new ViewTreeObserver.OnGlobalLayoutListener() {
 					@TargetApi(VERSION_CODES.JELLY_BEAN)
 					@Override
-					public void onGlobalLayout() {
-
+					public void onGlobalLayout() 
+					{
 						mQuickReturnHeight = mQuickReturnView.getHeight();
-											mListView.computeScrollY();
-
-
-						//                        if (mAdapter.getNumColumns() == 0) {
-						//                            final int numColumns = (int) Math.floor(
-						//                            		mListView.getWidth() / (mImageThumbSize + mImageThumbSpacing));
-						//                            if (numColumns > 0) {
-						//                                final int columnWidth =
-						//                                        (mListView.getWidth() / numColumns) - mImageThumbSpacing;
-						//                                mAdapter.setNumColumns(numColumns);
-						//                                mAdapter.setItemHeight(columnWidth);
-						//                                if (BuildConfig.DEBUG) {
-						//                                    Log.d(TAG, "onCreateView - numColumns set to " + numColumns);
-						//                                }
-						//                                if (Utils.hasJellyBean()) {
-						//                                	mListView.getViewTreeObserver()
-						//                                            .removeOnGlobalLayoutListener(this);
-						//                                } else {
-						//                                    mListView.getViewTreeObserver()
-						//                                            .removeGlobalOnLayoutListener(this);
-						//                                }
-						//                            }
-						//                        }
 					}
 				});
 
-
+		mListView.setOnTouchListener(new OnTouchListener() 
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event) 
+			{
+				mDetector.onTouchEvent(event);
+				return false;
+			}
+		});
 		return v;
 	}
 
 	@Override
-	public void onResume() {
+	public void onResume() 
+	{
 		super.onResume();
-		mAdapter.onScrollNext();
 		TweetCommonData.mImageFetcher.setExitTasksEarly(false);
-		TweetCommonData.tweetsMap.get(mUsername).clear();
-		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
-	public void onPause() {
+	public void onPause() 
+	{
 		super.onPause();
 		TweetCommonData.mImageFetcher.setPauseWork(false);
 		TweetCommonData.mImageFetcher.setExitTasksEarly(true);
@@ -361,7 +363,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	}
 
 	@Override
-	public void onDestroy() {
+	public void onDestroy() 
+	{
 		super.onDestroy();
 		TweetCommonData.mImageFetcher.closeCache();
 	}
@@ -413,6 +416,33 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		//                return true;
 		//        }
 		return super.onOptionsItemSelected(item);
+	}
+
+
+	public  class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+		private static final String DEBUG_TAG = "Gestures"; 
+
+		@Override
+		public boolean onDown(MotionEvent event) { 
+			Log.d(DEBUG_TAG,"onDown: " + event.toString()); 
+			return true;
+		}
+
+		@Override
+		public boolean onFling(MotionEvent event1, MotionEvent event2, 
+				float velocityX, float velocityY) {
+			mQuickReturnView.setTranslationY(mQuickReturnHeight);
+			mState = STATE_OFFSCREEN;
+			Log.d(DEBUG_TAG, "onFling: " + event1.toString()+event2.toString());
+			return true;
+		}
+
+		@Override
+		public boolean onScroll(MotionEvent event1, MotionEvent event2,
+				float distanceX, float distanceY) {
+			Log.d(DEBUG_TAG, "onFling: " + event1.toString()+event2.toString());
+			return false;
+		}
 	}
 
 

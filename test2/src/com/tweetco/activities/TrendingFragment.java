@@ -132,9 +132,6 @@ public class TrendingFragment extends ListFragment
 				trend.setText("#" + tag.hashtag);
 			}
 			return convertView;
-		}
-		
-		
-		
+		}	
 	}
 }

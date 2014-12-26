@@ -419,7 +419,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	}
 
 
-	public  class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+	public  class MyGestureListener extends GestureDetector.SimpleOnGestureListener 
+	{
 		private static final String DEBUG_TAG = "Gestures"; 
 
 		@Override

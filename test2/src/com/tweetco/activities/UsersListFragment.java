@@ -51,55 +51,12 @@ public class UsersListFragment extends ListFragment
 
 
 		mTweetUsersTable = TweetCommonData.mClient.getTable("tweetusers",TweetUser.class);
-
+		mUserName = TweetCommonData.getUserName();
+		
 		if(usersList == null || usersList.isEmpty())
 		{
 			loadUsers();
 		}
-		
-		
-
-
-//		mUserName = getIntent().getExtras().getString("username");
-//		TweetUser user = TweetCommonData.tweetUsers.get(mUserName);
-//		if(user != null)
-//		{
-//			mUserProfileBg = UiUtility.getView(this, R.id.userProfileBg);
-//			mUserProfilePic = UiUtility.getView(this, R.id.userProfilePic);
-//			mUserProfileDisplayName = UiUtility.getView(this, R.id.userProfileDisplayName);
-//			mUserProfileHandleName = UiUtility.getView(this, R.id.userProfileHandle);
-//			mFolloweeCount = UiUtility.getView(this, R.id.followeesCount);
-//			mFollowerCount = UiUtility.getView(this, R.id.followersCount);
-//
-//			mUserProfileDisplayName.setText((TextUtils.isEmpty(user.displayname))?mUserName:user.displayname);
-//			mUserProfileHandleName.setText("@"+mUserName);
-//			int followeesCount = 0;
-//			if(!TextUtils.isEmpty(user.followees))
-//			{
-//				followeesCount = user.followees.split(";").length - 1;
-//			}
-//			mFolloweeCount.setText(String.valueOf(followeesCount));
-//
-//			int followersCount = 0;
-//			if(!TextUtils.isEmpty(user.followers))
-//			{
-//				followersCount = user.followers.split(";").length - 1;
-//			}
-//			mFollowerCount.setText(String.valueOf(followersCount));
-//
-//			if(UiUtility.getView(this, R.id.tweetsListFragmentContainer) != null)
-//			{
-//				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//				TweetListFragment tweetListFragment = new TweetListFragment();
-//				Bundle bundle = new Bundle();
-//				bundle.putString("username", mUserName);
-//				bundle.putBoolean("gettweetsbyuser", true);
-//				tweetListFragment.setArguments(bundle);
-//				ft.add(R.id.tweetsListFragmentContainer, tweetListFragment);
-//				ft.commit();
-//			}
-//
-//		}
 	}
 	
 	
@@ -107,7 +64,6 @@ public class UsersListFragment extends ListFragment
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 		userListAdapter = new UserListAdapter(this.getActivity(), R.layout.users_list_row, usersList);
 		
@@ -129,17 +85,16 @@ public class UsersListFragment extends ListFragment
 
 					public void onCompleted(List<TweetUser> result, int count, Exception exception, ServiceFilterResponse response) {
 						if (exception == null) {
-//							mAdapter.clear();
-//
-//							for (TweetUser item : result) {
-//								mAdapter.add(item);
-//							}
 							Log.e("tag", "msg");
 							userListAdapter.clear();
-							userListAdapter.addAll(result);
 							for (TweetUser tweetUser : result) 
 							{
 								TweetCommonData.tweetUsers.put(tweetUser.username, tweetUser);
+								if(!mUserName.equals(tweetUser.username))
+								{
+									//Don't add the same user
+									userListAdapter.add(tweetUser);
+								}
 							}
 							userListAdapter.notifyDataSetChanged();
 						} else {
@@ -148,33 +103,26 @@ public class UsersListFragment extends ListFragment
 					}
 				});
 				
-//				try {
-//					final MobileServiceList<TweetUser> result = mTweetUsersTable.where().field("complete").eq(false).execute().get();
-//					runOnUiThread(new Runnable() {
-//						@Override
-//						public void run() {
-//							mAdapter.clear();
-//
-//							for (ToDoItem item : result) {
-//								mAdapter.add(item);
-//							}
-//						}
-//					});
-//				} catch (Exception exception) {
-//					createAndShowDialog(exception, "Error");
-//				}
 				return null;
 			}
 		}.execute();
 	}
 
 	
-	public void followUser(final View followButton,final String requestingUser,String userToFollow,boolean follow)
+	public void followOrUnfollowUser(final View followButton,final String requestingUser, final String userToFollowOrUnfollow,boolean follow)
 	{
 		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
-		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
-		obj.addProperty(ApiInfo.kUserToFollowKey, userToFollow);
+		obj.addProperty(ApiInfo.kApiRequesterKey, requestingUser);
+		if(follow)
+		{
+			obj.addProperty(ApiInfo.kUserToFollowKey, userToFollowOrUnfollow);
+		}
+		else
+		{
+			obj.addProperty(ApiInfo.kUserToUnFollowKey, userToFollowOrUnfollow);
+		}
+		
 		String customApiName = follow?ApiInfo.FOLLOW_USER: ApiInfo.UN_FOLLOW_USER;
 		mClient.invokeApi(customApiName, obj, new ApiJsonOperationCallback() {
 			
@@ -185,8 +133,8 @@ public class UsersListFragment extends ListFragment
 				{
 					if(followButton!=null && (followButton instanceof Button))
 					{
-						//setUpVoteFlag( (ImageView)upvoteView, requestingUser);
-						Log.e("Item clicked","Exception upVoting a tweet") ;
+						Log.d("Item clicked","Follow/Unfollow succeeded") ;
+						loadUsers();
 					}
 				}
 				else
@@ -265,6 +213,15 @@ public class UsersListFragment extends ListFragment
 		        Button button = (Button)convertView.findViewById(R.id.follow_button);
 		        button.isPressed();
 		        button.setTag(position);
+		        boolean isCurrentUserAFollower  = TweetUtils.isStringPresent(user.followers, mUserName);
+		        if(isCurrentUserAFollower)
+		        {
+		        	button.setText("Unfollow");
+		        }
+		        else
+		        {
+		        	button.setText("Follow");
+		        }
 		        button.setOnClickListener(new View.OnClickListener() 
 		        {	
 					@Override
@@ -275,7 +232,7 @@ public class UsersListFragment extends ListFragment
 						TweetUser user = (TweetUser)getItem(position);
 		        		if(user != null)
 		        		{
-		        			followUser(v, mUserName, user.username, ((Button)v).isPressed());
+		        			followOrUnfollowUser(v, mUserName, user.username, !TweetUtils.isStringPresent(user.followers, mUserName));
 		        		}						
 					}
 				});

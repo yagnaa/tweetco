@@ -6,24 +6,28 @@ public class TweetUtils
 {
 	public static boolean isStringPresent(String commaSeparatedString, String stringToSearch)
 	{
-		if(TextUtils.isEmpty(stringToSearch.trim()))
+		boolean bStringPresent = false;
+		if(TextUtils.isEmpty(stringToSearch) || TextUtils.isEmpty(stringToSearch.trim()))
 		{
 			throw new IllegalArgumentException("String to search is empty");
 		}
-		if(commaSeparatedString!=null)
+		if(!TextUtils.isEmpty(commaSeparatedString))
 		{
+			stringToSearch = stringToSearch.trim();
 			String[] stringArray = commaSeparatedString.split(";");
-	
+			String tempStr;
 			for(String str:stringArray)
 			{
-				if(!TextUtils.isEmpty(str.trim()))
+				tempStr = str.trim();
+				if(!TextUtils.isEmpty(tempStr) && stringToSearch.equalsIgnoreCase(tempStr))
 				{
-					return stringToSearch.trim().equalsIgnoreCase(str.trim());
+					bStringPresent = true;
+					break;
 				}
 			}
 		}
 
-		return false;
+		return bStringPresent;
 	}
 }
 

@@ -137,6 +137,10 @@ public class UsersListFragment extends ListFragment
 							Log.e("tag", "msg");
 							userListAdapter.clear();
 							userListAdapter.addAll(result);
+							for (TweetUser tweetUser : result) 
+							{
+								TweetCommonData.tweetUsers.put(tweetUser.username, tweetUser);
+							}
 							userListAdapter.notifyDataSetChanged();
 						} else {
 							//createAndShowDialog(exception, "Error");

@@ -30,7 +30,6 @@ public class AddAccountTask extends AsyncTask<Void, Void, Uri>
 	private static String TAG = "AddAccountTask";
 	private static String CREATE_USER_API = "CreateUser";
 	private static String FOLLOW_USER_API = "followuser";
-	private static String[] USERS_TO_FOLLOW = new String[] {"udayak", "IronMan", "yagnasri", "tweetbot", "udaytweetco", "udaynelluri", "kirankum", "strider"};
 	
 	private AddAccountTaskCompletionCallback m_completioncallback;
 	private UIEventSink m_uicallback;
@@ -99,29 +98,7 @@ public class AddAccountTask extends AsyncTask<Void, Void, Uri>
 						mAccount = new Account();
 						mAccount.setUsername(username);
 						mAccount.setAuthToken(client.getCurrentUser().getAuthenticationToken());
-
-						for (final String userToFollow : USERS_TO_FOLLOW) 
-						{
-							JsonObject jsonObj = new JsonObject();
-							jsonObj.addProperty("user", username);
-							jsonObj.addProperty("userToFollow", userToFollow);
-							client.invokeApi(FOLLOW_USER_API, jsonObj, new ApiJsonOperationCallback() 
-							{
-
-								@Override
-								public void onCompleted(JsonElement user, Exception exception,
-										ServiceFilterResponse arg2) {
-									if(exception != null)
-									{
-										Log.e(TAG, "Following " + userToFollow + " failed");
-									}
-									else
-									{
-										Log.d(TAG, "Following " + userToFollow);
-									}
-								}
-							}, true);
-						}
+						
 					}
 
 				}

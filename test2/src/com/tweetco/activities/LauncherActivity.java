@@ -39,6 +39,7 @@ public class LauncherActivity extends TweetCoBaseActivity
 						{
 							TweetCommonData.setAccount(account);
 							startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
+							finish();
 						}
 					}
 				} catch (InterruptedException e) {

@@ -50,7 +50,7 @@ public class UsersListFragment extends ListFragment
 		super.onCreate(savedInstanceState);
 
 
-		mTweetUsersTable = AllInOneActivity.mClient.getTable("tweetusers",TweetUser.class);
+		mTweetUsersTable = TweetCommonData.mClient.getTable("tweetusers",TweetUser.class);
 
 		if(usersList == null || usersList.isEmpty())
 		{
@@ -167,7 +167,7 @@ public class UsersListFragment extends ListFragment
 	
 	public void followUser(final View followButton,final String requestingUser,String userToFollow,boolean follow)
 	{
-		MobileServiceClient mClient = AllInOneActivity.mClient;
+		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
 		obj.addProperty(ApiInfo.kUserToFollowKey, userToFollow);

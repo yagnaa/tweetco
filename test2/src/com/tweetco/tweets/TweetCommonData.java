@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.text.TextUtils;
 
-import com.tweetco.TweetCo;
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.tweetco.database.dao.Account;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.Tweet;
@@ -16,6 +16,10 @@ import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 
 public class TweetCommonData 
 {
+	//Use only one of these through out
+	public static MobileServiceClient mClient;
+	
+	
 	//All the tweets that we are currently holding in memory
     public static List<Tweet> tweetsList = Collections.synchronizedList(new ArrayList<Tweet>());
     

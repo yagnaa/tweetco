@@ -12,16 +12,20 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.notifications.NotificationsManager;
 import com.tweetco.R;
+import com.tweetco.notifications.PushNotificationHandler;
 
 
 
 public class AllInOneActivity extends FragmentActivity
 {
+	public static final String SENDER_ID = "721884328218";
+	
+	
 	private static final int SEVER_SIDE_BATCH_SIZE = 10; //Number of tweets fetched from server at one time
     private static final String IMAGE_CACHE_DIR = "thumbs"; //Name of directory where images are saved
-	
-	public static MobileServiceClient mClient;
+
 	
 	private Handler handler;
 	
@@ -37,19 +41,8 @@ public class AllInOneActivity extends FragmentActivity
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.all_in_one_activity_layout);
-
-        // Initialize the demo client here and use it all over.
-        
-		try {
-			mClient = new MobileServiceClient(
-				      "https://tweetcosap.azure-mobile.net/",
-				      "GeDacEmoZtCjASmINhXiLWpBujCtJI48", 
-				      this
-				);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		NotificationsManager.handleNotifications(this, SENDER_ID, PushNotificationHandler.class);
         
         initializePager();
 

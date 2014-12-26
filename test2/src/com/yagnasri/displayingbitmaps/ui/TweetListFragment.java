@@ -17,6 +17,9 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -96,7 +99,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	 * Empty constructor as per the Fragment documentation
 	 */
 	public TweetListFragment() {}
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -174,6 +177,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		mAdapter.onScrollNext();
 	}
 
+	public void refresh()
+	{
+		mAdapter.refresh();
+	}
+	
 	public void launchPostTweetActivity()
 	{
 		Intent intent = new Intent(this.getActivity().getApplicationContext(),PostTweetActivity.class);

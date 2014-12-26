@@ -28,9 +28,8 @@ public class AllInOneActivity extends FragmentActivity
 	private static final String TAG = "ImageGridActivity";
 	
 	private ViewPager mViewPager;
-	private CustomFragmentPagerAdapter mPagerAdapter = null;
+	private static CustomFragmentPagerAdapter mPagerAdapter = null;
 	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -111,6 +110,11 @@ public class AllInOneActivity extends FragmentActivity
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+	}
+	
+	public static void tweetsListRefresh()
+	{
+		((TweetListFragment)mPagerAdapter.getItem(0)).refresh();
 	}
 	
 }

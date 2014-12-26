@@ -1,20 +1,16 @@
 package com.tweetco.activities;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,20 +19,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
+import com.tweetco.activities.progress.AsyncTaskEventHandler;
+import com.tweetco.asynctasks.PostTweetTask;
+import com.tweetco.asynctasks.PostTweetTask.PostTweetTaskCompletionCallback;
+import com.tweetco.asynctasks.PostTweetTaskParams;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ClientHelper;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.displayingbitmaps.ui.ApiInfo;
+import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
+import com.yagnasri.displayingbitmaps.ui.Tweet;
 
 public class PostTweetActivity extends TweetCoBaseActivity 
 {
+	private final static String TAG = "PostTweetActivity";
 	private static final int TWEET_MAX_CHARS = 140;
 	private static final int REQUEST_CODE_IMAGE_SELECT = 100;
 	private static final int REQUEST_CODE_IMAGE_CAPTURE = 101;
@@ -49,6 +47,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	private ImageView mTweetImage;
 	
 	private int mCharCountInt = TWEET_MAX_CHARS;
+	AsyncTaskEventHandler asyncTaskEventHandler = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -62,6 +61,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mImageGalleryButton = UiUtility.getView(this, R.id.imageGalleryButton);
 		mImageCameraButton = UiUtility.getView(this, R.id.imageCameraButton);
 		mTweetImage = UiUtility.getView(this, R.id.tweetImaage);
+		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Posting...");
 		
 		mCharCount.setText(String.valueOf(mCharCountInt));
 		
@@ -104,37 +104,31 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				try 
 				{
 					MobileServiceClient client = ClientHelper.getMobileClient(PostTweetActivity.this);
-					JsonObject element = new JsonObject();
-					element.addProperty(ApiInfo.kTweetOwner, TweetCommonData.getUserName());
-					element.addProperty(ApiInfo.kTweetContentKey, mTweetContent.getEditableText().toString());
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();  
-					BitmapDrawable drawable = (BitmapDrawable) mTweetImage.getDrawable();
+					PostTweetTaskParams params = new PostTweetTaskParams(client, TweetCommonData.getUserName());
+					params.setTweetContent(mTweetContent.getEditableText().toString());
+					params.setTweetImage((BitmapDrawable) mTweetImage.getDrawable());
 					
-					if(drawable != null)
-					{
-						Bitmap bitmap = drawable.getBitmap();
-						bitmap.compress(CompressFormat.JPEG,25,bos); 
-						byte[] bb = bos.toByteArray();
-						String image = Base64.encodeToString(bb, 0);
-						element.addProperty("image", image);
-						
-					}
-					client.invokeApi(ApiInfo.POST_TWEET, element, new ApiJsonOperationCallback() {
+					new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() {
 						
 						@Override
-						public void onCompleted(JsonElement element, Exception exception,
-								ServiceFilterResponse arg2) {
-							if(exception == null)
-							{
-								Log.d("postTweet", "TweetPosted");
-							}
-							else
-							{
-								Log.e("postTweet", "TweetPost failed");
-							}
+						public void onPostTweetTaskSuccess(Tweet tweet) {
+							asyncTaskEventHandler.dismiss();
+							AllInOneActivity.tweetsListRefresh();
+							finish();
+						}
+						
+						@Override
+						public void onPostTweetTaskFailure() {
+							asyncTaskEventHandler.dismiss();
+							Log.e(TAG, "Posting tweet failed");
+						}
+						
+						@Override
+						public void onPostTweetTaskCancelled() {
+							asyncTaskEventHandler.dismiss();
 							
 						}
-					}, false);
+					}).execute();
 				} 
 				catch (MalformedURLException e) {
 					// TODO Auto-generated catch block

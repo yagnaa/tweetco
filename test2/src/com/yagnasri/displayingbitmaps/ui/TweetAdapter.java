@@ -529,6 +529,10 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		},false);
 	}
 
+	public void refresh()
+	{
+		mNewPageLoader.onScrollNext();
+	}
 
 	//TODO this has to be moved to a separate class
 	private class PageLoader extends NewPageLoader

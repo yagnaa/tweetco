@@ -81,6 +81,8 @@ public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity
 							public void onAddAccountTaskSuccess(Uri accountUri) 
 							{
 								asyncTaskEventHandler.dismiss();
+								
+								TweetCommonData.mClient = mobileServiceClient;
 
 								new Thread(new Runnable() {
 

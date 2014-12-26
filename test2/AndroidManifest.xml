@@ -8,6 +8,15 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <permission
+        android:name="com.tweetco.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.tweetco.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="19" />
@@ -34,18 +43,16 @@
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="sensor" >
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.UserProfileFragment"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="sensor" >
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.LeaderboardActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="sensor" ></activity>
-        
+            android:screenOrientation="sensor" >
+        </activity>
         <activity
             android:name="com.tweetco.activities.FTUActivity"
             android:screenOrientation="portrait"
@@ -61,10 +68,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
-        
-        
-        <provider android:name="com.tweetco.provider.TweetCoProvider" android:authorities="com.tweetco.provider" android:exported="false"></provider>
-        
+
+        <provider
+            android:name="com.tweetco.provider.TweetCoProvider"
+            android:authorities="com.tweetco.provider"
+            android:exported="false" >
+        </provider>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.tweetco.fileprovider"
@@ -75,7 +84,15 @@
                 android:resource="@xml/files_path" />
         </provider>
 
+        <receiver
+            android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
+                <category android:name="com.tweetco" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

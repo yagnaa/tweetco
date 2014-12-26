@@ -65,7 +65,7 @@ public class TrendingFragment extends ListFragment
 	
 	private void loadTrendingTags()
 	{
-		MobileServiceClient mClient = AllInOneActivity.mClient;
+		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
 		mClient.invokeApi(ApiInfo.TRENDING, obj, new ApiJsonOperationCallback() {
 			

@@ -85,7 +85,7 @@ public  class TweetUserLoader
 
 	public static class TweetUserAsyncTask extends AsyncTask<Void, Void, TweetUser>
 	{
-		MobileServiceClient mClient = AllInOneActivity.mClient;
+		MobileServiceClient mClient = TweetCommonData.mClient;
 		String mUserForWhomDataIsBeingLoaded = null;
 		TweetAdapter adapter = null;
 

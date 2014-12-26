@@ -473,7 +473,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 	public void upVote(final View upvoteView,final String requestingUser,int iterator,String tweetOwner)
 	{
-		MobileServiceClient mClient = AllInOneActivity.mClient;
+		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
 		obj.addProperty(ApiInfo.kIteratorKey, iterator);
@@ -500,7 +500,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 	public void bookmark(final View bookmarkView,final String requestingUser,int iterator,String tweetOwner)
 	{
-		MobileServiceClient mClient = AllInOneActivity.mClient;
+		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
 		obj.addProperty(ApiInfo.kIteratorKey, iterator);
@@ -544,7 +544,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		public PageLoader(Context context,TweetAdapter tweetAdapter)
 		{
 			mContext = context;
-			mClient = AllInOneActivity.mClient;
+			mClient = TweetCommonData.mClient;
 		}
 
 		@Override

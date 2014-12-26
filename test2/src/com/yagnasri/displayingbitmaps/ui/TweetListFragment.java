@@ -33,12 +33,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.tweetco.R;
@@ -46,6 +48,7 @@ import com.tweetco.activities.PostTweetActivity;
 import com.tweetco.activities.QuickReturnListView;
 import com.tweetco.activities.UserProfileFragment;
 import com.tweetco.tweets.TweetCommonData;
+import com.tweetco.utility.UiUtility;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
 import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
@@ -216,8 +219,14 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 
 		final View v = inflater.inflate(R.layout.tweetlist, container, false);
+		
 
 		mQuickReturnView = (LinearLayout) v.findViewById(R.id.footer);
+		if(getArguments().getBoolean("hideFooter", false))
+		{
+			mQuickReturnView.setVisibility(View.GONE);
+			
+		}
 		mListView = (QuickReturnListView) v.findViewById(R.id.listView);
 		mListView.setAdapter(mAdapter);
 
@@ -425,7 +434,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 		@Override
 		public boolean onDown(MotionEvent event) { 
-			Log.d(DEBUG_TAG,"onDown: " + event.toString()); 
+			if(event != null)
+			{
+				Log.d(DEBUG_TAG,"onDown: " + event.toString()); 
+			}
+			
 			return true;
 		}
 
@@ -434,14 +447,22 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				float velocityX, float velocityY) {
 			mQuickReturnView.setTranslationY(mQuickReturnHeight);
 			mState = STATE_OFFSCREEN;
-			Log.d(DEBUG_TAG, "onFling: " + event1.toString()+event2.toString());
+			if(event1 != null && event2 != null)
+			{
+				Log.d(DEBUG_TAG, "onFling: " + event1.toString()+event2.toString());
+			}
 			return true;
 		}
 
 		@Override
 		public boolean onScroll(MotionEvent event1, MotionEvent event2,
-				float distanceX, float distanceY) {
-			Log.d(DEBUG_TAG, "onFling: " + event1.toString()+event2.toString());
+				float distanceX, float distanceY) 
+		{
+			if(event1 != null && event2 != null)
+			{
+				Log.d(DEBUG_TAG, "onScroll: " + event1.toString()+event2.toString());
+			}
+
 			return false;
 		}
 	}

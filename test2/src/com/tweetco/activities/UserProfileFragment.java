@@ -62,18 +62,18 @@ public class UserProfileFragment extends FragmentActivity
     			followersCount = user.followers.split(";").length - 1;
     		}
     		mFollowerCount.setText(String.valueOf(followersCount));
-    		
-    		if(UiUtility.getView(this, R.id.tweetsListFragmentContainer) != null)
-    		{
-    			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                TweetListFragment tweetListFragment = new TweetListFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString(TweetListFragment.USERNAME, mUserName);
-                tweetListFragment.setArguments(bundle);
-                ft.add(R.id.tweetsListFragmentContainer, tweetListFragment);
-                ft.commit();
-    		}
-    		
     	}
+    	
+    	if(UiUtility.getView(this, R.id.tweetsListFragmentContainer) != null)
+		{
+			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            TweetListFragment tweetListFragment = new TweetListFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(TweetListFragment.USERNAME, mUserName);
+            bundle.putBoolean("hideFooter", true);
+            tweetListFragment.setArguments(bundle);
+            ft.replace(R.id.tweetsListFragmentContainer, tweetListFragment);
+            ft.commit();
+		}
     }
 }

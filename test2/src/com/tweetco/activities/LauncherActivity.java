@@ -50,13 +50,13 @@ public class LauncherActivity extends TweetCoBaseActivity
 								TweetCommonData.mClient = mobileServiceClient;
 								TweetCommonData.setAccount(account);
 								startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
+								finish();
 							} 
 							catch (MalformedURLException e) 
 							{
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-
 						}
 					}
 				} catch (InterruptedException e) {

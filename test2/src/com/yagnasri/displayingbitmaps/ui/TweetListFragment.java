@@ -17,9 +17,6 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -36,14 +33,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.tweetco.R;
@@ -51,7 +46,7 @@ import com.tweetco.activities.PostTweetActivity;
 import com.tweetco.activities.QuickReturnListView;
 import com.tweetco.activities.UserProfileFragment;
 import com.tweetco.tweets.TweetCommonData;
-import com.tweetco.utility.UiUtility;
+import com.yagnasri.dao.Tweet;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
 import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;

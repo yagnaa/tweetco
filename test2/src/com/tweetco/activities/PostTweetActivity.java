@@ -29,13 +29,13 @@ import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ClientHelper;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
-import com.yagnasri.displayingbitmaps.ui.Tweet;
+import com.yagnasri.dao.Tweet;
 
 public class PostTweetActivity extends TweetCoBaseActivity 
 {
 	private final static String TAG = "PostTweetActivity";
 	private static final int TWEET_MAX_CHARS = 140;
+
 	private static final int REQUEST_CODE_IMAGE_SELECT = 100;
 	private static final int REQUEST_CODE_IMAGE_CAPTURE = 101;
 	
@@ -111,9 +111,12 @@ public class PostTweetActivity extends TweetCoBaseActivity
 					new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() {
 						
 						@Override
-						public void onPostTweetTaskSuccess(Tweet tweet) {
+						public void onPostTweetTaskSuccess(Tweet tweet) 
+						{
 							asyncTaskEventHandler.dismiss();
-							AllInOneActivity.tweetsListRefresh();
+							Intent resultIntent = new Intent();
+							resultIntent.putExtra(Constants.POSTED_TWEET, tweet);
+							PostTweetActivity.this.setResult(RESULT_OK, resultIntent);
 							finish();
 						}
 						

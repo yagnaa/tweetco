@@ -8,15 +8,12 @@ import java.util.List;
 import org.apache.http.client.methods.HttpGet;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
@@ -24,13 +21,9 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
-import com.tweetco.asynctasks.AddAccountTask.AddAccountTaskCompletionCallback;
-import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.utility.ClientHelper;
 import com.yagnasri.dao.LeaderboardUser;
-import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
-import com.yagnasri.displayingbitmaps.ui.Tweet;
 
 public class GetLeaderboardTask extends AsyncTask <Void, Void, List<LeaderboardUser>>
 {

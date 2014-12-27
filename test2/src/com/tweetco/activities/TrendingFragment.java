@@ -1,22 +1,17 @@
 package com.tweetco.activities;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -25,18 +20,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 import com.tweetco.R;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
-import com.yagnasri.displayingbitmaps.ui.Tweet;
-import com.yagnasri.displayingbitmaps.ui.TweetUtils;
-import com.yagnasri.displayingbitmaps.util.AsyncTask;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 
 public class TrendingFragment extends ListFragment
 {

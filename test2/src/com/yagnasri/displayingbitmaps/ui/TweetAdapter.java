@@ -31,6 +31,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
 import com.tweetco.tweets.TweetCommonData;
+import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 

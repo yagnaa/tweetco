@@ -10,8 +10,8 @@ import android.text.TextUtils;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.tweetco.database.dao.Account;
+import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.Tweet;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 
 public class TweetCommonData 

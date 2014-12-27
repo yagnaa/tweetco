@@ -1,21 +1,12 @@
 package com.tweetco.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ListView;
 
 import com.tweetco.R;
 import com.tweetco.activities.adapter.LeaderboardAdapter;
-import com.tweetco.activities.adapter.LeaderboardAdapter.OnProfilePicClick;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
-import com.tweetco.asynctasks.GetLeaderboardTask;
-import com.tweetco.asynctasks.GetLeaderboardTask.GetLeaderboardTaskCompletionCallback;
-import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.dao.LeaderboardUser;
-import com.yagnasri.displayingbitmaps.ui.Tweet;
 
 public class LeaderboardActivity extends TweetCoBaseActivity 
 {

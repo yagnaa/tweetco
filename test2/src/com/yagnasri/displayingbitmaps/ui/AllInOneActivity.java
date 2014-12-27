@@ -1,7 +1,6 @@
 package com.yagnasri.displayingbitmaps.ui;
-import java.net.MalformedURLException;
-
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -11,15 +10,17 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 import com.tweetco.R;
+import com.tweetco.activities.Constants;
 import com.tweetco.notifications.PushNotificationHandler;
+import com.yagnasri.dao.Tweet;
 
 
 
 public class AllInOneActivity extends FragmentActivity
 {
+
 	public static final String SENDER_ID = "721884328218";
 	
 	
@@ -29,15 +30,19 @@ public class AllInOneActivity extends FragmentActivity
 	
 	private Handler handler;
 	
-	private static final String TAG = "ImageGridActivity";
+	private static final String TAG = "AllInOneActivity";
 	
 	private ViewPager mViewPager;
 	private static CustomFragmentPagerAdapter mPagerAdapter = null;
+	
+	private Controller mController = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		mController = new Controller();
 
 		setContentView(R.layout.all_in_one_activity_layout);
 		
@@ -93,7 +98,8 @@ public class AllInOneActivity extends FragmentActivity
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onResume() 
+	{
 		// TODO Auto-generated method stub
 		super.onResume();
 
@@ -104,10 +110,39 @@ public class AllInOneActivity extends FragmentActivity
 		// TODO Auto-generated method stub
 		super.onPause();
 	}
+//	
+//	public static void tweetsListRefresh()
+//	{
+//		mController.
+//	}
 	
-	public static void tweetsListRefresh()
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		((TweetListFragment)mPagerAdapter.getItem(0)).refresh();
+		if(requestCode == Constants.POSTED_TWEET_REQUEST_CODE)
+		{
+			if(resultCode == RESULT_OK)
+			{
+				Tweet tweet =  data.getParcelableExtra(Constants.POSTED_TWEET);
+				mController.tweetsListRefresh(tweet);
+			}
+		}
+		
+	
+	}
+	
+	/**
+	 * All the actions that has to be done on the fragments will be done here.
+	 *
+	 */
+	public class Controller
+	{
+		public void tweetsListRefresh(Tweet tweet)
+		{
+			//Ideally we should call mPagerAdapter.getFragmentByClass(classname);
+			TweetListFragment twwetListFragment = (TweetListFragment)mPagerAdapter.getRegisteredFragment(0);
+			twwetListFragment.refresh();
+		}
 	}
 	
 }

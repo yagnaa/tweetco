@@ -1,15 +1,15 @@
 package com.yagnasri.displayingbitmaps.ui;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.ref.WeakReference;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.SparseArray;
+import android.view.ViewGroup;
 
-import com.tweetco.TweetCo;
 import com.tweetco.activities.LeaderboardFragment;
 import com.tweetco.activities.TrendingFragment;
 import com.tweetco.activities.UsersListFragment;
@@ -19,25 +19,11 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 {
 	public static final int FRAGMENT_COUNT = 4;
 	
-
-	private Context m_Context = null;
-	private Map<Integer, Fragment> mFragmentsMap;
+	 SparseArray<WeakReference<Fragment>> mFragmentsMap = new SparseArray<WeakReference<Fragment>>();
 
 	public CustomFragmentPagerAdapter(Context context, FragmentManager fm)
 	{
 		super(fm);
-		m_Context = context.getApplicationContext();
-		mFragmentsMap = new HashMap<Integer, Fragment>();
-		
-		Fragment fragment = new TweetListFragment();
-		Bundle bundle = new Bundle();
-        bundle.putString(TweetListFragment.USERNAME, TweetCommonData.getUserName());
-        fragment.setArguments(bundle);
-        mFragmentsMap.put(0, fragment);
-        
-        mFragmentsMap.put(1, new LeaderboardFragment());
-        mFragmentsMap.put(2, new UsersListFragment());
-        mFragmentsMap.put(3, new TrendingFragment());
 	}
 	
 	@Override
@@ -70,12 +56,25 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 		return null;
 	}
 
+	
 	@Override
 	public Fragment getItem(int i)
 	{
-		if(i <= 3)
+		switch(i)
 		{
-			return mFragmentsMap.get(i);
+		case 0:
+			Fragment fragment = new TweetListFragment();
+			Bundle bundle = new Bundle();
+            bundle.putString(TweetListFragment.USERNAME, TweetCommonData.getUserName());
+            fragment.setArguments(bundle);
+			return fragment;
+		case 1:
+			return new LeaderboardFragment();
+		case 2:	
+			fragment = new UsersListFragment();
+			return fragment;
+		case 3:
+			return new TrendingFragment();
 		}
 		return null;
 	}
@@ -85,5 +84,25 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 	{
 		return FRAGMENT_COUNT;
 	}
+	
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Fragment fragment = (Fragment) super.instantiateItem(container, position);
+        mFragmentsMap.put(position, new WeakReference<Fragment>(fragment));
+        return fragment;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) 
+    {
+    	mFragmentsMap.remove(position);
+        super.destroyItem(container, position, object);
+    }
+
+    public Fragment getRegisteredFragment(int position) 
+    {
+    	WeakReference<Fragment> weakReference = mFragmentsMap.get(position);
+        return weakReference.get();
+    }
 
 }

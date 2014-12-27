@@ -19,13 +19,12 @@ import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallba
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
-import com.yagnasri.displayingbitmaps.ui.Tweet;
 
-public class EditProfileTask extends AsyncTask<Void, Void, Tweet> 
+public class EditProfileTask extends AsyncTask<Void, Void, Void> 
 {
 	public static interface EditProfileTaskCompletionCallback
 	{
-		public void onEditProfileTaskSuccess(Tweet tweet);
+		public void onEditProfileTaskSuccess();
 		public void onEditProfileTaskFailure ();
 		public void onEditProfileTaskCancelled();
 	}
@@ -35,7 +34,7 @@ public class EditProfileTask extends AsyncTask<Void, Void, Tweet>
 	private UIEventSink m_uicallback;
 	private Context mContext;
 	private EditProfileTaskParams mParams;
-	private Tweet mTweet = null;
+	private boolean mbSuccess = false;
 	
 	public EditProfileTask(Context context, EditProfileTaskParams params, UIEventSink uicallback, EditProfileTaskCompletionCallback completioncallback)
 	{
@@ -64,7 +63,7 @@ public class EditProfileTask extends AsyncTask<Void, Void, Tweet>
 	}
 	
 	@Override
-	protected Tweet doInBackground(Void... params) 
+	protected Void doInBackground(Void... params) 
 	{
 		MobileServiceClient client = TweetCommonData.mClient;
 			JsonObject element = new JsonObject();
@@ -102,25 +101,25 @@ public class EditProfileTask extends AsyncTask<Void, Void, Tweet>
 					if(exception == null)
 					{
 						Log.d("EditProfile", "Profile edit saved");
-						
+						mbSuccess = true;
 					}
 					else
 					{
 						Log.e("EditProfile", "Profile edit save failed");
+						mbSuccess = false;
 					}
 					
 				}
 			}, true);
-		
-		return mTweet;
+		return null;
 	}
 
 	@Override
-	protected void onPostExecute(Tweet tweet)
+	protected void onPostExecute(Void value)
 	{
-		if(tweet != null)
+		if(mbSuccess)
 		{
-			m_completioncallback.onEditProfileTaskSuccess(tweet);
+			m_completioncallback.onEditProfileTaskSuccess();
 		}
 		else
 		{

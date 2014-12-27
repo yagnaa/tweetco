@@ -25,8 +25,8 @@ import com.tweetco.asynctasks.EditProfileTaskParams;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
+import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.Tweet;
 
 public class EditProfileActivity extends TweetCoBaseActivity 
 {
@@ -98,7 +98,7 @@ public class EditProfileActivity extends TweetCoBaseActivity
 				new EditProfileTask(getApplicationContext(), params, asyncTaskEventHandler, new EditProfileTaskCompletionCallback() {
 					
 					@Override
-					public void onEditProfileTaskSuccess(Tweet tweet) 
+					public void onEditProfileTaskSuccess() 
 					{
 						Log.d("EditProfile", "Success");
 						finish();

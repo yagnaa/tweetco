@@ -1,8 +1,6 @@
 package com.tweetco.utility;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import android.net.Uri;
 
@@ -26,16 +24,6 @@ public class AttachmentHelper
 	
 	public static void deleteAttachment(Uri uri)
 	{
-		try {
-			File file = new File(new URI(uri.toString()));
-
-			if(file.exists() && file.isFile())
-			{
-				file.delete();
-			}
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		TweetCo.mContext.getContentResolver().delete(uri, null, null);
 	}
 }

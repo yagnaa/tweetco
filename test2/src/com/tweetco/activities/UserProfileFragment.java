@@ -1,14 +1,18 @@
 package com.tweetco.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tweetco.R;
-import com.tweetco.TweetCo;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.TweetUser;
@@ -24,6 +28,7 @@ public class UserProfileFragment extends FragmentActivity
 	private TextView mUserProfileHandleName = null;
 	private TextView mFollowerCount = null;
 	private TextView mFolloweeCount = null;
+	private Button mEditProfileButton = null;
 	/**
      * Empty constructor as per the Fragment documentation
      */
@@ -62,6 +67,21 @@ public class UserProfileFragment extends FragmentActivity
     			followersCount = user.followers.split(";").length - 1;
     		}
     		mFollowerCount.setText(String.valueOf(followersCount));
+    		
+    		if(mUserName.equals((TweetCommonData.getUserName())))
+    		{
+    			LinearLayout layout = UiUtility.getView(this, R.id.editProfileButtonLayout);
+    			layout.setVisibility(View.VISIBLE);
+    			mEditProfileButton = UiUtility.getView(this, R.id.editProfileButton);
+    			mEditProfileButton.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) 
+					{
+						startActivity(new Intent(getApplicationContext(), EditProfileActivity.class));
+					}
+				});
+    		}
     	}
     	
     	if(UiUtility.getView(this, R.id.tweetsListFragmentContainer) != null)

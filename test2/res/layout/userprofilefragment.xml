@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_weight="0.3"
-        android:orientation="vertical" >
+        android:orientation="vertical" android:background="@color/selector_blue" >
 
         <FrameLayout
             android:layout_width="fill_parent"
@@ -103,6 +103,12 @@
                     android:hint="0" />
             </LinearLayout>
         </LinearLayout>
+            
+    </LinearLayout>
+    
+    <LinearLayout android:id="@+id/editProfileButtonLayout" android:background="@color/selector_blue" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	<Button android:id="@+id/editProfileButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Edit Profile" android:paddingBottom="5dp" />
+                
     </LinearLayout>
 
     <FrameLayout

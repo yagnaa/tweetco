@@ -39,6 +39,8 @@ public class ApiInfo
 	public static final String LEADERBOARD = "getleaderboard";
 	public static final String GET_TWEETS_FOR_USER = "gettweetsforuser";
 	public static final String POST_TWEET = "PostTweet";
+	public static final String UPDATE_USER_IMAGE = "updateuserimage";
+	
 	
 	public static final String EMBED_API_KEY = "17f6d3df6522482081d800746a06987a";
 	

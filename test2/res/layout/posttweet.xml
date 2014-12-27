@@ -11,7 +11,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
     
-    <EditText android:id="@+id/tweetContent" android:layout_height="150dp" android:layout_width="0dip" android:layout_weight="1" android:hint="What's on your mind?"/>
+    <MultiAutoCompleteTextView android:id="@+id/tweetContent"  android:layout_height="150dp" android:layout_width="0dip" android:layout_weight="1" android:hint="What's on your mind?"/>
     <TextView android:id="@+id/charCount" android:layout_height="wrap_content" android:layout_width="wrap_content" android:hint="140"/>
         </LinearLayout>
         <ImageView android:id="@+id/tweetImaage" android:layout_height="wrap_content" android:layout_width="fill_parent"/>    

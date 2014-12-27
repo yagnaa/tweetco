@@ -142,19 +142,19 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) 
 			{
-				mCharCountInt = TWEET_MAX_CHARS - count;
+				int decrementValue = (before > 0)? -before: count;
+				mCharCountInt = mCharCountInt - decrementValue;
 				mCharCount.setText(String.valueOf(mCharCountInt));
 				if(mCharCountInt < 0)
 				{
 					mSendButton.setEnabled(false);
+					mCharCount.setTextColor(Color.RED);
 				}
 				else
 				{
 					mSendButton.setEnabled(true);
+					mCharCount.setTextColor(Color.BLACK);
 				}
-				
-				
-				
 			}
 			
 			@Override

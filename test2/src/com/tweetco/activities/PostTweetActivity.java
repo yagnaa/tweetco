@@ -3,20 +3,31 @@ package com.tweetco.activities;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MultiAutoCompleteTextView;
+import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import android.widget.TextView;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
@@ -29,6 +40,7 @@ import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ClientHelper;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
+import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 import com.yagnasri.displayingbitmaps.ui.Tweet;
 
@@ -39,12 +51,13 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	private static final int REQUEST_CODE_IMAGE_SELECT = 100;
 	private static final int REQUEST_CODE_IMAGE_CAPTURE = 101;
 	
-	private EditText mTweetContent;
+	private MultiAutoCompleteTextView mTweetContent;
 	private TextView mCharCount;
 	private Button mSendButton;
 	private Button mImageGalleryButton;
 	private Button mImageCameraButton;
 	private ImageView mTweetImage;
+	private String[] mUsernames;
 	
 	private int mCharCountInt = TWEET_MAX_CHARS;
 	AsyncTaskEventHandler asyncTaskEventHandler = null;
@@ -62,6 +75,65 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mImageCameraButton = UiUtility.getView(this, R.id.imageCameraButton);
 		mTweetImage = UiUtility.getView(this, R.id.tweetImaage);
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Posting...");
+		mUsernames = getUsernames(TweetCommonData.tweetUsers.values().iterator());
+		mTweetContent.setAdapter(new ArrayAdapter<String>(PostTweetActivity.this,
+                android.R.layout.simple_dropdown_item_1line, mUsernames));
+		mTweetContent.setThreshold(1);
+		
+		//From http://stackoverflow.com/questions/12691679/android-autocomplete-textview-similar-to-the-facebook-app
+		//Create a new Tokenizer which will get text after '@' and terminate on ' '
+		mTweetContent.setTokenizer(new Tokenizer() {
+
+		  @Override
+		  public CharSequence terminateToken(CharSequence text) {
+		    int i = text.length();
+
+		    while (i > 0 && text.charAt(i - 1) == ' ') {
+		      i--;
+		    }
+
+		    if (i > 0 && text.charAt(i - 1) == ' ') {
+		      return text;
+		    } else {
+		        SpannableString sp = new SpannableString(text + " ");
+		        sp.setSpan(new ForegroundColorSpan(Color.BLUE), 0, sp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        return sp;
+		      
+		    }
+		  }
+
+		  @Override
+		  public int findTokenStart(CharSequence text, int cursor) {
+		    int i = cursor;
+
+		    while (i > 0 && text.charAt(i - 1) != '@') {
+		      i--;
+		    }
+
+		    //Check if token really started with @, else we don't have a valid token
+		    if (i < 1 || text.charAt(i - 1) != '@') {
+		      return cursor;
+		    }
+
+		    return i;
+		  }
+
+		  @Override
+		  public int findTokenEnd(CharSequence text, int cursor) {
+		    int i = cursor;
+		    int len = text.length();
+
+		    while (i < len) {
+		      if (text.charAt(i) == ' ') {
+		        return i;
+		      } else {
+		        i++;
+		      }
+		    }
+
+		    return len;
+		  }
+		});
 		
 		mCharCount.setText(String.valueOf(mCharCountInt));
 		
@@ -80,6 +152,9 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				{
 					mSendButton.setEnabled(true);
 				}
+				
+				
+				
 			}
 			
 			@Override
@@ -209,5 +284,21 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			Log.i("PostTweet","onActivityResult result code: " + resultCode + " for request code: " + requestCode);
 		}
 
+	}
+	
+	public static String[] getUsernames(Iterator<TweetUser> tweetUsers)
+	{
+		List<String> usernames = new ArrayList<String>();
+		usernames.add("feedback");
+		
+		for (TweetUser user; tweetUsers.hasNext(); ) 
+		{
+			user = tweetUsers.next();
+			usernames.add(user.username);
+		}
+		
+		String[] usernamesList = new String[usernames.size()];
+		
+		return usernames.toArray(usernamesList);
 	}
 }

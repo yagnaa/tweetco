@@ -80,6 +80,18 @@ public class ImageResizer extends ImageWorker {
     public void setImageSize(int size) {
         setImageSize(size, size);
     }
+    
+    @Override
+    protected int getReqWidth()
+    {
+    	return mImageWidth;
+    }
+    
+    @Override
+    protected  int getReqHeight()
+    {
+    	return mImageHeight;
+    }
 
     /**
      * The main processing method. This happens in a background task. In this case we are just
@@ -127,7 +139,7 @@ public class ImageResizer extends ImageWorker {
 
         // If we're running on Honeycomb or newer, try to use inBitmap
         if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
+ //           addInBitmapOptions(options, cache);
         }
 
         // Decode bitmap with inSampleSize set
@@ -158,7 +170,7 @@ public class ImageResizer extends ImageWorker {
 
         // If we're running on Honeycomb or newer, try to use inBitmap
         if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
+ //           addInBitmapOptions(options, cache);
         }
 
         // Decode bitmap with inSampleSize set
@@ -192,7 +204,7 @@ public class ImageResizer extends ImageWorker {
 
         // If we're running on Honeycomb or newer, try to use inBitmap
         if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
+ //           addInBitmapOptions(options, cache);
         }
 
         return BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
@@ -254,15 +266,15 @@ public class ImageResizer extends ImageWorker {
             // end up being too large to fit comfortably in memory, so we should
             // be more aggressive with sample down the image (=larger inSampleSize).
 
-            long totalPixels = width * height / inSampleSize;
-
-            // Anything more than 2x the requested pixels we'll sample down further
-            final long totalReqPixelsCap = reqWidth * reqHeight * 2;
-
-            while (totalPixels > totalReqPixelsCap) {
-                inSampleSize *= 2;
-                totalPixels /= 2;
-            }
+//            long totalPixels = width * height / inSampleSize;
+//
+//            // Anything more than 2x the requested pixels we'll sample down further
+//            final long totalReqPixelsCap = reqWidth * reqHeight * 2;
+//
+//            while (totalPixels > totalReqPixelsCap) {
+//                inSampleSize *= 2;
+//                totalPixels /= 2;
+//            }
         }
         return inSampleSize;
         // END_INCLUDE (calculate_sample_size)

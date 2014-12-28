@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -34,6 +38,7 @@ import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
+import com.yagnasri.displayingbitmaps.util.Utils;
 
 
 
@@ -173,12 +178,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	@Override
 	public int getCount() 
 	{
-		// If columns have yet to be determined, return no items
-		//        if (getNumColumns() == 0) {
-		//            return 0;
-		//        }
-
-		// Size + number of columns for top empty row
 		return TweetCommonData.tweetsList.size();
 	}
 
@@ -212,6 +211,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	@Override
 	public View getView(int position, View convertView, ViewGroup container) 
 	{
+		//Log.d(TAG, "getView called for position ="+position +" convertView="+(convertView!=null));
 		// Now handle the main ImageView thumbnails
 		ImageView imageView;
 		if (convertView == null) { // if it's not recycled, instantiate and initialize
@@ -312,16 +312,11 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 		}
 
-		//        // Check the height matches our calculated column width
-		//        if (imageView.getLayoutParams().height != mItemHeight) {
-		//            imageView.setLayoutParams(mImageViewLayoutParams);
-		//        }
-
 		// Finally load the image asynchronously into the ImageView, this also takes care of
 		// setting a placeholder image while the background thread runs
 		if(tweeter!=null)
 		{
-			mImageFetcher.loadImage(tweeter.profileimageurl, imageView);
+			loadProfileImage(tweeter,imageView);
 		}
 
 
@@ -329,6 +324,20 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 		return convertView;
 		//END_INCLUDE(load_gridview_item)
+	}
+	
+	private void loadProfileImage(TweetUser tweeter,ImageView imageView)
+	{
+		Log.d(TAG,"tweeter.profileimageurl="+tweeter.profileimageurl+ "   imageView="+imageView.toString());
+		if(TextUtils.isEmpty(tweeter.profileimageurl))
+		{
+			String initials = Utils.getInitials(tweeter.displayname);
+			mImageFetcher.loadImage(initials, imageView);
+		}
+		else
+		{
+			mImageFetcher.loadImage(tweeter.profileimageurl, imageView);
+		}
 	}
 
 	public void refreshAdapter()
@@ -367,14 +376,8 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	 *
 	 * @param height
 	 */
-	public void setItemHeight(int height) {
-		//        if (height == mItemHeight) {
-		//            return;
-		//        }
-		//        mItemHeight = height;
-		//        mImageViewLayoutParams =
-		//                new GridView.LayoutParams(LayoutParams.MATCH_PARENT, mItemHeight);
-		//        mImageFetcher.setImageSize(height);
+	public void setItemHeight(int height) 
+	{
 		notifyDataSetChanged();
 	}
 
@@ -447,7 +450,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		// In scroll-to-bottom-to-load mode, when the sum of first visible position and visible count equals the total number
 		// of items in the adapter it reaches the bottom
 		int bufferItemsToShow = getCount() -firstVisibleItem + visibleItemCount;
-		Log.d(TAG, "There are "+bufferItemsToShow+" items to show in the adapter.");
+	//	Log.d(TAG, "There are "+bufferItemsToShow+" items to show in the adapter.");
 		if (bufferItemsToShow < TWEET_LOAD_BUFFER  && canScroll) {
 			onScrollNext();
 		}

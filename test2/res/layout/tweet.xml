@@ -16,20 +16,28 @@
 -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/com.tweetco"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="3dip"
     android:paddingLeft="6dip"
     android:paddingRight="6dip" >
 
-    <com.yagnasri.displayingbitmaps.ui.RecyclingImageView
+    <com.yagnasri.displayingbitmaps.ui.RoundedImageView
         android:id="@+id/imageView1"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_centerVertical="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
         android:scaleType="fitXY"
-        android:src="@drawable/batman" />
+       custom:selector="true"
+       custom:selector_color="#44FFBB33"
+        custom:selector_stroke_color="#88FF8800"
+        custom:selector_stroke_width="2dp" />
 
     <LinearLayout
         android:id="@+id/tweet_user_info"

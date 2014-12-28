@@ -19,6 +19,7 @@ package com.yagnasri.displayingbitmaps.ui;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -114,7 +116,10 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
 
 		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
-		TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), 60,60, true);
+		Resources r = getResources();
+		int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, r.getDisplayMetrics());
+		
+		TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), px,px, true);
 		TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
 		TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 		mAdapter = new TweetAdapter(getActivity(), mUsername, TweetCommonData.mImageFetcher, new OnProfilePicClick() {

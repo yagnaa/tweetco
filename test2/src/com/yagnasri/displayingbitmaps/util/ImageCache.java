@@ -145,8 +145,8 @@ public class ImageCache {
             // the size would need to be precise, from KitKat onward the size would just need to
             // be the upper bound (due to changes in how inBitmap can re-use bitmaps).
             if (Utils.hasHoneycomb()) {
-                mReusableBitmaps =
-                        Collections.synchronizedSet(new HashSet<SoftReference<Bitmap>>());
+   //             mReusableBitmaps =
+   //                     Collections.synchronizedSet(new HashSet<SoftReference<Bitmap>>());
             }
 
             mMemoryCache = new LruCache<String, BitmapDrawable>(mCacheParams.memCacheSize) {
@@ -167,7 +167,7 @@ public class ImageCache {
                         if (Utils.hasHoneycomb()) {
                             // We're running on Honeycomb or later, so add the bitmap
                             // to a SoftReference set for possible use with inBitmap later
-                            mReusableBitmaps.add(new SoftReference<Bitmap>(oldValue.getBitmap()));
+   //                         mReusableBitmaps.add(new SoftReference<Bitmap>(oldValue.getBitmap()));
                         }
                     }
                 }
@@ -311,7 +311,7 @@ public class ImageCache {
      * @param data Unique identifier for which item to get
      * @return The bitmap if found in cache, null otherwise
      */
-    public Bitmap getBitmapFromDiskCache(String data) {
+    public Bitmap getBitmapFromDiskCache(String data,int reqWidth, int reqHeight) {
         //BEGIN_INCLUDE(get_bitmap_from_disk_cache)
         final String key = hashKeyForDisk(data);
         Bitmap bitmap = null;
@@ -337,7 +337,7 @@ public class ImageCache {
                             // Decode bitmap, but we don't want to sample so give
                             // MAX_VALUE as the target dimensions
                             bitmap = ImageResizer.decodeSampledBitmapFromDescriptor(
-                                    fd, Integer.MAX_VALUE, Integer.MAX_VALUE, this);
+                                    fd, reqWidth, reqHeight, this);
                         }
                     }
                 } catch (final IOException e) {

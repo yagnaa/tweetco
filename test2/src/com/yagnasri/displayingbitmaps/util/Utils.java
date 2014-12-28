@@ -16,10 +16,26 @@
 
 package com.yagnasri.displayingbitmaps.util;
 
-import android.annotation.TargetApi;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Locale;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Align;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.os.StrictMode;
+import android.text.TextUtils;
+
+import com.google.common.base.CharMatcher;
+import com.tweetco.R;
 
 /**
  * Class containing some static utility methods.
@@ -76,4 +92,152 @@ public class Utils {
     public static boolean hasKitKat() {
         return Build.VERSION.SDK_INT >= VERSION_CODES.KITKAT;
     }
+    
+    
+    public static Bitmap getRoundedBitmap(Bitmap bitmap) 
+    {
+    	Bitmap output = null;
+    	
+    	if (bitmap != null) {
+    		output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            final Canvas canvas = new Canvas(output);
+         
+            final int color = Color.RED;
+            final Paint paint = new Paint();
+            final Rect rect = new Rect(0, 0, bitmap.getWidth(),bitmap.getHeight());
+            final RectF rectF = new RectF(rect);
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawOval(rectF, paint);
+            paint.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, rect, rect, paint);
+    	}
+        
+        return output;
+    }
+    
+    public static Bitmap getInitialsBitmap(Context context,String initials)
+    {
+    	 int width = (int)context.getResources().getDimension(R.dimen.quick_contact_width);
+    	 int height = (int)context.getResources().getDimension(R.dimen.quick_contact_height);
+    	 final Bitmap output = Bitmap.createBitmap((int)width,(int)height, Bitmap.Config.ARGB_8888);
+         final Canvas canvas = new Canvas(output);
+      
+         final int color = Color.WHITE;
+         final Paint paint = new Paint();
+         paint.setAntiAlias(true);
+         canvas.drawARGB(255, 204, 204, 204);
+         paint.setColor(color);
+         paint.setTextAlign(Align.CENTER);
+         paint.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN));
+         int textSize = (int)context.getResources().getDimension(R.dimen.initials_textSize);
+         paint.setTextSize(textSize);
+         paint.setTypeface(Typeface.DEFAULT);
+         Rect bounds = new Rect();
+         paint.getTextBounds(initials, 0, initials.length(), bounds);
+         canvas.drawText(initials,width/2, (height+Math.abs(bounds.height()))/2, paint);
+         return output;
+    }
+    
+    
+    public static boolean isValidUrl(String data)
+    {
+    	boolean returnValue = false;
+        try {
+			final URL url = new URL(data);
+			returnValue = true;
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        return returnValue;
+    }
+    
+    public static boolean isValidInitials(String data)
+    {
+    	return true;
+    }
+    
+	public static String getInitials(String name)
+	{
+		String initials = "";
+		if ((name != null) && (name.length() > 0))
+		{
+			String firstName =  getFirstName(name);
+			String secondname = getSecondName(name);
+			CharMatcher az = CharMatcher.inRange('a', 'z');
+			CharMatcher AZ = CharMatcher.inRange('A', 'Z');
+			if(!TextUtils.isEmpty(firstName) && (az.matches(firstName.charAt(0)) || AZ.matches(firstName.charAt(0))))
+			{
+				if(!TextUtils.isEmpty(secondname))
+				{
+					initials = initials + firstName.charAt(0) + secondname.charAt(0);
+				}
+				
+			}		
+			return initials.toUpperCase(Locale.getDefault());
+		}
+		else
+		{
+			return initials;
+		}
+	}
+
+	private static String getSecondName(String name)
+	{
+		name = name.trim();
+    	int index = name.indexOf(",");
+    	if(index != -1)
+    	{
+    		return name.split(",")[0].trim();
+    	}
+    	else
+    	{
+    		String[] names = name.split(" ");
+    		int len = names.length;
+    		if(len > 1)
+    		{
+    			CharMatcher az = CharMatcher.inRange('a', 'z');
+    			CharMatcher AZ = CharMatcher.inRange('A', 'Z');
+    			for(int i = (len - 1); i > 0;i--)
+    			{
+    				if(!TextUtils.isEmpty(names[i]))
+    				{
+    					if(az.matches(names[i].charAt(0)) || AZ.matches(names[i].charAt(0)))
+    					{
+        					return names[i].trim();
+        				}
+    				}    				
+    			}
+    		}
+    		return "";
+    	}
+	}
+	
+    public static String getFirstName(String name)
+	{
+    	name = name.trim();
+    	int index = name.indexOf(",");
+    	if(index != -1)
+    	{
+    		String[] commaSeparated =  name.split(",");
+    		if(commaSeparated.length > 1)
+    		{
+    			String[] spaceSeparated = commaSeparated[1].trim().split(" ");
+    			return spaceSeparated[0].trim();
+    		}
+    		else
+    		{
+    			return commaSeparated[0].trim();
+    		}
+    	}
+    	else
+    	{
+    		return name.split(" ")[0].trim();
+    	}
+		
+	}
+    
+    
 }

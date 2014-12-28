@@ -16,8 +16,10 @@
 
 package com.yagnasri.displayingbitmaps.util;
 
+import java.io.FileDescriptor;
 import java.lang.ref.WeakReference;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -26,6 +28,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -51,6 +54,7 @@ public abstract class ImageWorker {
     private final Object mPauseWorkLock = new Object();
 
     protected Resources mResources;
+    protected Context mContext;
 
     private static final int MESSAGE_CLEAR = 0;
     private static final int MESSAGE_INIT_DISK_CACHE = 1;
@@ -58,6 +62,7 @@ public abstract class ImageWorker {
     private static final int MESSAGE_CLOSE = 3;
 
     protected ImageWorker(Context context) {
+    	mContext = context;
         mResources = context.getResources();
     }
 
@@ -168,6 +173,16 @@ public abstract class ImageWorker {
      * @return The processed bitmap
      */
     protected abstract Bitmap processBitmap(Object data);
+    
+    protected int getReqWidth()
+    {
+    	return Integer.MAX_VALUE;
+    }
+    
+    protected  int getReqHeight()
+    {
+    	return Integer.MAX_VALUE;
+    }
 
     /**
      * @return The {@link ImageCache} object currently being used by this ImageWorker.
@@ -274,7 +289,7 @@ public abstract class ImageWorker {
             // the cache
             if (mImageCache != null && !isCancelled() && getAttachedImageView() != null
                     && !mExitTasksEarly) {
-                bitmap = mImageCache.getBitmapFromDiskCache(dataString);
+                bitmap = mImageCache.getBitmapFromDiskCache(dataString,getReqWidth(), getReqHeight());
             }
 
             // If the bitmap was not found in the cache and this task has not been cancelled by
@@ -291,6 +306,8 @@ public abstract class ImageWorker {
             // here, if it was, and the thread is still running, we may as well add the processed
             // bitmap to our cache as it might be used again in the future
             if (bitmap != null) {
+            	//TODO we are already using a circular image view. So no need to convert the bitmap to circular
+            //	Bitmap circularBitmap = Utils.getRoundedBitmap(bitmap);
                 if (Utils.hasHoneycomb()) {
                     // Running on Honeycomb or newer, so wrap in a standard BitmapDrawable
                     drawable = new BitmapDrawable(mResources, bitmap);

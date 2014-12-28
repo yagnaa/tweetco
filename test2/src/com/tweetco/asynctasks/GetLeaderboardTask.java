@@ -21,7 +21,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
-import com.tweetco.utility.ClientHelper;
+import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.LeaderboardUser;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 
@@ -41,14 +41,14 @@ public class GetLeaderboardTask extends AsyncTask <Void, Void, List<LeaderboardU
 	private Activity mActivity;
 	private List<LeaderboardUser> result = null;
 
-	
+
 	public GetLeaderboardTask(Activity activity, UIEventSink uiCallback, GetLeaderboardTaskCompletionCallback callback)
 	{
 		mActivity = activity;
 		m_uicallback = uiCallback;
 		m_completioncallback = callback;
 	}
-	
+
 	@Override
 	protected void onPreExecute()
 	{
@@ -66,48 +66,44 @@ public class GetLeaderboardTask extends AsyncTask <Void, Void, List<LeaderboardU
 			}, true);
 		}
 	}
-	
+
 	@Override
 	protected List<LeaderboardUser> doInBackground(Void... arg0)
 	{
-		try 
+
+		MobileServiceClient mobileServiceClient = TweetCommonData.mClient;
+		mobileServiceClient.invokeApi(ApiInfo.LEADERBOARD, HttpGet.METHOD_NAME, new ArrayList<Pair<String, String>>(), new ApiJsonOperationCallback() 
 		{
-			MobileServiceClient mobileServiceClient = ClientHelper.getMobileClient(mActivity);
-			mobileServiceClient.invokeApi(ApiInfo.LEADERBOARD, HttpGet.METHOD_NAME, new ArrayList<Pair<String, String>>(), new ApiJsonOperationCallback() 
-			{
-				@Override
-				public void onCompleted(JsonElement arg0, Exception arg1, ServiceFilterResponse arg2) 
-				{					
-					if(arg1 == null)
+			@Override
+			public void onCompleted(JsonElement arg0, Exception arg1, ServiceFilterResponse arg2) 
+			{					
+				if(arg1 == null)
+				{
+					try
 					{
-						try
-						{
-							Gson gson = new Gson();
-							Type collectionType = new TypeToken<List<LeaderboardUser>>(){}.getType();
-							result = gson.fromJson(arg0, collectionType);
-						}
-						//TODO need to add this exception in all other places too.
-						catch(JsonSyntaxException exception)
-						{
-							exception.printStackTrace();
-							Log.e("TweetUserRunnable", "unable to parse tweetUser") ;
-						}
-													
+						Gson gson = new Gson();
+						Type collectionType = new TypeToken<List<LeaderboardUser>>(){}.getType();
+						result = gson.fromJson(arg0, collectionType);
 					}
-					else
+					//TODO need to add this exception in all other places too.
+					catch(JsonSyntaxException exception)
 					{
-						Log.e("Item clicked","Exception fetching tweets received") ;
+						exception.printStackTrace();
+						Log.e("TweetUserRunnable", "unable to parse tweetUser") ;
 					}
 
 				}
-			}, true);
-		} 
-		catch (MalformedURLException e) 
-		{
-			e.printStackTrace();
-		}
+				else
+				{
+					Log.e("Item clicked","Exception fetching tweets received") ;
+				}
+
+			}
+		}, true);
+
+
 		return result;
-		
+
 	}
 
 	@Override

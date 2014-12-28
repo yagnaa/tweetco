@@ -35,7 +35,6 @@ import com.tweetco.asynctasks.PostTweetTask;
 import com.tweetco.asynctasks.PostTweetTask.PostTweetTaskCompletionCallback;
 import com.tweetco.asynctasks.PostTweetTaskParams;
 import com.tweetco.tweets.TweetCommonData;
-import com.tweetco.utility.ClientHelper;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.Tweet;
@@ -49,7 +48,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 
 	private static final int REQUEST_CODE_IMAGE_SELECT = 100;
 	private static final int REQUEST_CODE_IMAGE_CAPTURE = 101;
-	
+
 	private MultiAutoCompleteTextView mTweetContent;
 	private TextView mCharCount;
 	private Button mSendButton;
@@ -57,16 +56,16 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	private Button mImageCameraButton;
 	private ImageView mTweetImage;
 	private String[] mUsernames;
-	
+
 	private int mCharCountInt = TWEET_MAX_CHARS;
 	AsyncTaskEventHandler asyncTaskEventHandler = null;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.posttweet);
-		
+
 		mTweetContent = UiUtility.getView(this, R.id.tweetContent);
 		mCharCount = UiUtility.getView(this, R.id.charCount);
 		mSendButton = UiUtility.getView(this, R.id.sendTweetButton);
@@ -76,68 +75,68 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Posting...");
 		mUsernames = getUsernames(TweetCommonData.tweetUsers.values().iterator());
 		mTweetContent.setAdapter(new ArrayAdapter<String>(PostTweetActivity.this,
-                android.R.layout.simple_dropdown_item_1line, mUsernames));
+				android.R.layout.simple_dropdown_item_1line, mUsernames));
 		mTweetContent.setThreshold(1);
-		
+
 		//From http://stackoverflow.com/questions/12691679/android-autocomplete-textview-similar-to-the-facebook-app
 		//Create a new Tokenizer which will get text after '@' and terminate on ' '
 		mTweetContent.setTokenizer(new Tokenizer() {
 
-		  @Override
-		  public CharSequence terminateToken(CharSequence text) {
-		    int i = text.length();
+			@Override
+			public CharSequence terminateToken(CharSequence text) {
+				int i = text.length();
 
-		    while (i > 0 && text.charAt(i - 1) == ' ') {
-		      i--;
-		    }
+				while (i > 0 && text.charAt(i - 1) == ' ') {
+					i--;
+				}
 
-		    if (i > 0 && text.charAt(i - 1) == ' ') {
-		      return text;
-		    } else {
-		        SpannableString sp = new SpannableString(text + " ");
-		        sp.setSpan(new ForegroundColorSpan(Color.BLUE), 0, sp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        return sp;
-		      
-		    }
-		  }
+				if (i > 0 && text.charAt(i - 1) == ' ') {
+					return text;
+				} else {
+					SpannableString sp = new SpannableString(text + " ");
+					sp.setSpan(new ForegroundColorSpan(Color.BLUE), 0, sp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					return sp;
 
-		  @Override
-		  public int findTokenStart(CharSequence text, int cursor) {
-		    int i = cursor;
+				}
+			}
 
-		    while (i > 0 && text.charAt(i - 1) != '@') {
-		      i--;
-		    }
+			@Override
+			public int findTokenStart(CharSequence text, int cursor) {
+				int i = cursor;
 
-		    //Check if token really started with @, else we don't have a valid token
-		    if (i < 1 || text.charAt(i - 1) != '@') {
-		      return cursor;
-		    }
+				while (i > 0 && text.charAt(i - 1) != '@') {
+					i--;
+				}
 
-		    return i;
-		  }
+				//Check if token really started with @, else we don't have a valid token
+				if (i < 1 || text.charAt(i - 1) != '@') {
+					return cursor;
+				}
 
-		  @Override
-		  public int findTokenEnd(CharSequence text, int cursor) {
-		    int i = cursor;
-		    int len = text.length();
+				return i;
+			}
 
-		    while (i < len) {
-		      if (text.charAt(i) == ' ') {
-		        return i;
-		      } else {
-		        i++;
-		      }
-		    }
+			@Override
+			public int findTokenEnd(CharSequence text, int cursor) {
+				int i = cursor;
+				int len = text.length();
 
-		    return len;
-		  }
+				while (i < len) {
+					if (text.charAt(i) == ' ') {
+						return i;
+					} else {
+						i++;
+					}
+				}
+
+				return len;
+			}
 		});
-		
+
 		mCharCount.setText(String.valueOf(mCharCountInt));
-		
+
 		mTweetContent.addTextChangedListener(new TextWatcher() {
-			
+
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) 
 			{
@@ -155,67 +154,63 @@ public class PostTweetActivity extends TweetCoBaseActivity
 					mCharCount.setTextColor(Color.BLACK);
 				}
 			}
-			
+
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				
-				
+
+
 			}
-			
+
 			@Override
 			public void afterTextChanged(Editable s) {
-				
-				
+
+
 			}
 		});
-		
+
 		mSendButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) 
 			{
-				try 
+
+				MobileServiceClient client = TweetCommonData.mClient;
+				PostTweetTaskParams params = new PostTweetTaskParams(client, TweetCommonData.getUserName());
+				params.setTweetContent(mTweetContent.getEditableText().toString());
+				params.setTweetImage((BitmapDrawable) mTweetImage.getDrawable());
+
+				new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() 
 				{
-					MobileServiceClient client = ClientHelper.getMobileClient(PostTweetActivity.this);
-					PostTweetTaskParams params = new PostTweetTaskParams(client, TweetCommonData.getUserName());
-					params.setTweetContent(mTweetContent.getEditableText().toString());
-					params.setTweetImage((BitmapDrawable) mTweetImage.getDrawable());
-					
-					new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() {
-						
-						@Override
-						public void onPostTweetTaskSuccess(Tweet tweet) 
-						{
-							asyncTaskEventHandler.dismiss();
-							Intent resultIntent = new Intent();
-							resultIntent.putExtra(Constants.POSTED_TWEET, tweet);
-							PostTweetActivity.this.setResult(RESULT_OK, resultIntent);
-							finish();
-						}
-						
-						@Override
-						public void onPostTweetTaskFailure() {
-							asyncTaskEventHandler.dismiss();
-							Log.e(TAG, "Posting tweet failed");
-						}
-						
-						@Override
-						public void onPostTweetTaskCancelled() {
-							asyncTaskEventHandler.dismiss();
-							
-						}
-					}).execute();
-				} 
-				catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+					@Override
+					public void onPostTweetTaskSuccess(Tweet tweet) 
+					{
+						asyncTaskEventHandler.dismiss();
+						Intent resultIntent = new Intent();
+						resultIntent.putExtra(Constants.POSTED_TWEET, tweet);
+						PostTweetActivity.this.setResult(RESULT_OK, resultIntent);
+						finish();
+					}
+
+					@Override
+					public void onPostTweetTaskFailure() {
+						asyncTaskEventHandler.dismiss();
+						Log.e(TAG, "Posting tweet failed");
+					}
+
+					@Override
+					public void onPostTweetTaskCancelled() {
+						asyncTaskEventHandler.dismiss();
+
+					}
+				}).execute();
+
 			}
 		});
-		
+
 		mImageGalleryButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) 
 			{
@@ -223,9 +218,9 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				startActivityForResult(intent, REQUEST_CODE_IMAGE_SELECT);
 			}
 		});
-		
+
 		mImageCameraButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) 
 			{
@@ -234,7 +229,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			}
 		});
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -246,7 +241,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				try
 				{
 					fileUri = ImageUtility.onImageAttachmentReceived(getApplicationContext(), data);
-				
+
 					if(fileUri != null)
 					{
 						mTweetImage.setImageURI(fileUri);
@@ -267,7 +262,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 
 				if(fileUri != null)
 				{
-					
+
 				}
 				else
 				{
@@ -275,7 +270,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				}
 
 			}
-			
+
 		}
 		else
 		{
@@ -287,20 +282,20 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		}
 
 	}
-	
+
 	public static String[] getUsernames(Iterator<TweetUser> tweetUsers)
 	{
 		List<String> usernames = new ArrayList<String>();
 		usernames.add("feedback");
-		
+
 		for (TweetUser user; tweetUsers.hasNext(); ) 
 		{
 			user = tweetUsers.next();
 			usernames.add(user.username);
 		}
-		
+
 		String[] usernamesList = new String[usernames.size()];
-		
+
 		return usernames.toArray(usernamesList);
 	}
 }

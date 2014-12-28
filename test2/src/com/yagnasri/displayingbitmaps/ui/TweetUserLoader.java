@@ -113,7 +113,10 @@ public  class TweetUserLoader
 						try
 						{
 							TweetUser[] tweetUser = gson.fromJson(arg0, TweetUser[].class);
-							adapter.addUser(mUserForWhomDataIsBeingLoaded,tweetUser[0]);
+							if(tweetUser.length > 0)
+							{
+								adapter.addUser(mUserForWhomDataIsBeingLoaded,tweetUser[0]);
+							}
 						}
 						catch(JsonSyntaxException exception)
 						{

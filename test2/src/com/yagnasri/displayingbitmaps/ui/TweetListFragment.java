@@ -106,7 +106,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 		mUsername = getArguments().getString(Constants.USERNAME_STR);
 		TweetListMode mode = TweetListMode.valueOf(getArguments().getString(Constants.FEEDTYPE_STR));
-
+		String trendTag = null;
+		if(mode == TweetListMode.TRENDING_FEED)
+		{
+			trendTag = getArguments().getString(Constants.TREND_TAG_STR);
+		}
 		ImageCache.ImageCacheParams cacheParams =
 				new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
 
@@ -118,7 +122,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), 60,60, true);
 		TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
 		TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-		mAdapter = new TweetAdapter(getActivity(), mUsername, TweetCommonData.mImageFetcher, mode, new OnProfilePicClick() {
+		mAdapter = new TweetAdapter(getActivity(), mUsername, TweetCommonData.mImageFetcher, mode, trendTag, new OnProfilePicClick() {
 
 			@Override
 			public void onItemClick(int position) {

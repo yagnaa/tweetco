@@ -64,6 +64,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	private int mActionBarHeight = 0;
 	private ImageFetcher mImageFetcher; //Fetches the images
 	private String mUserName; // This is the user for which this adapter is associated
+	private String mTrendTag = null;
 
 	private NewPageLoader mNewPageLoader; //Fetches the tweets
 
@@ -91,22 +92,19 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	public static enum TweetListMode
 	{
 		HOME_FEED,
-		USER_FEED
+		USER_FEED,
+		TRENDING_FEED
 	}
 	
 	private TweetListMode mTweetListMode = null; 
 
-	public TweetAdapter(Context context, String username, ImageFetcher imageFetcher, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback) 
+	public TweetAdapter(Context context, String username, ImageFetcher imageFetcher, TweetListMode mode, String trendTag, OnProfilePicClick onProfilePicClickCallback) 
 	{
 		super();
 		mContext = context;
 		mImageFetcher = imageFetcher;
 		mUserName = username;
-		
-		if(TextUtils.isEmpty(username))
-		{
-			throw new IllegalArgumentException("UserName cannot be empty");
-		}
+		mTrendTag = trendTag;
 		
 		mTweetListMode = mode;
 
@@ -548,21 +546,29 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			lock();
 			
 			JsonObject obj = new JsonObject();
-			if(getTweetListMode() == TweetListMode.HOME_FEED)
+			TweetListMode mode = getTweetListMode();
+			String api = ApiInfo.GET_TWEETS_FOR_USER;
+			if(mode == TweetListMode.HOME_FEED)
 			{
 				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
 				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
 				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
 			}
-			else
+			else if(mode == TweetListMode.USER_FEED)
 			{
 				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
 				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
 				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
 			}
+			else if(mode == TweetListMode.TRENDING_FEED)
+			{
+				obj.addProperty(ApiInfo.kTrendingTopicKey, mTrendTag);
+				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+				api = ApiInfo.GET_TWEETS_FOR_TREND;
+			}
 			
 			
-			mClient.invokeApi(ApiInfo.GET_TWEETS_FOR_USER , obj, new ApiJsonOperationCallback() {
+			mClient.invokeApi(api , obj, new ApiJsonOperationCallback() {
 
 				@Override
 				public void onCompleted(JsonElement arg0, Exception arg1,
@@ -600,7 +606,10 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 						
 						for(TweetUser user:tweetUserlist)
 						{
-							TweetCommonData.tweetUsers.put(user.username, user);
+							if(!TextUtils.isEmpty(user.username))
+							{
+								TweetCommonData.tweetUsers.put(user.username, user);
+							}
 						}
 
 

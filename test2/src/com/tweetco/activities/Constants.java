@@ -7,4 +7,7 @@ public final class Constants
 	
 	public static final String USERNAME_STR = "username";
 	public static final String FEEDTYPE_STR = "feedtype";
+	public static final String TREND_TAG_STR = "trendTag";
+	
+	
 }

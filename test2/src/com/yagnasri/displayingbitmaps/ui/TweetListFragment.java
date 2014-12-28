@@ -42,12 +42,14 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 
 import com.tweetco.R;
+import com.tweetco.activities.Constants;
 import com.tweetco.activities.PostTweetActivity;
 import com.tweetco.activities.QuickReturnListView;
 import com.tweetco.activities.UserProfileFragment;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
+import com.yagnasri.displayingbitmaps.ui.TweetAdapter.TweetListMode;
 import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 import com.yagnasri.displayingbitmaps.util.Utils;
@@ -61,7 +63,6 @@ import com.yagnasri.displayingbitmaps.util.Utils;
  */
 public class TweetListFragment extends Fragment implements AdapterView.OnItemClickListener 
 {
-	public static final String USERNAME = "username";//Constant to be used in intent for username
 	private static final String TAG = "ImageGridFragment";
 	private static final String IMAGE_CACHE_DIR = "thumbs";
 
@@ -103,8 +104,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
 
-		mUsername = getArguments().getString("username");
-
+		mUsername = getArguments().getString(Constants.USERNAME_STR);
+		TweetListMode mode = TweetListMode.valueOf(getArguments().getString(Constants.FEEDTYPE_STR));
 
 		ImageCache.ImageCacheParams cacheParams =
 				new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
@@ -117,7 +118,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), 60,60, true);
 		TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
 		TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-		mAdapter = new TweetAdapter(getActivity(), mUsername, TweetCommonData.mImageFetcher, new OnProfilePicClick() {
+		mAdapter = new TweetAdapter(getActivity(), mUsername, TweetCommonData.mImageFetcher, mode, new OnProfilePicClick() {
 
 			@Override
 			public void onItemClick(int position) {

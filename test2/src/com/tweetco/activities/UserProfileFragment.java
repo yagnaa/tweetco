@@ -16,6 +16,7 @@ import com.tweetco.R;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.TweetUser;
+import com.yagnasri.displayingbitmaps.ui.TweetAdapter;
 import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
 public class UserProfileFragment extends FragmentActivity 
@@ -41,7 +42,7 @@ public class UserProfileFragment extends FragmentActivity
 
         setContentView(R.layout.userprofilefragment);
        
-        mUserName = getIntent().getExtras().getString("username");
+        mUserName = getIntent().getExtras().getString(Constants.USERNAME_STR);
         TweetUser user = TweetCommonData.tweetUsers.get(mUserName);
     	if(user != null)
     	{
@@ -89,7 +90,8 @@ public class UserProfileFragment extends FragmentActivity
 			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             TweetListFragment tweetListFragment = new TweetListFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(TweetListFragment.USERNAME, mUserName);
+            bundle.putString(Constants.USERNAME_STR, mUserName);
+            bundle.putString(Constants.FEEDTYPE_STR, TweetAdapter.TweetListMode.USER_FEED.name());
             bundle.putBoolean("hideFooter", true);
             tweetListFragment.setArguments(bundle);
             ft.replace(R.id.tweetsListFragmentContainer, tweetListFragment);

@@ -96,7 +96,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	
 	private TweetListMode mTweetListMode = null; 
 
-	public TweetAdapter(Context context, String username, ImageFetcher imageFetcher, OnProfilePicClick onProfilePicClickCallback) 
+	public TweetAdapter(Context context, String username, ImageFetcher imageFetcher, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback) 
 	{
 		super();
 		mContext = context;
@@ -108,14 +108,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			throw new IllegalArgumentException("UserName cannot be empty");
 		}
 		
-		if(username.equalsIgnoreCase(TweetCommonData.getUserName()))
-		{
-			mTweetListMode = TweetListMode.HOME_FEED;
-		}
-		else
-		{
-			mTweetListMode = TweetListMode.USER_FEED;
-		}
+		mTweetListMode = mode;
 
 		mOnProfilePicClickCallback = onProfilePicClickCallback;
 		// Calculate ActionBar height

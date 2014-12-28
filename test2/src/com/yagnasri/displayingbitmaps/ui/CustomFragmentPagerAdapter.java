@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import com.tweetco.activities.Constants;
 import com.tweetco.activities.LeaderboardFragment;
 import com.tweetco.activities.TrendingFragment;
 import com.tweetco.activities.UsersListFragment;
@@ -65,7 +66,8 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 		case 0:
 			Fragment fragment = new TweetListFragment();
 			Bundle bundle = new Bundle();
-            bundle.putString(TweetListFragment.USERNAME, TweetCommonData.getUserName());
+            bundle.putString(Constants.USERNAME_STR, TweetCommonData.getUserName());
+            bundle.putString(Constants.FEEDTYPE_STR, TweetAdapter.TweetListMode.HOME_FEED.name());
             fragment.setArguments(bundle);
 			return fragment;
 		case 1:

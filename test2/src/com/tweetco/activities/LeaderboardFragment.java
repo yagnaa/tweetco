@@ -54,7 +54,7 @@ public class LeaderboardFragment extends ListFragment
 //                    ft.commit();
     				
     				Intent intent = new Intent(LeaderboardFragment.this.getActivity(), UserProfileFragment.class);
-    				intent.putExtra("username", owner);
+    				intent.putExtra(Constants.USERNAME_STR, owner);
     				LeaderboardFragment.this.getActivity().startActivity(intent);
                 }
     		}

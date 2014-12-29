@@ -18,11 +18,13 @@ package com.yagnasri.displayingbitmaps.ui;
 
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
 import android.text.TextUtils;
@@ -41,6 +43,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.tweetco.R;
@@ -49,6 +52,7 @@ import com.tweetco.activities.QuickReturnListView;
 import com.tweetco.activities.UserProfileFragment;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
+import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
 import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
@@ -141,6 +145,22 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 			}
 		});
+		
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() 
+			{
+				ActionBar actionbar = TweetListFragment.this.getActivity().getActionBar();
+				ImageView imageView = (ImageView)actionbar.getCustomView().findViewById(R.id.imageView1);
+				
+				TweetUser tweetUser = TweetCommonData.tweetUsers.get(TweetCommonData.getUserName());
+
+				TweetCommonData.mImageFetcher.loadImage(tweetUser.profileimageurl, imageView);
+				
+			}
+		}, 10000);
 	}
 
 	@Override

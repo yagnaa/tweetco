@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/com.tweetco"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="fill_horizontal"
+    android:background="@color/white" >
+
+    <com.yagnasri.displayingbitmaps.ui.RoundedImageView
+        android:id="@+id/imageView1"
+        android:layout_width="60dp" 
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:scaleType="fitXY"
+        custom:selector="true"
+        custom:selector_color="#44FFBB33"
+        custom:selector_stroke_color="#88FF8800"
+        custom:selector_stroke_width="2dp" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:text="TweetCo"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/purple_theme_color"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

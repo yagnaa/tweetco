@@ -1,4 +1,5 @@
 package com.yagnasri.displayingbitmaps.ui;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -30,6 +33,8 @@ public class AllInOneActivity extends FragmentActivity
 	
 	private Handler handler;
 	
+	private ActionBar m_actionbar;
+	
 	private static final String TAG = "AllInOneActivity";
 	
 	private ViewPager mViewPager;
@@ -49,7 +54,21 @@ public class AllInOneActivity extends FragmentActivity
 		NotificationsManager.handleNotifications(this, SENDER_ID, PushNotificationHandler.class);
         
         initializePager();
-
+        
+        customizeActionBar();
+	}
+	
+	
+	public void customizeActionBar()
+	{
+		m_actionbar = getActionBar();
+		m_actionbar.setDisplayShowHomeEnabled(false);
+		m_actionbar.setDisplayShowTitleEnabled(false);
+		View customView =  LayoutInflater.from(this).inflate(R.layout.custom_action_bar, null);
+		ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+		m_actionbar.setCustomView(customView, params);
+		m_actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ~ActionBar.DISPLAY_SHOW_HOME);
+		m_actionbar.setDisplayShowCustomEnabled(true);
 	}
 	
 	private void hideKeyboard() 

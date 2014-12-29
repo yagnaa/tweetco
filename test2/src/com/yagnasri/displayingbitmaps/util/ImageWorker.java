@@ -48,7 +48,7 @@ public abstract class ImageWorker {
     private ImageCache mImageCache;
     private ImageCache.ImageCacheParams mImageCacheParams;
     private Bitmap mLoadingBitmap;
-    private boolean mFadeInBitmap = true;
+    private boolean mFadeInBitmap = false; //TODO this adds a fade in effect for the profileImage but it is not working due to ROundedImageVIew. Need to check
     private boolean mExitTasksEarly = false;
     protected boolean mPauseWork = false;
     private final Object mPauseWorkLock = new Object();

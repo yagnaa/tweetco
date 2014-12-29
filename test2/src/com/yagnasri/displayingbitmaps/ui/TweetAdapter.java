@@ -193,25 +193,9 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	}
 
 	@Override
-	public int getViewTypeCount() 
-	{
-		return 1;
-	}
-
-	@Override
-	public int getItemViewType(int position) {
-		return 1;
-	}
-
-	@Override
-	public boolean hasStableIds() {
-		return true;
-	}
-
-	@Override
 	public View getView(int position, View convertView, ViewGroup container) 
 	{
-		//Log.d(TAG, "getView called for position ="+position +" convertView="+(convertView!=null));
+		Log.d(TAG, "getView called for position ="+position +" convertView="+(convertView!=null));
 		// Now handle the main ImageView thumbnails
 		ImageView imageView;
 		if (convertView == null) { // if it's not recycled, instantiate and initialize
@@ -331,7 +315,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		Log.d(TAG,"tweeter.profileimageurl="+tweeter.profileimageurl+ "   imageView="+imageView.toString());
 		if(TextUtils.isEmpty(tweeter.profileimageurl))
 		{
-			String initials = Utils.getInitials(tweeter.displayname);
+			String initials = "YA";//Utils.getInitials(tweeter.displayname);
 			mImageFetcher.loadImage(initials, imageView);
 		}
 		else
@@ -449,8 +433,8 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 		// In scroll-to-bottom-to-load mode, when the sum of first visible position and visible count equals the total number
 		// of items in the adapter it reaches the bottom
-		int bufferItemsToShow = getCount() -firstVisibleItem + visibleItemCount;
-	//	Log.d(TAG, "There are "+bufferItemsToShow+" items to show in the adapter.");
+		int bufferItemsToShow = getCount() -(firstVisibleItem + visibleItemCount);
+		Log.d(TAG, "There are getCount()="+getCount()+" firstVisibleItem="+firstVisibleItem+ " visibleItemCount="+visibleItemCount);
 		if (bufferItemsToShow < TWEET_LOAD_BUFFER  && canScroll) {
 			onScrollNext();
 		}
@@ -563,6 +547,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
 				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
 				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+				obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
 			}
 			else
 			{
@@ -571,6 +556,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
 			}
 			
+			Log.d(TAG, "Trying to load the next set of tweets");
 			
 			mClient.invokeApi(ApiInfo.GET_TWEETS_FOR_USER , obj, new ApiJsonOperationCallback() {
 

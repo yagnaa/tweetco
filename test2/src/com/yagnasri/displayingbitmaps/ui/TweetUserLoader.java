@@ -22,12 +22,10 @@ import com.yagnasri.displayingbitmaps.util.AsyncTask;
 public  class TweetUserLoader
 {
 	TweetAdapter adapter = null;
-	String mUsername = null;
 
-	public TweetUserLoader(TweetAdapter adapter, String username)
+	public TweetUserLoader(TweetAdapter adapter)
 	{
 		this.adapter = adapter;
-		mUsername = username;
 	}
 
 	public void load(List<Tweet> tweetsList,Map<String, TweetUser> users)
@@ -115,7 +113,8 @@ public  class TweetUserLoader
 							TweetUser[] tweetUser = gson.fromJson(arg0, TweetUser[].class);
 							if(tweetUser.length > 0)
 							{
-								adapter.addUser(mUserForWhomDataIsBeingLoaded,tweetUser[0]);
+								// Clear all the data points
+								TweetCommonData.tweetUsers.put(mUserForWhomDataIsBeingLoaded, tweetUser[0]);
 							}
 						}
 						catch(JsonSyntaxException exception)

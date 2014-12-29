@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tweetco.R;
+import com.tweetco.tweetlist.UserFeedMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.TweetUser;
@@ -90,8 +91,8 @@ public class UserProfileFragment extends FragmentActivity
 			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             TweetListFragment tweetListFragment = new TweetListFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(Constants.USERNAME_STR, mUserName);
-            bundle.putString(Constants.FEEDTYPE_STR, TweetAdapter.TweetListMode.USER_FEED.name());
+            UserFeedMode mode = new UserFeedMode(mUserName);
+            bundle.putParcelable(Constants.TWEET_LIST_MODE, mode);
             bundle.putBoolean("hideFooter", true);
             tweetListFragment.setArguments(bundle);
             ft.replace(R.id.tweetsListFragmentContainer, tweetListFragment);

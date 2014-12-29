@@ -1,19 +1,13 @@
 package com.yagnasri.displayingbitmaps.ui;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.CompressFormat;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -26,14 +20,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
+import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
@@ -56,7 +49,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 	// A demo listener to pass actions from view to adapter
 	public static abstract class NewPageLoader {
-		public abstract void onScrollNext();
+		public abstract void load(JsonObject tweetRequest);
 	}
 
 	public interface OnProfilePicClick
@@ -68,8 +61,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	private int mItemHeight = 0;
 	private int mActionBarHeight = 0;
 	private ImageFetcher mImageFetcher; //Fetches the images
-	private String mUserName; // This is the user for which this adapter is associated
-	private String mTrendTag = null;
 
 	private NewPageLoader mNewPageLoader; //Fetches the tweets
 
@@ -85,8 +76,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	protected boolean rowEnabled = true;
 
 
-	private int oldCount = 0;
-
 	public void lock() {
 		canScroll = false;
 	}	
@@ -94,22 +83,13 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		canScroll = true;
 	}
 	
-	public static enum TweetListMode
-	{
-		HOME_FEED,
-		USER_FEED,
-		TRENDING_FEED
-	}
-	
 	private TweetListMode mTweetListMode = null; 
 
-	public TweetAdapter(Context context, String username, ImageFetcher imageFetcher, TweetListMode mode, String trendTag, OnProfilePicClick onProfilePicClickCallback) 
+	public TweetAdapter(Context context, ImageFetcher imageFetcher, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback) 
 	{
 		super();
 		mContext = context;
 		mImageFetcher = imageFetcher;
-		mUserName = username;
-		mTrendTag = trendTag;
 		
 		mTweetListMode = mode;
 
@@ -122,65 +102,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 					tv.data, context.getResources().getDisplayMetrics());
 		}
 		mNewPageLoader = new PageLoader(context, this);
-		tweetUserLoader = new TweetUserLoader(this, mUserName);
-
-		TweetCommonData.tweetsList.clear();
-	}
-
-	public void addEntriesToTop(List<Tweet> entries) {
-		// Add entries in reversed order to achieve a sequence used in most of messaging/chat apps
-		if (entries != null) {
-			Collections.reverse(entries);
-		}
-		oldCount = TweetCommonData.tweetsList.size();
-		// Add entries to the top of the list
-		TweetCommonData.tweetsList.addAll(0, entries);
-		notifyDataSetChanged();
-	}
-
-	public void addEntriesToBottom(List<Tweet> entries) {
-		// Add entries to the bottom of the list
-
-		oldCount = TweetCommonData.tweetsList.size();
-		TweetCommonData.tweetsList.addAll(entries);
-		notifyDataSetChanged();
-	}
-
-	public void clearEntries() {
-
-		oldCount = TweetCommonData.tweetsList.size();
-		TweetCommonData.tweetsList.clear();
-		notifyDataSetChanged();
-	}
-
-	public void addUsers(Map<String,TweetUser> tweetUsers) 
-	{
-		// Clear all the data points
-		TweetCommonData.tweetUsers.putAll(tweetUsers);
-		notifyDataSetChanged();
-	}
-
-	public void addUser(String user,TweetUser userInfo) 
-	{
-		// Clear all the data points
-		TweetCommonData.tweetUsers.put(user, userInfo);
-	}
-
-	@Override
-	public int getCount() 
-	{
-		return TweetCommonData.tweetsList.size();
-	}
-
-	@Override
-	public Object getItem(int position) 
-	{
-		return TweetCommonData.tweetsList.get(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return position < 0 ? 0 : position;
+		tweetUserLoader = new TweetUserLoader(this);
 	}
 
 	@Override
@@ -301,12 +223,31 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		//END_INCLUDE(load_gridview_item)
 	}
 	
+
+	@Override
+	public int getCount() 
+	{
+		return mTweetListMode.getCount();
+	}
+	
+	@Override
+	public Object getItem(int position) 
+	{
+		return mTweetListMode.getItem(position);
+	}
+	
+	@Override
+	public long getItemId(int position) 
+	{
+		return mTweetListMode.getItemId(position);
+	}
+	
 	private void loadProfileImage(TweetUser tweeter,ImageView imageView)
 	{
 		Log.d(TAG,"tweeter.profileimageurl="+tweeter.profileimageurl+ "   imageView="+imageView.toString());
 		if(TextUtils.isEmpty(tweeter.profileimageurl))
 		{
-			String initials = "YA";//Utils.getInitials(tweeter.displayname);
+			String initials = Utils.getInitials(tweeter.displayname);
 			mImageFetcher.loadImage(initials, imageView);
 		}
 		else
@@ -375,18 +316,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			mInfiniteListPageListener.hasMore();
 		}
 	}
-
-	public int getLastTweetIterator()
-	{
-		int retValue =0;
-		int size = TweetCommonData.tweetsList.size();
-		if(size>0)
-		{
-			Tweet tweet = TweetCommonData.tweetsList.get(size - 1);
-			retValue = tweet.iterator;
-		}
-		return retValue;
-	}
 	
 	public TweetListMode getTweetListMode()
 	{
@@ -394,22 +323,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	}
 
 
-	@Override
-	public void notifyDataSetChanged() {
-
-		int count = getCount();
-		// TODO Auto-generated method stub
-		super.notifyDataSetChanged();
-		if((oldCount==0 && count!=0) || (oldCount!=0 && count==0))
-		{
-
-		}
-	}
-	@Override
-	public void notifyDataSetInvalidated() {
-		// TODO Auto-generated method stub
-		super.notifyDataSetInvalidated();
-	}
 
 	/**
 	 * This function decides when to load the next set of tweets.
@@ -419,34 +332,42 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	 * @param totalItemCount
 	 */
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) 
+	{
 		// In scroll-to-bottom-to-load mode, when the sum of first visible position and visible count equals the total number
 		// of items in the adapter it reaches the bottom
 		int bufferItemsToShow = getCount() -(firstVisibleItem + visibleItemCount);
 		Log.d(TAG, "There are getCount()="+getCount()+" firstVisibleItem="+firstVisibleItem+ " visibleItemCount="+visibleItemCount);
-		if (bufferItemsToShow < TWEET_LOAD_BUFFER  && canScroll) {
+		if (bufferItemsToShow < TWEET_LOAD_BUFFER  && canScroll) 
+		{
 			onScrollNext();
 		}
-
 	}
-
-
-	public void onScrollNext() {
-		if (mNewPageLoader != null) {
-			mNewPageLoader.onScrollNext();
-		}
-	}
-
-	public void setInfiniteListPageListener(InfiniteScrollListPageListener infiniteListPageListener) {
-		this.mInfiniteListPageListener = infiniteListPageListener;
-	}
+	
+	
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	public void onScrollStateChanged(AbsListView view, int scrollState) 
+	{
 		// TODO Auto-generated method stub
 
 	}
+
+
+	private void onScrollNext() 
+	{
+		if (mNewPageLoader != null) 
+		{
+			JsonObject tweetRequest = mTweetListMode.getNextTweetRequest();
+			//TODO Build the request for the load
+			mNewPageLoader.load(tweetRequest);
+		}
+	}
+
+	public void setInfiniteListPageListener(InfiniteScrollListPageListener infiniteListPageListener) 
+	{
+		this.mInfiniteListPageListener = infiniteListPageListener;
+	}
+
 
 
 
@@ -508,9 +429,12 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		},false);
 	}
 
-	public void refresh()
+	public void refreshTop()
 	{
-		mNewPageLoader.onScrollNext();
+		//TODO Build the tweetRequest and give it to loader
+		JsonObject tweetRequest = mTweetListMode.getPreviousTweetRequest();
+		//TODO Build the request for the load
+		mNewPageLoader.load(tweetRequest);
 	}
 
 	//TODO this has to be moved to a separate class
@@ -527,37 +451,38 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		}
 
 		@Override
-		public void onScrollNext() {
+		public void load(final JsonObject tweetRequest ) 
+		{
 
 			// Loading lock to allow only one instance of loading
 			lock();
 			
-			JsonObject obj = new JsonObject();
-			TweetListMode mode = getTweetListMode();
+//			JsonObject obj = new JsonObject();
+//			TweetListMode mode = getTweetListMode();
 			String api = ApiInfo.GET_TWEETS_FOR_USER;
-			if(mode == TweetListMode.HOME_FEED)
-			{
-				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
-				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
-				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-				obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
-			}
-			else if(mode == TweetListMode.USER_FEED)
-			{
-				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
-				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
-				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-			}
-			else if(mode == TweetListMode.TRENDING_FEED)
-			{
-				obj.addProperty(ApiInfo.kTrendingTopicKey, mTrendTag);
-				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-				api = ApiInfo.GET_TWEETS_FOR_TREND;
-			}
+//			if(mode == TweetListMode.HOME_FEED)
+//			{
+//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
+//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
+//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+//				obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
+//			}
+//			else if(mode == TweetListMode.USER_FEED)
+//			{
+//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
+//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
+//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+//			}
+//			else if(mode == TweetListMode.TRENDING_FEED)
+//			{
+//				obj.addProperty(ApiInfo.kTrendingTopicKey, mTrendTag);
+//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+//				api = ApiInfo.GET_TWEETS_FOR_TREND;
+//			}
 			
 			Log.d(TAG, "Trying to load the next set of tweets");
 			
-			mClient.invokeApi(api , obj, new ApiJsonOperationCallback() {
+			mClient.invokeApi(api , tweetRequest, new ApiJsonOperationCallback() {
 
 				@Override
 				public void onCompleted(JsonElement arg0, Exception arg1,
@@ -566,48 +491,34 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 					{
 						//The teceived data contains an inner join of tweets and tweet users. 
 						//Read them both.
-						Gson gson = new Gson();
-
-						Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
-						List<Tweet> list = gson.fromJson(arg0, collectionType);
-						
-						Type tweetusertype = new TypeToken<List<TweetUser>>(){}.getType();
-						List<TweetUser> tweetUserlist = gson.fromJson(arg0, tweetusertype);
-						
-						List<Tweet> removeTweetsList = new ArrayList<Tweet>();
-//						if(mbGetTweetsByUser)
+//						Gson gson = new Gson();
+//
+//						Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
+//						List<Tweet> list = gson.fromJson(arg0, collectionType);
+//						
+//						Type tweetusertype = new TypeToken<List<TweetUser>>(){}.getType();
+//						List<TweetUser> tweetUserlist = gson.fromJson(arg0, tweetusertype);
+//
+//						addEntriesToBottom(list);
+//						
+//						for(TweetUser user:tweetUserlist)
 //						{
-//							for (Tweet tweet : list) 
+//							if(!TextUtils.isEmpty(user.username))
 //							{
-//								if(!tweet.tweetowner.equalsIgnoreCase(mUsername))
-//								{
-//									removeTweetsList.add(tweet);
-//								}
+//								TweetCommonData.tweetUsers.put(user.username, user);
 //							}
 //						}
-//
-//						if(!removeTweetsList.isEmpty())
-//						{
-//							list.removeAll(removeTweetsList);
-//						}
 
-						addEntriesToBottom(list);
+
+						mTweetListMode.processReceivedTweets(arg0,tweetRequest);
 						
-						for(TweetUser user:tweetUserlist)
-						{
-							if(!TextUtils.isEmpty(user.username))
-							{
-								TweetCommonData.tweetUsers.put(user.username, user);
-							}
-						}
-
-
 						// Add or remove the loading view depend on if there might be more to load
-						if (list.size() < SEVER_SIDE_BATCH_SIZE) {
-							notifyEndOfList();
-						} else {
-							notifyHasMore();
-						}
+						//TODO spinner at the bottom
+//						if (list.size() < SEVER_SIDE_BATCH_SIZE) {
+//							notifyEndOfList();
+//						} else {
+//							notifyHasMore();
+//						}
 
 						tweetUserLoader.load();
 
@@ -621,4 +532,5 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			},false);
 		}	
 	}
+
 }

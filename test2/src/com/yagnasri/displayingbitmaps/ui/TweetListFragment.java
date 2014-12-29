@@ -51,11 +51,11 @@ import com.tweetco.activities.Constants;
 import com.tweetco.activities.PostTweetActivity;
 import com.tweetco.activities.QuickReturnListView;
 import com.tweetco.activities.UserProfileFragment;
+import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
-import com.yagnasri.displayingbitmaps.ui.TweetAdapter.TweetListMode;
 import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 import com.yagnasri.displayingbitmaps.util.Utils;
@@ -93,10 +93,6 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	private TranslateAnimation anim;
 
 
-
-	private String mUsername;
-
-
 	/**
 	 * Empty constructor as per the Fragment documentation
 	 */
@@ -109,14 +105,9 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
+		
+		TweetListMode mode = (TweetListMode)getArguments().getParcelable(Constants.TWEET_LIST_MODE);
 
-		mUsername = getArguments().getString(Constants.USERNAME_STR);
-		TweetListMode mode = TweetListMode.valueOf(getArguments().getString(Constants.FEEDTYPE_STR));
-		String trendTag = null;
-		if(mode == TweetListMode.TRENDING_FEED)
-		{
-			trendTag = getArguments().getString(Constants.TREND_TAG_STR);
-		}
 		ImageCache.ImageCacheParams cacheParams =
 				new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
 
@@ -131,7 +122,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), px,px, true);
 		TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
 		TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-		mAdapter = new TweetAdapter(getActivity(), mUsername, TweetCommonData.mImageFetcher, mode, trendTag, new OnProfilePicClick() {
+		mAdapter = new TweetAdapter(getActivity(), TweetCommonData.mImageFetcher, mode, new OnProfilePicClick() {
 
 			@Override
 			public void onItemClick(int position) {
@@ -198,13 +189,14 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				launchPostTweetActivity();
 			}
 		});
-		TweetCommonData.tweetsList.clear();
-		mAdapter.onScrollNext();
 	}
 
+	/**
+	 * This should be called when there is new data to load. ie. Push Notification or a tweet being posted.
+	 */
 	public void refresh()
 	{
-		mAdapter.refresh();
+		mAdapter.refreshTop();
 	}
 	
 	public void launchPostTweetActivity()

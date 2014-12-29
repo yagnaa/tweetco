@@ -195,7 +195,7 @@ public class UsersListFragment extends ListFragment
 						if(user!=null)
 						{
 							Intent intent = new Intent(UserListAdapter.this.getContext(), UserProfileFragment.class);
-							intent.putExtra("username", user.username);
+							intent.putExtra(Constants.USERNAME_STR, user.username);
 							UsersListFragment.this.startActivity(intent);
 						}
 					}

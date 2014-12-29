@@ -4,7 +4,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -24,6 +27,8 @@ import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
+import com.yagnasri.displayingbitmaps.ui.TweetAdapter;
+import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
 public class TrendingFragment extends ListFragment
 {
@@ -47,8 +52,23 @@ public class TrendingFragment extends ListFragment
 
 		loadTrendingTags();
 		
+		
 	}
 	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id)
+	{
+		TrendingTag tag = (TrendingTag)l.getItemAtPosition(position);
+		
+		if(tag!=null && !TextUtils.isEmpty(tag.hashtag))
+		{
+			Intent intent = new Intent(getActivity(), TrendingFragmentActivity.class);
+			intent.putExtra(Constants.TREND_TAG_STR, tag.hashtag);
+			startActivity(intent);
+		}
+		
+		
+	}
 	
 	private void loadTrendingTags()
 	{
@@ -86,11 +106,12 @@ public class TrendingFragment extends ListFragment
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 		mAdapter = new TrendingAdapter(this.getActivity(), android.R.layout.simple_list_item_1);
 		
 		this.setListAdapter(mAdapter);
+		
+		
 	}
 	
  

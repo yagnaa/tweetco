@@ -66,9 +66,10 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	}
 
 	@Override
-	public void processReceivedTweets(JsonElement response,JsonElement tweetRequest ) 
+	public void processReceivedTweets(JsonElement response,JsonObject tweetRequest ) 
 	{
-		if(tweetRequest.get(ApiInfo.kTweetRequestTypeKey))
+
+
 		//The teceived data contains an inner join of tweets and tweet users. 
 		//Read them both.
 		Gson gson = new Gson();

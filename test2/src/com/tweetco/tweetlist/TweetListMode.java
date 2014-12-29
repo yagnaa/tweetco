@@ -17,4 +17,6 @@ public abstract class TweetListMode
 	public abstract Object getItem(int position);
 	
 	public abstract long getItemId(int position);
+	
+	public abstract String getApi();
 }

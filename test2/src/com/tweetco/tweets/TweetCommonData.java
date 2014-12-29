@@ -22,12 +22,8 @@ public class TweetCommonData
 	
 	//All the tweets that we are currently holding in memory
     public static List<Tweet> tweetsList = Collections.synchronizedList(new ArrayList<Tweet>());
-    
-    public static Map<String,List<Tweet>> userTweetsList = new ConcurrentHashMap<String, List<Tweet>>();//Collections.synchronizedList(new Con new ArrayList<Tweet>());
-    
-  //  public static Map<String, List<Tweet>> tweetsMap = new ConcurrentHashMap<String, List<Tweet>>();
-    
- 
+
+    public static Map<String,List<Tweet>> userTweetsList = new ConcurrentHashMap<String, List<Tweet>>();
     
     //All the tweets that we are currently holding in memory
     public static Map<String,TweetUser> tweetUsers = new ConcurrentHashMap<String, TweetUser>();

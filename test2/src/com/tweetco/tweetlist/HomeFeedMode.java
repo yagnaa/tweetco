@@ -68,19 +68,35 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public void processReceivedTweets(JsonElement response,JsonObject tweetRequest ) 
 	{
-
-
-		//The teceived data contains an inner join of tweets and tweet users. 
+		//populate set
+		boolean requestWasForOldTweets = false;
+		
+		JsonElement elem = tweetRequest.get(ApiInfo.kTweetRequestTypeKey);
+		if(elem!=null)
+		{
+			requestWasForOldTweets = elem.getAsString().equalsIgnoreCase(ApiInfo.kOldTweetRequest);
+		}
+		
+		
+		//The received data contains an inner join of tweets and tweet users. 
 		//Read them both.
 		Gson gson = new Gson();
 
 		Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
 		List<Tweet> list = gson.fromJson(response, collectionType);
-
+		
 		Type tweetusertype = new TypeToken<List<TweetUser>>(){}.getType();
 		List<TweetUser> tweetUserlist = gson.fromJson(response, tweetusertype);
 
-		addEntriesToBottom(list);
+        if(requestWasForOldTweets)
+        {
+    		addEntriesToBottom(list);
+        }
+        else
+        {
+        	addEntriesToTop(list);
+        }
+
 
 		for(TweetUser user:tweetUserlist)
 		{
@@ -176,6 +192,12 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public long getItemId(int position) {
 		// TODO Auto-generated method stub
-		return 0;
+		return position<0?0:position;
+	}
+	
+	@Override
+	public String getApi()
+	{
+		return ApiInfo.GET_TWEETS_FOR_USER;
 	}
 }

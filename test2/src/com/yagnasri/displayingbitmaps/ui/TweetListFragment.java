@@ -122,7 +122,12 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), px,px, true);
 		TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
 		TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-		mAdapter = new TweetAdapter(getActivity(), TweetCommonData.mImageFetcher, mode, new OnProfilePicClick() {
+		
+		ImageFetcher mImageFetcher2 = new ImageFetcher(getActivity(), px,px, true);
+		mImageFetcher2.setLoadingImage(R.drawable.ic_launcher);
+		mImageFetcher2.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
+		
+		mAdapter = new TweetAdapter(getActivity(), TweetCommonData.mImageFetcher,mImageFetcher2, mode, new OnProfilePicClick() {
 
 			@Override
 			public void onItemClick(int position) {
@@ -134,7 +139,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 					if(!TextUtils.isEmpty(owner))
 					{
 						Intent intent = new Intent(getActivity(), UserProfileFragment.class);
-						intent.putExtra("username", owner);
+						intent.putExtra(Constants.USERNAME_STR, owner);
 						getActivity().startActivity(intent);
 					}
 				}
@@ -152,8 +157,10 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				ImageView imageView = (ImageView)actionbar.getCustomView().findViewById(R.id.imageView1);
 				
 				TweetUser tweetUser = TweetCommonData.tweetUsers.get(TweetCommonData.getUserName());
-
+				if(tweetUser!=null && tweetUser.profileimageurl!=null)
+				{
 				TweetCommonData.mImageFetcher.loadImage(tweetUser.profileimageurl, imageView);
+				}
 				
 			}
 		}, 10000);
@@ -189,6 +196,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				launchPostTweetActivity();
 			}
 		});
+		
+		mAdapter.onScrollNext();
 	}
 
 	/**

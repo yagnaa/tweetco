@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.support.v4.view.GestureDetectorCompat;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -30,6 +31,8 @@ import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
+import com.yagnasri.displayingbitmaps.ui.TweetListFragment.MyGestureListener;
+import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 import com.yagnasri.displayingbitmaps.util.Utils;
 
@@ -49,7 +52,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 	// A demo listener to pass actions from view to adapter
 	public static abstract class NewPageLoader {
-		public abstract void load(JsonObject tweetRequest);
+		public abstract void load(JsonObject tweetRequest,String api);
 	}
 
 	public interface OnProfilePicClick
@@ -61,6 +64,8 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	private int mItemHeight = 0;
 	private int mActionBarHeight = 0;
 	private ImageFetcher mImageFetcher; //Fetches the images
+	
+	private ImageFetcher mImageFetcher2; //Fetches the images
 
 	private NewPageLoader mNewPageLoader; //Fetches the tweets
 
@@ -85,11 +90,12 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	
 	private TweetListMode mTweetListMode = null; 
 
-	public TweetAdapter(Context context, ImageFetcher imageFetcher, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback) 
+	public TweetAdapter(Context context, ImageFetcher imageFetcher, ImageFetcher imageFetcher2, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback) 
 	{
 		super();
 		mContext = context;
 		mImageFetcher = imageFetcher;
+		mImageFetcher2 = imageFetcher2;
 		
 		mTweetListMode = mode;
 
@@ -161,7 +167,10 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			Linkify.addLinks(tweetContent, Linkify.WEB_URLS);
 			tweetContent.setMovementMethod(new LinkMovementMethod());
 
+			ImageView tweetContentImage = (ImageView) convertView.findViewById(R.id.tweet_content_image);
+			loadTweetImage(tweet, tweetContentImage);
 
+			
 			//UpVote ImageView
 			ImageView upvoteView = (ImageView) convertView.findViewById(R.id.upvote);
 			upvoteView.setTag(position);
@@ -253,6 +262,20 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		else
 		{
 			mImageFetcher.loadImage(tweeter.profileimageurl, imageView);
+		}
+	}
+	
+	private void loadTweetImage(Tweet tweet,ImageView imageView)
+	{
+		Log.d(TAG,"tweeter.profileimageurl="+tweet.imageurl+ "   imageView="+imageView.toString());
+		if(TextUtils.isEmpty(tweet.imageurl))
+		{
+			imageView.setVisibility(View.GONE);
+		}
+		else
+		{
+			imageView.setVisibility(View.VISIBLE);
+			mImageFetcher2.loadImage(tweet.imageurl, imageView);
 		}
 	}
 
@@ -353,13 +376,13 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	}
 
 
-	private void onScrollNext() 
+	public void onScrollNext() 
 	{
 		if (mNewPageLoader != null) 
 		{
 			JsonObject tweetRequest = mTweetListMode.getNextTweetRequest();
 			//TODO Build the request for the load
-			mNewPageLoader.load(tweetRequest);
+			mNewPageLoader.load(tweetRequest,mTweetListMode.getApi());
 		}
 	}
 
@@ -434,7 +457,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		//TODO Build the tweetRequest and give it to loader
 		JsonObject tweetRequest = mTweetListMode.getPreviousTweetRequest();
 		//TODO Build the request for the load
-		mNewPageLoader.load(tweetRequest);
+		mNewPageLoader.load(tweetRequest, mTweetListMode.getApi());
 	}
 
 	//TODO this has to be moved to a separate class
@@ -451,7 +474,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		}
 
 		@Override
-		public void load(final JsonObject tweetRequest ) 
+		public void load(final JsonObject tweetRequest, String api ) 
 		{
 
 			// Loading lock to allow only one instance of loading
@@ -459,6 +482,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			
 //			JsonObject obj = new JsonObject();
 //			TweetListMode mode = getTweetListMode();
+
 //			if(mode == TweetListMode.HOME_FEED)
 //			{
 //				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
@@ -488,28 +512,8 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 						ServiceFilterResponse arg2) {
 					if(arg1 == null)
 					{
-						//The teceived data contains an inner join of tweets and tweet users. 
-						//Read them both.
-//						Gson gson = new Gson();
-//
-//						Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
-//						List<Tweet> list = gson.fromJson(arg0, collectionType);
-//						
-//						Type tweetusertype = new TypeToken<List<TweetUser>>(){}.getType();
-//						List<TweetUser> tweetUserlist = gson.fromJson(arg0, tweetusertype);
-//
-//						addEntriesToBottom(list);
-//						
-//						for(TweetUser user:tweetUserlist)
-//						{
-//							if(!TextUtils.isEmpty(user.username))
-//							{
-//								TweetCommonData.tweetUsers.put(user.username, user);
-//							}
-//						}
-
-
 						mTweetListMode.processReceivedTweets(arg0,tweetRequest);
+
 						
 						refreshAdapter();
 						// Add or remove the loading view depend on if there might be more to load
@@ -521,6 +525,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 //						}
 
 						tweetUserLoader.load();
+						notifyDataSetChanged();
 
 					}
 					else

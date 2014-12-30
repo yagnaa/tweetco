@@ -1,9 +1,11 @@
 package com.tweetco.tweetlist;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -21,7 +23,7 @@ import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 public class UserFeedMode extends TweetListMode implements Parcelable
 {
 	private String mUserName;
-	
+
 	public UserFeedMode(String username)
 	{
 		mUserName = username;
@@ -30,12 +32,10 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public JsonObject getNextTweetRequest() 
 	{
-		// TODO Auto-generated method stub
 		JsonObject obj = new JsonObject();
-		obj.addProperty(ApiInfo.kRequestingUserKey, TweetCommonData.getUserName());
+		obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
 		obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
 		obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-		obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
 		return obj;
 	}
 
@@ -43,12 +43,7 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	public JsonObject getPreviousTweetRequest() 
 	{
 		// TODO Auto-generated method stub
-		JsonObject obj = new JsonObject();
-		obj.addProperty(ApiInfo.kRequestingUserKey, TweetCommonData.getUserName());
-		obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
-		obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-		obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
-		return obj;
+		throw new IllegalAccessError("getPreviousTweetRequest is not implemented for UserFeedMode");
 	}
 
 
@@ -56,10 +51,10 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	public int getLastTweetIterator()
 	{
 		int retValue =0;
-		int size = TweetCommonData.tweetsList.size();
-		if(size>0)
+		List<Tweet> userTweets = TweetCommonData.userTweetsList.get(mUserName);
+		if(userTweets!=null && !userTweets.isEmpty())
 		{
-			Tweet tweet = TweetCommonData.tweetsList.get(size - 1);
+			Tweet tweet = userTweets.get(userTweets.size() - 1);
 			retValue = tweet.iterator;
 		}
 		return retValue;
@@ -98,25 +93,37 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	public void addEntriesToBottom(List<Tweet> entries) 
 	{
 		// Add entries to the bottom of the list
-		TweetCommonData.tweetsList.addAll(entries);
+		List<Tweet> userTweetList = TweetCommonData.userTweetsList.get(mUserName);
+		if(userTweetList==null)
+		{
+			userTweetList = new ArrayList<Tweet>();
+			TweetCommonData.userTweetsList.put(mUserName, userTweetList);
+		}
+		userTweetList.addAll(entries);
 	}
-	
+
 
 	public void addEntriesToTop(List<Tweet> entries) 
 	{
-		// Add entries in reversed order to achieve a sequence used in most of messaging/chat apps
-		if (entries != null) {
-			Collections.reverse(entries);
+		// Add entries to the bottom of the list
+		List<Tweet> userTweetList = TweetCommonData.userTweetsList.get(mUserName);
+		if(userTweetList==null)
+		{
+			userTweetList = new ArrayList<Tweet>();
+			TweetCommonData.userTweetsList.put(mUserName, userTweetList);
 		}
-
-		// Add entries to the top of the list
-		TweetCommonData.tweetsList.addAll(0, entries);
+		userTweetList.addAll(0,entries);
 	}
 
 	public void clearEntries() 
 	{
-
 		TweetCommonData.tweetsList.clear();
+		// Add entries to the bottom of the list
+		List<Tweet> userTweetList = TweetCommonData.userTweetsList.get(mUserName);
+		if(userTweetList!=null)
+		{
+			userTweetList.clear();
+		}
 	}
 
 	public void addUsers(Map<String,TweetUser> tweetUsers) 
@@ -157,27 +164,48 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 			return new HomeFeedMode[size];
 		}
 	};
-	
+
 	@Override
-	public int getCount() {
+	public int getCount() 
+	{
 		// TODO Auto-generated method stub
-		return 0;
+		int retValue = 0;
+
+		// Add entries to the bottom of the list
+		List<Tweet> userTweetList = TweetCommonData.userTweetsList.get(mUserName);
+		if(userTweetList!=null)
+		{
+			retValue = userTweetList.size();
+		}
+		return retValue;
 	}
 
 	@Override
-	public Object getItem(int position) {
+	public Object getItem(int position) 
+	{
+
 		// TODO Auto-generated method stub
-		return null;
+		Tweet tweet = null;
+
+		// Add entries to the bottom of the list
+		List<Tweet> userTweetList = TweetCommonData.userTweetsList.get(mUserName);
+		if(userTweetList!=null)
+		{
+			tweet = userTweetList.get(position);
+		}
+		return tweet;
 	}
 
 	@Override
-	public long getItemId(int position) {
+	public long getItemId(int position) 
+	{
 		// TODO Auto-generated method stub
-		return 0;
+		return position<0?0:position;
 	}
-	
+
 	@Override
-	public String getApi() {
+	public String getApi()
+	{
 		return ApiInfo.GET_TWEETS_FOR_USER;
 	}
 }

@@ -34,8 +34,8 @@
         android:layout_marginTop="8dp"
         android:clickable="true"
         android:scaleType="fitXY"
-       custom:selector="true"
-       custom:selector_color="#44FFBB33"
+        custom:selector="true"
+        custom:selector_color="#44FFBB33"
         custom:selector_stroke_color="#88FF8800"
         custom:selector_stroke_width="2dp" />
 
@@ -85,12 +85,25 @@
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
+    <com.yagnasri.displayingbitmaps.ui.RecyclingImageView
+        android:id="@+id/tweet_content_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_below="@+id/tweetcontent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/imageView1"
+        android:clickable="true"
+        android:scaleType="centerCrop" />
+
     <LinearLayout
         android:id="@+id/tweet_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/tweetcontent"
+        android:layout_below="@id/tweet_content_image"
         android:layout_toRightOf="@+id/imageView1"
         android:orientation="horizontal"
         android:paddingBottom="5dp"

@@ -394,7 +394,6 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	{
 		super.onResume();
 		TweetCommonData.mImageFetcher.setExitTasksEarly(false);
-		refresh();
 	}
 
 	@Override

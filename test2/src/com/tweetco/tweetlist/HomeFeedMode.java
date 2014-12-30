@@ -133,7 +133,6 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 
 	public void clearEntries() 
 	{
-
 		TweetCommonData.tweetsList.clear();
 	}
 

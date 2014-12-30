@@ -5,12 +5,12 @@
     android:orientation="vertical" >
     
     <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_margin="30dp">
-    	<ImageView android:id="@+id/editProfileUserPic" android:layout_width="50dp" android:layout_height="50dp" android:padding="10dp" android:background="@drawable/batman"/>
+    	<ImageView android:id="@+id/editProfileUserPic" android:layout_width="50dp" android:layout_height="50dp" android:padding="10dp" android:background="@drawable/ico_profile_default"/>
         <TextView android:text="Photo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:padding="20dp"/>
     </LinearLayout>
     
     <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_margin="30dp">
-    	<ImageView android:id="@+id/editProfileBackgroundPic" android:layout_width="50dp" android:layout_height="50dp" android:padding="10dp" android:background="@drawable/batman"/>
+    	<ImageView android:id="@+id/editProfileBackgroundPic" android:layout_width="50dp" android:layout_height="50dp" android:padding="10dp" android:background="@drawable/ico_profile_default"/>
         <TextView android:text="Header" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:padding="20dp"/>
     </LinearLayout>
     

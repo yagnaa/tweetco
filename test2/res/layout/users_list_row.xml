@@ -29,7 +29,8 @@
         android:layout_height="60dp"
         android:layout_gravity="center_vertical"
         android:clickable="true"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:src="@drawable/ico_profile_default" />
 
     <LinearLayout
         android:id="@+id/name_and_bio"

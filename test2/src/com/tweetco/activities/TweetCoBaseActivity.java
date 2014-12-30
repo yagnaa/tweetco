@@ -1,17 +1,29 @@
 package com.tweetco.activities;
 
+import android.app.Activity;
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
 public class TweetCoBaseActivity extends ActionBarActivity 
 {
-	public static boolean isActivityVisible = false;
+	public static boolean isAppInForeground = false;
+	public static Activity topActivity = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		nm.cancelAll();
+	}
+	
+	@Override
+	protected void onStart()
+	{
+		super.onStart();
+		topActivity =  this;
 	}
 
 	@Override
@@ -19,7 +31,7 @@ public class TweetCoBaseActivity extends ActionBarActivity
 	{
 		// TODO Auto-generated method stub
 		super.onResume();
-		isActivityVisible = true;
+		isAppInForeground = true;
 	}
 
 	@Override
@@ -27,6 +39,6 @@ public class TweetCoBaseActivity extends ActionBarActivity
 	{
 		// TODO Auto-generated method stub
 		super.onPause();
-		isActivityVisible = false;
+		isAppInForeground = false;
 	}
 }

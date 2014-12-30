@@ -29,8 +29,7 @@
         android:layout_height="60dp"
         android:layout_gravity="center_vertical"
         android:clickable="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/batman" />
+        android:scaleType="fitXY" />
 
     <LinearLayout
         android:id="@+id/name_and_bio"

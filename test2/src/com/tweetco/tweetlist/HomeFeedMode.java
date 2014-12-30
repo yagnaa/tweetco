@@ -46,7 +46,7 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kRequestingUserKey, TweetCommonData.getUserName());
 		obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
-		obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+		obj.addProperty(ApiInfo.kLastTweetIterator, getFirstTweetIterator());
 		obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kNewTweetRequest);
 		return obj;
 	}
@@ -60,6 +60,18 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 		if(size>0)
 		{
 			Tweet tweet = TweetCommonData.tweetsList.get(size - 1);
+			retValue = tweet.iterator;
+		}
+		return retValue;
+	}
+	
+	public int getFirstTweetIterator()
+	{
+		int retValue =0;
+		int size = TweetCommonData.tweetsList.size();
+		if(size>0)
+		{
+			Tweet tweet = TweetCommonData.tweetsList.get(0);
 			retValue = tweet.iterator;
 		}
 		return retValue;

@@ -11,6 +11,7 @@ import android.util.Log;
 import com.microsoft.windowsazure.mobileservices.Registration;
 import com.microsoft.windowsazure.mobileservices.RegistrationCallback;
 import com.tweetco.R;
+import com.tweetco.activities.TweetCoBaseActivity;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 
@@ -52,28 +53,42 @@ public class PushNotificationHandler extends com.microsoft.windowsazure.notifica
 	public void onReceive(Context context, Bundle bundle) 
 	{
 		ctx = context;
-		String nhMessage = bundle.getString("message");
+		
+		String tweeterName = bundle.getString("message");
+		String tweetContent = bundle.getString("message2");
 
-		sendNotification(nhMessage);
+		sendNotification(tweeterName,tweetContent);
 	}
 
-	private void sendNotification(String msg) {
-		mNotificationManager = (NotificationManager)
-				ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+	private void sendNotification(String tweeterName, String tweetContent) 
+	{	
+		if(TweetCoBaseActivity.isAppInForeground)
+		{
+			if(TweetCoBaseActivity.topActivity instanceof AllInOneActivity)
+			{
+				((AllInOneActivity)TweetCoBaseActivity.topActivity).getController().tweetsListRefresh(null);
+			}
+		}
+		else
+		{
+			mNotificationManager = (NotificationManager)
+					ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
-				new Intent(ctx, AllInOneActivity.class), 0);
+			PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
+					new Intent(ctx, AllInOneActivity.class), 0);
 
-		NotificationCompat.Builder mBuilder =
-				new NotificationCompat.Builder(ctx)
-		.setSmallIcon(R.drawable.ic_launcher)
-		.setContentTitle("Notification Hub Demo")
-		.setStyle(new NotificationCompat.BigTextStyle()
-		.bigText(msg))
-		.setContentText(msg);
+			NotificationCompat.Builder mBuilder =
+					new NotificationCompat.Builder(ctx)
+			.setSmallIcon(R.drawable.icon_main)
+			.setContentTitle(tweeterName)
+			.setStyle(new NotificationCompat.BigTextStyle()
+			.bigText(tweetContent))
+			.setContentText(tweetContent);
 
-		mBuilder.setContentIntent(contentIntent);
-		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}
+
 	}
 
 }

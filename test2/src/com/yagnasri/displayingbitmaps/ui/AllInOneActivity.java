@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -16,12 +15,13 @@ import android.view.inputmethod.InputMethodManager;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 import com.tweetco.R;
 import com.tweetco.activities.Constants;
+import com.tweetco.activities.TweetCoBaseActivity;
 import com.tweetco.notifications.PushNotificationHandler;
 import com.yagnasri.dao.Tweet;
 
 
 
-public class AllInOneActivity extends FragmentActivity
+public class AllInOneActivity extends TweetCoBaseActivity
 {
 
 	public static final String SENDER_ID = "721884328218";
@@ -146,9 +146,13 @@ public class AllInOneActivity extends FragmentActivity
 				mController.tweetsListRefresh(tweet);
 			}
 		}
-		
-	
 	}
+	
+	public Controller getController()
+	{
+		return mController;
+	}
+	
 	
 	/**
 	 * All the actions that has to be done on the fragments will be done here.

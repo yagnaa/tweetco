@@ -3,6 +3,7 @@ package com.tweetco.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -95,7 +97,27 @@ public class UserProfileFragment extends FragmentActivity
 				});
     		}
     		
-    		initializePager();
+    		if(mUserName.equals(TweetCommonData.getUserName()))
+    		{
+    			initializePager();
+    		}
+    		else
+    		{
+    			FrameLayout layout = UiUtility.getView(this, R.id.tweetsListFragmentContainer);
+    			layout.setVisibility(View.VISIBLE);
+    			
+                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                TweetListFragment tweetListFragment = new TweetListFragment();
+                Bundle bundle = new Bundle();
+                UserFeedMode mode = new UserFeedMode(mUserName);
+                bundle.putParcelable(Constants.TWEET_LIST_MODE, mode);
+                bundle.putBoolean("hideFooter", true);
+                tweetListFragment.setArguments(bundle);
+                ft.replace(R.id.tweetsListFragmentContainer, tweetListFragment);
+                ft.commit();
+    		}
+    		
+    		
     	}
     	
     	
@@ -115,6 +137,7 @@ public class UserProfileFragment extends FragmentActivity
 	{	
 		// init pager
 		mViewPager = (ViewPager) findViewById(R.id.userProfilePager);
+		mViewPager.setVisibility(View.VISIBLE);
 		mViewPager.setOnPageChangeListener(new OnPageChangeListener()
 		{
 

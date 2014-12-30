@@ -164,23 +164,23 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 			}
 		});
 		
-		Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			
-			@Override
-			public void run() 
-			{
-				ActionBar actionbar = TweetListFragment.this.getActivity().getActionBar();
-				ImageView imageView = (ImageView)actionbar.getCustomView().findViewById(R.id.imageView1);
-				
-				TweetUser tweetUser = TweetCommonData.tweetUsers.get(TweetCommonData.getUserName());
-				if(tweetUser!=null && tweetUser.profileimageurl!=null)
-				{
-				TweetCommonData.mImageFetcher.loadImage(tweetUser.profileimageurl, imageView);
-				}
-				
-			}
-		}, 10000);
+//		Handler handler = new Handler();
+//		handler.postDelayed(new Runnable() {
+//			
+//			@Override
+//			public void run() 
+//			{
+//				ActionBar actionbar = TweetListFragment.this.getActivity().getActionBar();
+//				ImageView imageView = (ImageView)actionbar.getCustomView().findViewById(R.id.imageView1);
+//				
+//				TweetUser tweetUser = TweetCommonData.tweetUsers.get(TweetCommonData.getUserName());
+//				if(tweetUser!=null && tweetUser.profileimageurl!=null)
+//				{
+//				TweetCommonData.mImageFetcher.loadImage(tweetUser.profileimageurl, imageView);
+//				}
+//				
+//			}
+//		}, 10000);
 		
 		mNewPageLoader = new PageLoader();
 

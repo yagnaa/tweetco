@@ -459,7 +459,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			
 //			JsonObject obj = new JsonObject();
 //			TweetListMode mode = getTweetListMode();
-			String api = ApiInfo.GET_TWEETS_FOR_USER;
 //			if(mode == TweetListMode.HOME_FEED)
 //			{
 //				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
@@ -482,7 +481,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			
 			Log.d(TAG, "Trying to load the next set of tweets");
 			
-			mClient.invokeApi(api , tweetRequest, new ApiJsonOperationCallback() {
+			mClient.invokeApi(mTweetListMode.getApi() , tweetRequest, new ApiJsonOperationCallback() {
 
 				@Override
 				public void onCompleted(JsonElement arg0, Exception arg1,
@@ -512,6 +511,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 						mTweetListMode.processReceivedTweets(arg0,tweetRequest);
 						
+						refreshAdapter();
 						// Add or remove the loading view depend on if there might be more to load
 						//TODO spinner at the bottom
 //						if (list.size() < SEVER_SIDE_BATCH_SIZE) {

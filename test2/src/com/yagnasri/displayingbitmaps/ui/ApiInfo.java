@@ -41,6 +41,7 @@ public class ApiInfo
 	public static final String POST_TWEET = "PostTweet";
 	public static final String UPDATE_USER_IMAGE = "updateuserimage";
 	public static final String GET_TWEETS_FOR_TREND = "gettweetsfortrendingtopic";
+	public static final String GET_BOOKMARKED_TWEETS = "getbookmarkedtweetsforuser";
 	
 	
 	

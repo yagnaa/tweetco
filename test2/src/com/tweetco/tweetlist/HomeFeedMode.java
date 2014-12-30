@@ -178,4 +178,9 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	@Override
+	public String getApi() {
+		return ApiInfo.GET_TWEETS_FOR_USER;
+	}
 }

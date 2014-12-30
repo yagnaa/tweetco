@@ -18,11 +18,11 @@ import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 
-public class UserFeedMode extends TweetListMode implements Parcelable
+public class BookmarksFeedMode extends TweetListMode implements Parcelable
 {
 	private String mUserName;
 	
-	public UserFeedMode(String username)
+	public BookmarksFeedMode(String username)
 	{
 		mUserName = username;
 	}
@@ -33,9 +33,6 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 		// TODO Auto-generated method stub
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kRequestingUserKey, TweetCommonData.getUserName());
-		obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
-		obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-		obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
 		return obj;
 	}
 
@@ -45,9 +42,6 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 		// TODO Auto-generated method stub
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kRequestingUserKey, TweetCommonData.getUserName());
-		obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
-		obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-		obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
 		return obj;
 	}
 
@@ -68,6 +62,7 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public void processReceivedTweets(JsonElement response,JsonObject tweetRequest ) 
 	{
+
 
 		//The teceived data contains an inner join of tweets and tweet users. 
 		//Read them both.
@@ -113,6 +108,7 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 		TweetCommonData.tweetsList.addAll(0, entries);
 	}
 
+
 	public void clearEntries() 
 	{
 
@@ -130,8 +126,21 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 		// Clear all the data points
 		TweetCommonData.tweetUsers.put(user, userInfo);
 	}
+	
+	@Override
+	public int getCount() 
+	{	
+		return TweetCommonData.tweetsList.size();
+	}
+	
+	@Override
+	public Object getItem(int position) 
+	{
+		return TweetCommonData.tweetsList.get(position);
+	}
 
-	protected UserFeedMode(Parcel in) {
+
+	protected BookmarksFeedMode(Parcel in) {
 		mUserName = in.readString();
 	}
 
@@ -146,29 +155,17 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	}
 
 	@SuppressWarnings("unused")
-	public static final Parcelable.Creator<HomeFeedMode> CREATOR = new Parcelable.Creator<HomeFeedMode>() {
+	public static final Parcelable.Creator<BookmarksFeedMode> CREATOR = new Parcelable.Creator<BookmarksFeedMode>() {
 		@Override
-		public HomeFeedMode createFromParcel(Parcel in) {
-			return new HomeFeedMode(in);
+		public BookmarksFeedMode createFromParcel(Parcel in) {
+			return new BookmarksFeedMode(in);
 		}
 
 		@Override
-		public HomeFeedMode[] newArray(int size) {
-			return new HomeFeedMode[size];
+		public BookmarksFeedMode[] newArray(int size) {
+			return new BookmarksFeedMode[size];
 		}
 	};
-	
-	@Override
-	public int getCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Object getItem(int position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public long getItemId(int position) {
@@ -178,6 +175,6 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	
 	@Override
 	public String getApi() {
-		return ApiInfo.GET_TWEETS_FOR_USER;
+		return ApiInfo.GET_BOOKMARKED_TWEETS;
 	}
 }

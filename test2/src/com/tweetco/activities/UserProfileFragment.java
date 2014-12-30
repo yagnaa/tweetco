@@ -1,12 +1,16 @@
 package com.tweetco.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +21,8 @@ import com.tweetco.tweetlist.UserFeedMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.TweetUser;
+import com.yagnasri.displayingbitmaps.ui.CustomFragmentPagerAdapter;
+import com.yagnasri.displayingbitmaps.ui.CustomUserProfileFragmentPagerAdapter;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter;
 import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
@@ -31,6 +37,10 @@ public class UserProfileFragment extends FragmentActivity
 	private TextView mFollowerCount = null;
 	private TextView mFolloweeCount = null;
 	private Button mEditProfileButton = null;
+	
+	private ViewPager mViewPager;
+	private static CustomUserProfileFragmentPagerAdapter mPagerAdapter = null;
+	
 	/**
      * Empty constructor as per the Fragment documentation
      */
@@ -84,19 +94,50 @@ public class UserProfileFragment extends FragmentActivity
 					}
 				});
     		}
+    		
+    		initializePager();
     	}
     	
-    	if(UiUtility.getView(this, R.id.tweetsListFragmentContainer) != null)
-		{
-			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            TweetListFragment tweetListFragment = new TweetListFragment();
-            Bundle bundle = new Bundle();
-            UserFeedMode mode = new UserFeedMode(mUserName);
-            bundle.putParcelable(Constants.TWEET_LIST_MODE, mode);
-            bundle.putBoolean("hideFooter", true);
-            tweetListFragment.setArguments(bundle);
-            ft.replace(R.id.tweetsListFragmentContainer, tweetListFragment);
-            ft.commit();
-		}
+    	
     }
+    
+    private void hideKeyboard() 
+	{   
+	    // Check if no view has focus:
+	    View view = this.getCurrentFocus();
+	    if (view != null) {
+	        InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+	        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	    }
+	}
+    
+    public void initializePager()
+	{	
+		// init pager
+		mViewPager = (ViewPager) findViewById(R.id.userProfilePager);
+		mViewPager.setOnPageChangeListener(new OnPageChangeListener()
+		{
+
+			@Override
+			public void onPageScrollStateChanged(int state)
+			{
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2)
+			{
+			}
+
+			@Override
+			public void onPageSelected(int position)
+			{
+				hideKeyboard();
+			}
+		});
+		
+		mPagerAdapter = new CustomUserProfileFragmentPagerAdapter(this.getApplicationContext(), getSupportFragmentManager());
+		mViewPager.setAdapter(mPagerAdapter);
+		mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount() - 1);
+		mViewPager.setCurrentItem(0);
+	}
 }

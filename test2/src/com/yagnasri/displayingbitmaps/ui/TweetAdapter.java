@@ -516,6 +516,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 						
 						refreshAdapter();
+						
 						// Add or remove the loading view depend on if there might be more to load
 						//TODO spinner at the bottom
 //						if (list.size() < SEVER_SIDE_BATCH_SIZE) {

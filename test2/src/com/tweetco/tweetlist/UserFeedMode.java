@@ -61,7 +61,7 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	}
 
 	@Override
-	public void processReceivedTweets(JsonElement response,JsonObject tweetRequest ) 
+	public int processReceivedTweets(JsonElement response,JsonObject tweetRequest,int index ) 
 	{
 
 		//The teceived data contains an inner join of tweets and tweet users. 
@@ -83,6 +83,7 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 				TweetCommonData.tweetUsers.put(user.username, user);
 			}
 		}
+		return index;
 
 	}
 

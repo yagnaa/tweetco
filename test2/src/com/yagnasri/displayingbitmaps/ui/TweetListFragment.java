@@ -17,6 +17,9 @@
 package com.yagnasri.displayingbitmaps.ui;
 
 
+import java.lang.reflect.Type;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Intent;
@@ -46,6 +49,13 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
 import com.tweetco.activities.Constants;
 import com.tweetco.activities.PostTweetActivity;
@@ -55,6 +65,7 @@ import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
+import com.yagnasri.displayingbitmaps.ui.TweetAdapter.NewPageLoader;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
 import com.yagnasri.displayingbitmaps.util.ImageCache;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
@@ -69,12 +80,18 @@ import com.yagnasri.displayingbitmaps.util.Utils;
  */
 public class TweetListFragment extends Fragment implements AdapterView.OnItemClickListener 
 {
-	private static final String TAG = "ImageGridFragment";
+	private static final String TAG = "TweetListFragment";
 	private static final String IMAGE_CACHE_DIR = "thumbs";
 
 	private int mImageThumbSize;
 	private int mImageThumbSpacing;
 	private TweetAdapter mAdapter;
+	
+
+	private TweetUserLoader tweetUserLoader; //Loads user data
+	
+
+	private NewPageLoader mNewPageLoader; //Fetches the tweets
 
 	private GestureDetectorCompat mDetector; 
 
@@ -164,6 +181,9 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				
 			}
 		}, 10000);
+		
+		mNewPageLoader = new PageLoader();
+
 	}
 
 	@Override
@@ -196,16 +216,23 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				launchPostTweetActivity();
 			}
 		});
+
 		
-		mAdapter.onScrollNext();
+		
+		tweetUserLoader = new TweetUserLoader(mAdapter);
+		onScrollNext();
 	}
 
 	/**
 	 * This should be called when there is new data to load. ie. Push Notification or a tweet being posted.
 	 */
-	public void refresh()
+	public void refreshTop()
 	{
-		mAdapter.refreshTop();
+		TweetListMode mode = mAdapter.getTweetListMode();
+		//TODO Build the tweetRequest and give it to loader
+		JsonObject tweetRequest = mode.getPreviousTweetRequest();
+		//TODO Build the request for the load
+		mNewPageLoader.load(tweetRequest, mode.getApi());
 	}
 	
 	public void launchPostTweetActivity()
@@ -284,7 +311,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 					int visibleItemCount, int totalItemCount) {
 
 				//Start Loading tweets in the backing adapter
-				mAdapter.onScroll(absListView, firstVisibleItem, visibleItemCount, totalItemCount);
+				loadDataOnScroll(absListView, firstVisibleItem, visibleItemCount, totalItemCount);
 
 				//End Loading tweets in the backing adapter
 
@@ -411,6 +438,32 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		super.onDestroy();
 		TweetCommonData.mImageFetcher.closeCache();
 	}
+	
+	
+	private void loadDataOnScroll(AbsListView absListView, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount)
+	{
+		// In scroll-to-bottom-to-load mode, when the sum of first visible position and visible count equals the total number
+		// of items in the adapter it reaches the bottom
+		int bufferItemsToShow = mAdapter.getCount() -(firstVisibleItem + visibleItemCount);
+		Log.d(TAG, "There are getCount()="+ mAdapter.getCount()+" firstVisibleItem="+firstVisibleItem+ " visibleItemCount="+visibleItemCount);
+		if (bufferItemsToShow < PageLoader.TWEET_LOAD_BUFFER  && mAdapter.canScroll) 
+		{
+			onScrollNext();
+		}
+	}
+	
+
+	public void onScrollNext() 
+	{
+		if (mNewPageLoader != null) 
+		{
+			TweetListMode mode = mAdapter.getTweetListMode();
+			JsonObject tweetRequest = mode.getNextTweetRequest();
+			//TODO Build the request for the load
+			mNewPageLoader.load(tweetRequest,mode.getApi());
+		}
+	}
 
 	@TargetApi(VERSION_CODES.JELLY_BEAN)
 	@Override
@@ -499,6 +552,95 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 			return false;
 		}
+	}
+	
+	
+	//TODO this has to be moved to a separate class
+	private class PageLoader extends NewPageLoader
+	{
+		
+		public static final int TWEET_LOAD_BUFFER = 10; //When the user is slowly scrolling throught he tweets, if the backing adapter has
+		                             //fewer than TWEET_LOAD_BUFFER tweets to show, we start loading the next batch
+		private static final int SEVER_SIDE_BATCH_SIZE = 10;
+		private MobileServiceClient mClient;
+
+		public PageLoader()
+		{
+			mClient = TweetCommonData.mClient;
+		}
+
+		@Override
+		public void load(final JsonObject tweetRequest, String api ) 
+		{
+			final TweetAdapter adapter = (TweetAdapter)mListView.getAdapter();
+			
+			final TweetListMode tweetListMode = adapter.getTweetListMode();
+			// Loading lock to allow only one instance of loading
+			adapter.lock();
+
+			
+//			JsonObject obj = new JsonObject();
+//			TweetListMode mode = getTweetListMode();
+
+//			if(mode == TweetListMode.HOME_FEED)
+//			{
+//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
+//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
+//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+//				obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
+//			}
+//			else if(mode == TweetListMode.USER_FEED)
+//			{
+//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
+//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
+//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+//			}
+//			else if(mode == TweetListMode.TRENDING_FEED)
+//			{
+//				obj.addProperty(ApiInfo.kTrendingTopicKey, mTrendTag);
+//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+//				api = ApiInfo.GET_TWEETS_FOR_TREND;
+//			}
+			
+			Log.d(TAG, "Trying to load the next set of tweets");
+			
+			mClient.invokeApi(tweetListMode.getApi() , tweetRequest, new ApiJsonOperationCallback() {
+
+				@Override
+				public void onCompleted(JsonElement arg0, Exception arg1,
+						ServiceFilterResponse arg2) {
+					if(arg1 == null)
+					{
+						
+						// save index and top position
+						int index = mListView.getFirstVisiblePosition();
+						View v = mListView.getChildAt(0);
+						int top = (v == null) ? 0 : v.getTop();
+
+						int positionOfList = tweetListMode.processReceivedTweets(arg0,tweetRequest,index);
+						adapter.notifyDataSetChanged();
+						
+						mListView.setSelectionFromTop(positionOfList, top);
+						
+						// Add or remove the loading view depend on if there might be more to load
+						//TODO spinner at the bottom
+//						if (list.size() < SEVER_SIDE_BATCH_SIZE) {
+//							notifyEndOfList();
+//						} else {
+//							notifyHasMore();
+//						}
+
+						tweetUserLoader.load();
+
+					}
+					else
+					{
+						Log.e(TAG,"Exception fetching tweets received") ;
+					}
+
+				}
+			},false);
+		}	
 	}
 
 

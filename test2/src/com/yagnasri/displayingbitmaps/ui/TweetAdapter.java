@@ -43,12 +43,10 @@ import com.yagnasri.displayingbitmaps.util.Utils;
  * columns in the GridView is used to create a fake top row of empty views as we use a
  * transparent ActionBar and don't want the real top row of images to start off covered by it.
  */
-public class TweetAdapter extends BaseAdapter implements OnScrollListener 
+public class TweetAdapter extends BaseAdapter
 {
 	public static final String TAG = "TweetAdapter";
-	
-	public static final int TWEET_LOAD_BUFFER = 10; //When the user is slowly scrolling throught he tweets, if the backing adapter has
-	                             //fewer than TWEET_LOAD_BUFFER tweets to show, we start loading the next batch
+
 
 	// A demo listener to pass actions from view to adapter
 	public static abstract class NewPageLoader {
@@ -67,9 +65,7 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 	
 	private ImageFetcher mImageFetcher2; //Fetches the images
 
-	private NewPageLoader mNewPageLoader; //Fetches the tweets
 
-	private TweetUserLoader tweetUserLoader; //Loads user data
 
 	private OnProfilePicClick mOnProfilePicClickCallback;
 
@@ -107,8 +103,8 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			mActionBarHeight = TypedValue.complexToDimensionPixelSize(
 					tv.data, context.getResources().getDisplayMetrics());
 		}
-		mNewPageLoader = new PageLoader(context, this);
-		tweetUserLoader = new TweetUserLoader(this);
+
+
 	}
 
 	@Override
@@ -232,6 +228,11 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 		//END_INCLUDE(load_gridview_item)
 	}
 	
+	public TweetListMode getTweetListMode()
+	{
+		return mTweetListMode;
+	}
+	
 
 	@Override
 	public int getCount() 
@@ -339,52 +340,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 			mInfiniteListPageListener.hasMore();
 		}
 	}
-	
-	public TweetListMode getTweetListMode()
-	{
-		return mTweetListMode;
-	}
-
-
-
-	/**
-	 * This function decides when to load the next set of tweets.
-	 * @param view
-	 * @param firstVisibleItem
-	 * @param visibleItemCount
-	 * @param totalItemCount
-	 */
-	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) 
-	{
-		// In scroll-to-bottom-to-load mode, when the sum of first visible position and visible count equals the total number
-		// of items in the adapter it reaches the bottom
-		int bufferItemsToShow = getCount() -(firstVisibleItem + visibleItemCount);
-		Log.d(TAG, "There are getCount()="+getCount()+" firstVisibleItem="+firstVisibleItem+ " visibleItemCount="+visibleItemCount);
-		if (bufferItemsToShow < TWEET_LOAD_BUFFER  && canScroll) 
-		{
-			onScrollNext();
-		}
-	}
-	
-	
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) 
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-
-	public void onScrollNext() 
-	{
-		if (mNewPageLoader != null) 
-		{
-			JsonObject tweetRequest = mTweetListMode.getNextTweetRequest();
-			//TODO Build the request for the load
-			mNewPageLoader.load(tweetRequest,mTweetListMode.getApi());
-		}
-	}
 
 	public void setInfiniteListPageListener(InfiniteScrollListPageListener infiniteListPageListener) 
 	{
@@ -450,93 +405,6 @@ public class TweetAdapter extends BaseAdapter implements OnScrollListener
 
 			}
 		},false);
-	}
-
-	public void refreshTop()
-	{
-		//TODO Build the tweetRequest and give it to loader
-		JsonObject tweetRequest = mTweetListMode.getPreviousTweetRequest();
-		//TODO Build the request for the load
-		mNewPageLoader.load(tweetRequest, mTweetListMode.getApi());
-	}
-
-	//TODO this has to be moved to a separate class
-	private class PageLoader extends NewPageLoader
-	{
-		private static final int SEVER_SIDE_BATCH_SIZE = 10;
-		Context mContext = null;
-		private MobileServiceClient mClient;
-
-		public PageLoader(Context context,TweetAdapter tweetAdapter)
-		{
-			mContext = context;
-			mClient = TweetCommonData.mClient;
-		}
-
-		@Override
-		public void load(final JsonObject tweetRequest, String api ) 
-		{
-
-			// Loading lock to allow only one instance of loading
-			lock();
-			
-//			JsonObject obj = new JsonObject();
-//			TweetListMode mode = getTweetListMode();
-
-//			if(mode == TweetListMode.HOME_FEED)
-//			{
-//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
-//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
-//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-//				obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
-//			}
-//			else if(mode == TweetListMode.USER_FEED)
-//			{
-//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
-//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
-//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-//			}
-//			else if(mode == TweetListMode.TRENDING_FEED)
-//			{
-//				obj.addProperty(ApiInfo.kTrendingTopicKey, mTrendTag);
-//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-//				api = ApiInfo.GET_TWEETS_FOR_TREND;
-//			}
-			
-			Log.d(TAG, "Trying to load the next set of tweets");
-			
-			mClient.invokeApi(mTweetListMode.getApi() , tweetRequest, new ApiJsonOperationCallback() {
-
-				@Override
-				public void onCompleted(JsonElement arg0, Exception arg1,
-						ServiceFilterResponse arg2) {
-					if(arg1 == null)
-					{
-						mTweetListMode.processReceivedTweets(arg0,tweetRequest);
-
-						
-						refreshAdapter();
-						
-						// Add or remove the loading view depend on if there might be more to load
-						//TODO spinner at the bottom
-//						if (list.size() < SEVER_SIDE_BATCH_SIZE) {
-//							notifyEndOfList();
-//						} else {
-//							notifyHasMore();
-//						}
-
-						tweetUserLoader.load();
-						notifyDataSetChanged();
-
-					}
-					else
-					{
-						Log.e(TAG,"Exception fetching tweets received") ;
-					}
-
-				}
-			},false);
-		}	
 	}
 
 }

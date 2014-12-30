@@ -78,8 +78,9 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	}
 
 	@Override
-	public void processReceivedTweets(JsonElement response,JsonObject tweetRequest ) 
+	public int processReceivedTweets(JsonElement response,JsonObject tweetRequest,int index ) 
 	{
+		int returnIndex = index;
 		//populate set
 		boolean requestWasForOldTweets = false;
 		
@@ -106,6 +107,7 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
         }
         else
         {
+        	returnIndex += list.size();
         	addEntriesToTop(list);
         }
 
@@ -117,7 +119,8 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 				TweetCommonData.tweetUsers.put(user.username, user);
 			}
 		}
-
+		
+		return returnIndex;
 	}
 
 	/**

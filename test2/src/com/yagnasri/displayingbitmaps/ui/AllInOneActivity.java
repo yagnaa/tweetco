@@ -164,7 +164,7 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		{
 			//Ideally we should call mPagerAdapter.getFragmentByClass(classname);
 			TweetListFragment twwetListFragment = (TweetListFragment)mPagerAdapter.getRegisteredFragment(0);
-			twwetListFragment.refresh();
+			twwetListFragment.refreshTop();
 		}
 	}
 	

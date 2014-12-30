@@ -10,7 +10,7 @@ public abstract class TweetListMode
 	
 	public abstract JsonObject getNextTweetRequest();
 	
-	public abstract void processReceivedTweets(JsonElement response,JsonObject tweetRequest );
+	public abstract int processReceivedTweets(JsonElement response,JsonObject tweetRequest,int index);
 	
 	public abstract int getCount();
 	

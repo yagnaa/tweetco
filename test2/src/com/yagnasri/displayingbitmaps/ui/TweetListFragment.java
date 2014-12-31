@@ -520,7 +520,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		// of items in the adapter it reaches the bottom
 		int bufferItemsToShow = mAdapter.getCount() -(firstVisibleItem + visibleItemCount);
 		Log.d(TAG, "There are getCount()="+ mAdapter.getCount()+" firstVisibleItem="+firstVisibleItem+ " visibleItemCount="+visibleItemCount);
-		if((bufferItemsToShow < PageLoader.TWEET_LOAD_BUFFER  && mAdapter.canScroll) ||  mAdapter.getCount() < PageLoader.TWEET_LOAD_BUFFER )
+		if((bufferItemsToShow < PageLoader.TWEET_LOAD_BUFFER  && mAdapter.canScroll()))
 		{
 			onScrollNext();
 		}

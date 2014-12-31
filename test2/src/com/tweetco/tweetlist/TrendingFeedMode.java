@@ -1,30 +1,26 @@
 package com.tweetco.tweetlist;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections4.map.LinkedMap;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 
 public class TrendingFeedMode extends TweetListMode implements Parcelable
-{
-	//All the tweets that we are currently holding in memory
-    private static List<Tweet> trendingTweetList = Collections.synchronizedList(new ArrayList<Tweet>());
+{    
+	private LinkedMap<Integer,Tweet> trendingTweetList = new LinkedMap<Integer, Tweet>();
 	private String mTag;
-	
+
 	public TrendingFeedMode(String tag)
 	{
 		mTag = tag;
@@ -38,23 +34,26 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 		obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
 		return obj;
 	}
-	
+
 	@Override
 	public JsonObject getPreviousTweetRequest() 
 	{
 		throw new IllegalAccessError("getPreviousTweetRequest is not implemented for TrendingFeedMode");
 	}
-	
-	
-	
+
+
+
 	public int getLastTweetIterator()
 	{
 		int retValue =0;
-		int size = trendingTweetList.size();
-		if(size>0)
+		if(trendingTweetList.size()>0)
 		{
-			Tweet tweet = trendingTweetList.get(size - 1);
-			retValue = tweet.iterator;
+			Integer lastKey = trendingTweetList.lastKey();
+			if(lastKey!=null)
+			{
+				Tweet tweet = trendingTweetList.get(lastKey);
+				retValue = tweet.iterator;
+			}
 		}
 		return retValue;
 	}
@@ -63,7 +62,7 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 	public int processReceivedTweets(List<Tweet> list,List<TweetUser> tweetUserlist , JsonElement response,JsonObject tweetRequest,int index ) 
 	{
 		addEntriesToBottom(list);
-		
+
 		for(TweetUser user:tweetUserlist)
 		{
 			if(!TextUtils.isEmpty(user.username))
@@ -71,31 +70,38 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 				TweetCommonData.tweetUsers.put(user.username, user);
 			}
 		}
-		
+
 		return index;
-		
+
 	}
-	
+
 
 	public void addEntriesToTop(List<Tweet> entries) 
-	{
-		// Add entries in reversed order to achieve a sequence used in most of messaging/chat apps
-		if (entries != null) {
-			Collections.reverse(entries);
+	{		
+		if(!entries.isEmpty())
+		{
+			LinkedMap<Integer,Tweet> tweetList = trendingTweetList.clone();//(tweet.iterator, tweet);
+			trendingTweetList.clear();
+			// Add entries to the bottom of the list
+			for(Tweet tweet:entries)
+			{		
+				trendingTweetList.put(tweet.iterator, tweet);
+			}
+			trendingTweetList.putAll(tweetList);
 		}
-
-		// Add entries to the top of the list
-		trendingTweetList.addAll(0, entries);
 	}
 
 	public void addEntriesToBottom(List<Tweet> entries) 
-	{
-		trendingTweetList.addAll(entries);
+	{		
+		// Add entries to the bottom of the list
+		for(Tweet tweet:entries)
+		{
+			trendingTweetList.put(tweet.iterator, tweet);
+		}
 	}
 
 	public void clearEntries() 
 	{
-
 		trendingTweetList.clear();
 	}
 
@@ -108,7 +114,7 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 	{
 		TweetCommonData.tweetUsers.put(user, userInfo);
 	}
-	
+
 	protected TrendingFeedMode(Parcel in) {
 		mTag = in.readString();
 	}
@@ -141,7 +147,7 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 	{
 		return trendingTweetList.size();
 	}
-	
+
 	@Override
 	public Object removeItem(int position)
 	{
@@ -151,7 +157,7 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public Object getItem(int position) 
 	{
-		return trendingTweetList.get(position);
+		return trendingTweetList.get(trendingTweetList.get(position));
 	}
 
 	@Override
@@ -160,8 +166,8 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 		// TODO Auto-generated method stub
 		return position<0?0:position;
 	}
-	
-	
+
+
 	@Override
 	public String getApi()
 	{

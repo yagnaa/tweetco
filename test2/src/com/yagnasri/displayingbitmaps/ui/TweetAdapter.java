@@ -72,16 +72,32 @@ public class TweetAdapter extends BaseAdapter
 	protected InfiniteScrollListPageListener mInfiniteListPageListener; 
 
 	// A lock to prevent another scrolling event to be triggered if one is already in session
-	protected boolean canScroll = false;
+	private boolean canScroll = true;
 	// A flag to enable/disable row clicks
 	protected boolean rowEnabled = true;
+	
+	
+	private boolean hasMoreItemsToLoad = false;
+	private long lastDataSetChangedTime = System.currentTimeMillis();
 
 
-	public void lock() {
+	public void lock() 
+	{
 		canScroll = false;
-	}	
-	public void unlock() {
+	}
+	
+	public void unlock() 
+	{
 		canScroll = true;
+	}
+	
+	public boolean canScroll()
+	{
+		if((lastDataSetChangedTime - System.currentTimeMillis()) > 60000)
+		{
+			canScroll = true;
+		}
+		return canScroll;
 	}
 
 	private TweetListMode mTweetListMode = null; 
@@ -120,13 +136,16 @@ public class TweetAdapter extends BaseAdapter
 	{
 		Log.v(TAG, "notifyDataSetChanged()");
 		super.notifyDataSetChanged();
+		lastDataSetChangedTime =  System.currentTimeMillis();
 	}
 	@Override
 	public void notifyDataSetInvalidated() 
 	{
 		Log.v(TAG, "notifyDataSetInvalidated()");
 		super.notifyDataSetInvalidated();
+		lastDataSetChangedTime =  System.currentTimeMillis();
 	}
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup container) 
 	{
@@ -333,19 +352,9 @@ public class TweetAdapter extends BaseAdapter
 		}
 	}
 
-	/**
-	 * Sets the item height. Useful for when we know the column width so the height can be set
-	 * to match.
-	 *
-	 * @param height
-	 */
-	public void setItemHeight(int height) 
-	{
-		notifyDataSetChanged();
-	}
-
 	//This notifies that the list has ended
-	public void notifyEndOfList() {
+	public void notifyEndOfList() 
+	{
 		// When there is no more to load use the lock to prevent loading from happening
 		lock();
 		// More actions when there is no more to load
@@ -355,7 +364,8 @@ public class TweetAdapter extends BaseAdapter
 	}
 
 	//This notifies that there are more tweets to be loaded
-	public void notifyHasMore() {
+	public void notifyHasMore() 
+	{
 		// Release the lock when there might be more to load
 		unlock();
 		// More actions when it might have more to load

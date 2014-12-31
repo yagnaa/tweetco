@@ -1,6 +1,5 @@
 package com.tweetco.tweetlist;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +20,7 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 {
 	private String mUserName;
 	
-    
-    public static LinkedMap<Integer,Tweet> bookmarkedTweetList = (LinkedMap<Integer, Tweet>) Collections.synchronizedMap(new LinkedMap<Integer, Tweet>());
+    private LinkedMap<Integer,Tweet> bookmarkedTweetList = new LinkedMap<Integer, Tweet>();
 	
 	public BookmarksFeedMode(String username)
 	{
@@ -52,11 +50,14 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	public int getLastTweetIterator()
 	{
 		int retValue =0;
-		Integer lastKey = bookmarkedTweetList.lastKey();
-		if(lastKey!=null)
+		if(bookmarkedTweetList.size()>0)
 		{
-			Tweet tweet = bookmarkedTweetList.get(lastKey);
-			retValue = tweet.iterator;
+			Integer lastKey = bookmarkedTweetList.lastKey();
+			if(lastKey!=null)
+			{
+				Tweet tweet = bookmarkedTweetList.get(lastKey);
+				retValue = tweet.iterator;
+			}
 		}
 		return retValue;
 	}

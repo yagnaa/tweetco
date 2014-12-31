@@ -109,29 +109,34 @@ public class UsersListFragment extends ListFragment
 	}
 
 	
-	public void followOrUnfollowUser(final View followButton,final String requestingUser, final String userToFollowOrUnfollow,boolean follow)
+	public void followOrUnfollowUser(final Button followButton,final String requestingUser, final boolean requestForFollow)
 	{
+		String userToFollowOrUnfollow = (String)followButton.getTag();
+		String customApiName = null;
 		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kApiRequesterKey, requestingUser);
-		if(follow)
+		if(requestForFollow)
 		{
 			obj.addProperty(ApiInfo.kUserToFollowKey, userToFollowOrUnfollow);
+			customApiName = ApiInfo.FOLLOW_USER;
 		}
 		else
 		{
 			obj.addProperty(ApiInfo.kUserToUnFollowKey, userToFollowOrUnfollow);
+			customApiName =  ApiInfo.UN_FOLLOW_USER;
 		}
 		
-		String customApiName = follow?ApiInfo.FOLLOW_USER: ApiInfo.UN_FOLLOW_USER;
-		mClient.invokeApi(customApiName, obj, new ApiJsonOperationCallback() {
-			
+		mClient.invokeApi(customApiName, obj, new ApiJsonOperationCallback() 
+		{	
 			@Override
-			public void onCompleted(JsonElement arg0, Exception arg1,
-					ServiceFilterResponse arg2) {
+			public void onCompleted(JsonElement arg0, Exception arg1, ServiceFilterResponse arg2) 
+			{
 				if(arg1 == null)
 				{
-					if(followButton!=null && (followButton instanceof Button))
+					setFollowButton(followButton, requestForFollow);
+					//TODO update the adapter
+					if(followButton!=null)
 					{
 						Log.d("Item clicked","Follow/Unfollow succeeded") ;
 						loadUsers();
@@ -139,6 +144,7 @@ public class UsersListFragment extends ListFragment
 				}
 				else
 				{
+					setFollowButton(followButton,!requestForFollow);
 					Log.e("Item clicked","Exception upVoting a tweet") ;
 					arg1.printStackTrace();
 				}
@@ -147,17 +153,20 @@ public class UsersListFragment extends ListFragment
 		},false);
 	}
 	
-    private void setFollowButton(Button followButton,String userName)
+    private void setFollowButton(Button followButton,boolean isCurrentUserAFollower)
     {
-		Integer position = (Integer)followButton.getTag();
-		TweetUser user = userListAdapter.getItem(position);
-
-		if(user != null && followButton!=null)
-		{
-	        boolean isCurrentUserAFOllower  = TweetUtils.isStringPresent(user.followers, userName);
-	        followButton.setPressed(isCurrentUserAFOllower);
-		}
+        if(isCurrentUserAFollower)
+        {
+        	followButton.setText("Unfollow");
+        	followButton.setSelected(false);
+        }
+        else
+        {
+        	followButton.setText("Follow");
+        	followButton.setSelected(true);
+        }
     }
+
 	
 	private class UserListAdapter extends ArrayAdapter<TweetUser>
 	{
@@ -210,30 +219,20 @@ public class UsersListFragment extends ListFragment
 		        handle.setText(user.username);
 		        
 		        
-		        Button button = (Button)convertView.findViewById(R.id.follow_button);
-		        button.isPressed();
-		        button.setTag(position);
-		        boolean isCurrentUserAFollower  = TweetUtils.isStringPresent(user.followers, mUserName);
-		        if(isCurrentUserAFollower)
-		        {
-		        	button.setText("Unfollow");
-		        }
-		        else
-		        {
-		        	button.setText("Follow");
-		        }
-		        button.setOnClickListener(new View.OnClickListener() 
+		        Button followButton = (Button)convertView.findViewById(R.id.follow_button);
+		        followButton.setTag(user.username);
+		        
+		        final boolean isCurrentUserAFollower  = TweetUtils.isStringPresent(user.followers, mUserName);
+		        setFollowButton(followButton,isCurrentUserAFollower);
+		        
+		        followButton.setOnClickListener(new View.OnClickListener() 
 		        {	
 					@Override
 					public void onClick(View v) 
 					{
-						Integer position = (Integer)v.getTag();
-						//Show user profile view
-						TweetUser user = (TweetUser)getItem(position);
-		        		if(user != null)
-		        		{
-		        			followOrUnfollowUser(v, mUserName, user.username, !TweetUtils.isStringPresent(user.followers, mUserName));
-		        		}						
+						setFollowButton((Button)v,!isCurrentUserAFollower);
+
+		        		followOrUnfollowUser((Button)v, mUserName,!isCurrentUserAFollower);				
 					}
 				});
 				

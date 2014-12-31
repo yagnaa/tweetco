@@ -16,26 +16,37 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/com.tweetco"
     android:layout_width="fill_parent"
-    android:layout_height="70dp"
+    android:layout_height="90dp"
     android:orientation="horizontal"
     android:paddingBottom="5dip"
     android:paddingLeft="6dip"
     android:paddingRight="6dip"
     android:paddingTop="5dip" >
 
-    <com.yagnasri.displayingbitmaps.ui.RecyclingImageView
+    <com.yagnasri.displayingbitmaps.ui.RoundedImageView
         android:id="@+id/leaderProfilePic"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:clickable="true"
+        android:gravity="center_vertical"
         android:scaleType="fitXY"
-        android:src="@drawable/ico_profile_default" />
+        android:src="@drawable/ico_profile_default"
+        custom:selector="true"
+        custom:selector_color="#44FFBB33"
+        custom:selector_stroke_color="#88FF8800"
+        custom:selector_stroke_width="2dp" />
 
     <LinearLayout
         android:layout_width="0dip"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
+        android:layout_marginTop="13dp"
         android:orientation="vertical" >
 
         <TextView
@@ -43,17 +54,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:textSize="16dp"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/display_name_color" />
+            android:textColor="@color/display_name_color"
+            android:textSize="16dp" />
 
         <TextView
             android:id="@+id/handle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
             android:gravity="center_vertical"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -64,40 +75,64 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/upvote"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:src="@drawable/upvote_pressed" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Likes: " />
+                android:layout_weight="2"
+                android:text="(likes)"
+                android:textColor="@color/semi_grey" />
 
             <TextView
                 android:id="@+id/leaderLikesCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="0" />
+                android:text="0"
+                android:textColor="@color/semi_grey" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/bookmark"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:src="@drawable/flag_pressed" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bookmarked: " />
+                android:layout_weight="2"
+                android:text="(bookmarks)  "
+                android:textColor="@color/semi_grey" />
 
             <TextView
                 android:id="@+id/leaderBookmarkedCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="0" />
+                android:text="0"
+                android:textColor="@color/semi_grey" />
         </LinearLayout>
     </LinearLayout>
 

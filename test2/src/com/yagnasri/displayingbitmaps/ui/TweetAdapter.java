@@ -218,7 +218,7 @@ public class TweetAdapter extends BaseAdapter
 						String owner = linkedTweet.tweetowner;
 						if(!TextUtils.isEmpty(owner))
 						{
-							upVote(v,TweetCommonData.getUserName(), linkedTweet.iterator, owner);
+							bookmark(v,TweetCommonData.getUserName(), linkedTweet.iterator, owner);
 						}
 					}
 				}

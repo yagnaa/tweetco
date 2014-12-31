@@ -70,6 +70,17 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/purple_theme_color"
             android:textSize="12dp" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/purple_theme_color"
+            android:textSize="12dp" />
     </LinearLayout>
 
     <TextView

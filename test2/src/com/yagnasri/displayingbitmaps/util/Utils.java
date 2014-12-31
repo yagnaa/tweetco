@@ -20,6 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
+import org.joda.time.DateTime;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -239,5 +241,44 @@ public class Utils {
 		
 	}
     
+    public static String getTweetHandle(String name)
+	{
+    	name = name.trim();
+    	if(!TextUtils.isEmpty(name))
+    	{
+    		name = "@"+name;
+    	}
+    	return name;
+	}
+    
+    public static String getTime(String dateTimeString)
+    {
+    	long currentSeconds = System.currentTimeMillis()/1000;
+    	DateTime dt = new DateTime(dateTimeString);
+    	long tweetSeconds = dt.getMillis()/1000;
+    	long diff = currentSeconds - tweetSeconds;
+    	
+    	long days = diff/86400;
+    	long hours = diff/3600;
+    	long minutes = diff/60;
+    	
+    	if(days > 0)
+    	{
+    		return days+ " days ago";
+    	}
+    	else if(hours > 0)
+    	{
+    		return hours+ " hours ago";
+    	}
+    	else if(minutes > 0)
+    	{
+    		return minutes+ " minutes ago";
+    	}
+    	else {
+    		return diff+ " seconds ago";
+    	}
+
+    }
+
     
 }

@@ -161,15 +161,16 @@ public class TweetAdapter extends BaseAdapter
 			TextView handle = (TextView) convertView.findViewById(R.id.handle);
 			TextView userName = (TextView) convertView.findViewById(R.id.username);
 			TextView tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);
+			TextView tweetTime = (TextView) convertView.findViewById(R.id.time);
 
-			handle.setText(tweet.tweetowner);
+			handle.setText(Utils.getTweetHandle(tweeter.username));
 			if(tweeter!=null && !TextUtils.isEmpty(tweeter.displayname))
 			{
 				userName.setText(tweeter.displayname);
 			}
 			else
 			{
-				userName.setText(tweet.tweetowner);
+				userName.setText(tweeter.username);
 			}
 			tweetContent.setText(tweet.tweetcontent);	
 			Linkify.addLinks(tweetContent, Linkify.WEB_URLS);
@@ -178,6 +179,7 @@ public class TweetAdapter extends BaseAdapter
 			ImageView tweetContentImage = (ImageView) convertView.findViewById(R.id.tweet_content_image);
 			loadTweetImage(tweet, tweetContentImage);
 
+			tweetTime.setText(Utils.getTime(tweet.__createdAt));
 			
 			//UpVote ImageView
 			ImageView upvoteView = (ImageView) convertView.findViewById(R.id.upvote);

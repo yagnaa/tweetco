@@ -1,7 +1,11 @@
 package com.tweetco.tweetlist;
 
+import java.util.List;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.yagnasri.dao.Tweet;
+import com.yagnasri.dao.TweetUser;
 
 public abstract class TweetListMode 
 {
@@ -10,7 +14,7 @@ public abstract class TweetListMode
 	
 	public abstract JsonObject getNextTweetRequest();
 	
-	public abstract int processReceivedTweets(JsonElement response,JsonObject tweetRequest,int index);
+	public abstract int processReceivedTweets(List<Tweet> list,List<TweetUser> tweetUserlist ,JsonElement response,JsonObject tweetRequest,int index);
 	
 	public abstract int getCount();
 	

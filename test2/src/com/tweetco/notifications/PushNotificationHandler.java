@@ -11,6 +11,7 @@ import android.util.Log;
 import com.microsoft.windowsazure.mobileservices.Registration;
 import com.microsoft.windowsazure.mobileservices.RegistrationCallback;
 import com.tweetco.R;
+import com.tweetco.activities.Constants;
 import com.tweetco.activities.TweetCoBaseActivity;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
@@ -70,12 +71,13 @@ public class PushNotificationHandler extends com.microsoft.windowsazure.notifica
 			}
 		}
 		else
-		{
+		{			
 			mNotificationManager = (NotificationManager)
 					ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-
+			Intent intent = new Intent(ctx, AllInOneActivity.class);
+			intent.putExtra(Constants.LAUNCHED_FROM_NOTIFICATIONS, true);
 			PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
-					new Intent(ctx, AllInOneActivity.class), 0);
+					intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
 
 			NotificationCompat.Builder mBuilder =
 					new NotificationCompat.Builder(ctx)

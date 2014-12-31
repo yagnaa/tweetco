@@ -1,5 +1,6 @@
 package com.yagnasri.displayingbitmaps.ui;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public  class TweetUserLoader
 	{
 		List<String> usersToLoad = new ArrayList<String>();
 
-		List<Tweet> tweetsList = TweetCommonData.tweetsList;
+		Collection<Tweet> tweetsList = TweetCommonData.bookmarkedTweetList.values();
 
 		Map<String,TweetUser> tweetUsersList = TweetCommonData.tweetUsers;
 

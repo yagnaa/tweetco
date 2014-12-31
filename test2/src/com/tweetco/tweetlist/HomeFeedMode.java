@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.map.LinkedMap;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -56,11 +58,14 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	public int getLastTweetIterator()
 	{
 		int retValue =0;
-		int size = TweetCommonData.tweetsList.size();
-		if(size>0)
+		if(TweetCommonData.bookmarkedTweetList.size()>0)
 		{
-			Tweet tweet = TweetCommonData.tweetsList.get(size - 1);
-			retValue = tweet.iterator;
+			Integer lastKey = TweetCommonData.bookmarkedTweetList.lastKey();
+			if(lastKey!=null)
+			{
+				Tweet tweet = TweetCommonData.bookmarkedTweetList.get(lastKey);
+				retValue = tweet.iterator;
+			}
 		}
 		return retValue;
 	}
@@ -68,17 +73,20 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	public int getFirstTweetIterator()
 	{
 		int retValue =0;
-		int size = TweetCommonData.tweetsList.size();
-		if(size>0)
+		if(TweetCommonData.bookmarkedTweetList.size()>0)
 		{
-			Tweet tweet = TweetCommonData.tweetsList.get(0);
-			retValue = tweet.iterator;
+			Integer firstKey = TweetCommonData.bookmarkedTweetList.firstKey();
+			if(firstKey!=null)
+			{
+				Tweet tweet = TweetCommonData.bookmarkedTweetList.get(firstKey);
+				retValue = tweet.iterator;
+			}
 		}
 		return retValue;
 	}
 
 	@Override
-	public int processReceivedTweets(JsonElement response,JsonObject tweetRequest,int index ) 
+	public int processReceivedTweets(List<Tweet> list,List<TweetUser> tweetUserlist , JsonElement response,JsonObject tweetRequest,int index ) 
 	{
 		int returnIndex = index;
 		//populate set
@@ -89,17 +97,7 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 		{
 			requestWasForOldTweets = elem.getAsString().equalsIgnoreCase(ApiInfo.kOldTweetRequest);
 		}
-		
-		
-		//The received data contains an inner join of tweets and tweet users. 
-		//Read them both.
-		Gson gson = new Gson();
 
-		Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
-		List<Tweet> list = gson.fromJson(response, collectionType);
-		
-		Type tweetusertype = new TypeToken<List<TweetUser>>(){}.getType();
-		List<TweetUser> tweetUserlist = gson.fromJson(response, tweetusertype);
 
         if(requestWasForOldTweets)
         {
@@ -128,27 +126,35 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	 * @param entries
 	 */
 	public void addEntriesToBottom(List<Tweet> entries) 
-	{
+	{		
 		// Add entries to the bottom of the list
-		TweetCommonData.tweetsList.addAll(entries);
+		for(Tweet tweet:entries)
+		{
+			TweetCommonData.bookmarkedTweetList.put(tweet.iterator, tweet);
+		}
 	}
 	
 
 	public void addEntriesToTop(List<Tweet> entries) 
 	{
-		// Add entries in reversed order to achieve a sequence used in most of messaging/chat apps
-		if (entries != null) {
-			Collections.reverse(entries);
+		
+		if(entries!=null && !entries.isEmpty())
+		{
+			LinkedMap<Integer,Tweet> tweetList = TweetCommonData.bookmarkedTweetList.clone();//(tweet.iterator, tweet);
+			TweetCommonData.bookmarkedTweetList.clear();
+			// Add entries to the bottom of the list
+			for(Tweet tweet:entries)
+			{		
+				TweetCommonData.bookmarkedTweetList.put(tweet.iterator, tweet);
+			}
+			TweetCommonData.bookmarkedTweetList.putAll(tweetList);
 		}
-
-		// Add entries to the top of the list
-		TweetCommonData.tweetsList.addAll(0, entries);
 	}
 
 
 	public void clearEntries() 
 	{
-		TweetCommonData.tweetsList.clear();
+		TweetCommonData.bookmarkedTweetList.clear();
 	}
 
 	public void addUsers(Map<String,TweetUser> tweetUsers) 
@@ -166,13 +172,13 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public int getCount() 
 	{	
-		return TweetCommonData.tweetsList.size();
+		return TweetCommonData.bookmarkedTweetList.size();
 	}
 	
 	@Override
 	public Object getItem(int position) 
 	{
-		return TweetCommonData.tweetsList.get(position);
+		return TweetCommonData.bookmarkedTweetList.get(TweetCommonData.bookmarkedTweetList.get(position));
 	}
 
 

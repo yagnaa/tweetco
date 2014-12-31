@@ -1,18 +1,17 @@
 package com.tweetco.tweetlist;
 
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections4.map.LinkedMap;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
@@ -21,6 +20,9 @@ import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 public class BookmarksFeedMode extends TweetListMode implements Parcelable
 {
 	private String mUserName;
+	
+    
+    public static LinkedMap<Integer,Tweet> bookmarkedTweetList = (LinkedMap<Integer, Tweet>) Collections.synchronizedMap(new LinkedMap<Integer, Tweet>());
 	
 	public BookmarksFeedMode(String username)
 	{
@@ -50,30 +52,18 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	public int getLastTweetIterator()
 	{
 		int retValue =0;
-		int size = TweetCommonData.tweetsList.size();
-		if(size>0)
+		Integer lastKey = bookmarkedTweetList.lastKey();
+		if(lastKey!=null)
 		{
-			Tweet tweet = TweetCommonData.tweetsList.get(size - 1);
+			Tweet tweet = bookmarkedTweetList.get(lastKey);
 			retValue = tweet.iterator;
 		}
 		return retValue;
 	}
 
 	@Override
-	public int processReceivedTweets(JsonElement response,JsonObject tweetRequest,int index ) 
+	public int processReceivedTweets(List<Tweet> list,List<TweetUser> tweetUserlist ,JsonElement response,JsonObject tweetRequest,int index ) 
 	{
-
-
-		//The teceived data contains an inner join of tweets and tweet users. 
-		//Read them both.
-		Gson gson = new Gson();
-
-		Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
-		List<Tweet> list = gson.fromJson(response, collectionType);
-
-		Type tweetusertype = new TypeToken<List<TweetUser>>(){}.getType();
-		List<TweetUser> tweetUserlist = gson.fromJson(response, tweetusertype);
-
 		addEntriesToBottom(list);
 
 		for(TweetUser user:tweetUserlist)
@@ -95,26 +85,32 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	public void addEntriesToBottom(List<Tweet> entries) 
 	{
 		// Add entries to the bottom of the list
-		TweetCommonData.tweetsList.addAll(entries);
+		for(Tweet tweet:entries)
+		{
+			bookmarkedTweetList.put(tweet.iterator, tweet);
+		}
 	}
 	
 
 	public void addEntriesToTop(List<Tweet> entries) 
 	{
-		// Add entries in reversed order to achieve a sequence used in most of messaging/chat apps
-		if (entries != null) {
-			Collections.reverse(entries);
+		if(!entries.isEmpty())
+		{
+			LinkedMap<Integer,Tweet> tweetList = bookmarkedTweetList.clone();//(tweet.iterator, tweet);
+			bookmarkedTweetList.clear();
+			// Add entries to the bottom of the list
+			for(Tweet tweet:entries)
+			{		
+				bookmarkedTweetList.put(tweet.iterator, tweet);
+			}
+			bookmarkedTweetList.putAll(tweetList);
 		}
-
-		// Add entries to the top of the list
-		TweetCommonData.tweetsList.addAll(0, entries);
 	}
 
 
 	public void clearEntries() 
 	{
-
-		TweetCommonData.tweetsList.clear();
+		bookmarkedTweetList.clear();
 	}
 
 	public void addUsers(Map<String,TweetUser> tweetUsers) 
@@ -132,17 +128,18 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public int getCount() 
 	{	
-		return TweetCommonData.tweetsList.size();
+		return bookmarkedTweetList.size();
 	}
 	
 	@Override
 	public Object getItem(int position) 
 	{
-		return TweetCommonData.tweetsList.get(position);
+		return bookmarkedTweetList.get(bookmarkedTweetList.get(position));
 	}
 
 
-	protected BookmarksFeedMode(Parcel in) {
+	protected BookmarksFeedMode(Parcel in) 
+	{
 		mUserName = in.readString();
 	}
 
@@ -170,9 +167,9 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	};
 
 	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return 0;
+	public long getItemId(int position) 
+	{
+		return position<0?0:position;
 	}
 	
 	@Override

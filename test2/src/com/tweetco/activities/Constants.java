@@ -10,4 +10,6 @@ public final class Constants
 	
 	public static final String TWEET_LIST_MODE = "TweetListMode";
 	
+	public static final String LAUNCHED_FROM_NOTIFICATIONS = "launchedFromNOtification";
+	
 }

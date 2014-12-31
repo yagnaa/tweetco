@@ -108,9 +108,21 @@ public class TweetAdapter extends BaseAdapter
 	}
 
 	@Override
+	public void notifyDataSetChanged() 
+	{
+		Log.v(TAG, "notifyDataSetChanged()");
+		super.notifyDataSetChanged();
+	}
+	@Override
+	public void notifyDataSetInvalidated() 
+	{
+		Log.v(TAG, "notifyDataSetInvalidated()");
+		super.notifyDataSetInvalidated();
+	}
+	@Override
 	public View getView(int position, View convertView, ViewGroup container) 
 	{
-		Log.d(TAG, "getView called for position ="+position +" convertView="+(convertView!=null));
+		Log.v(TAG, "getView called for position ="+position +" convertView="+(convertView!=null));
 		// Now handle the main ImageView thumbnails
 		ImageView imageView;
 		if (convertView == null) { // if it's not recycled, instantiate and initialize

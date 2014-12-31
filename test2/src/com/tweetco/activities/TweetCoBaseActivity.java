@@ -13,10 +13,7 @@ public class TweetCoBaseActivity extends ActionBarActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		nm.cancelAll();
 	}
 	
 	@Override
@@ -32,6 +29,8 @@ public class TweetCoBaseActivity extends ActionBarActivity
 		// TODO Auto-generated method stub
 		super.onResume();
 		isAppInForeground = true;
+		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		nm.cancelAll();
 	}
 
 	@Override

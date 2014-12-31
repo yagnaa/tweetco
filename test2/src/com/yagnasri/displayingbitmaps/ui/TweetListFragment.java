@@ -22,7 +22,9 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
@@ -86,10 +88,10 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	private int mImageThumbSize;
 	private int mImageThumbSpacing;
 	private TweetAdapter mAdapter;
-	
+
 
 	private TweetUserLoader tweetUserLoader; //Loads user data
-	
+
 
 	private NewPageLoader mNewPageLoader; //Fetches the tweets
 
@@ -113,16 +115,19 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	/**
 	 * Empty constructor as per the Fragment documentation
 	 */
-	public TweetListFragment() {}
-	
+	public TweetListFragment() {
+		Log.v(TAG, "created");
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+		Log.v(TAG, "onCreate && savedInstanceState=" + (savedInstanceState!=null?"true":"false"));
+		setHasOptionsMenu(true); 
 
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
-		
+
 		TweetListMode mode = (TweetListMode)getArguments().getParcelable(Constants.TWEET_LIST_MODE);
 
 		ImageCache.ImageCacheParams cacheParams =
@@ -135,15 +140,15 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
 		Resources r = getResources();
 		int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, r.getDisplayMetrics());
-		
+
 		TweetCommonData.mImageFetcher = new ImageFetcher(getActivity(), px,px, true);
 		TweetCommonData.mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
 		TweetCommonData.mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-		
+
 		ImageFetcher mImageFetcher2 = new ImageFetcher(getActivity(), px,px, true);
 		mImageFetcher2.setLoadingImage(R.drawable.ic_launcher);
 		mImageFetcher2.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-		
+
 		mAdapter = new TweetAdapter(getActivity(), TweetCommonData.mImageFetcher,mImageFetcher2, mode, new OnProfilePicClick() {
 
 			@Override
@@ -163,33 +168,88 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 			}
 		});
-		
-//		Handler handler = new Handler();
-//		handler.postDelayed(new Runnable() {
-//			
-//			@Override
-//			public void run() 
-//			{
-//				ActionBar actionbar = TweetListFragment.this.getActivity().getActionBar();
-//				ImageView imageView = (ImageView)actionbar.getCustomView().findViewById(R.id.imageView1);
-//				
-//				TweetUser tweetUser = TweetCommonData.tweetUsers.get(TweetCommonData.getUserName());
-//				if(tweetUser!=null && tweetUser.profileimageurl!=null)
-//				{
-//				TweetCommonData.mImageFetcher.loadImage(tweetUser.profileimageurl, imageView);
-//				}
-//				
-//			}
-//		}, 10000);
-		
+
+		//		Handler handler = new Handler();
+		//		handler.postDelayed(new Runnable() {
+		//			
+		//			@Override
+		//			public void run() 
+		//			{
+		//				ActionBar actionbar = TweetListFragment.this.getActivity().getActionBar();
+		//				ImageView imageView = (ImageView)actionbar.getCustomView().findViewById(R.id.imageView1);
+		//				
+		//				TweetUser tweetUser = TweetCommonData.tweetUsers.get(TweetCommonData.getUserName());
+		//				if(tweetUser!=null && tweetUser.profileimageurl!=null)
+		//				{
+		//				TweetCommonData.mImageFetcher.loadImage(tweetUser.profileimageurl, imageView);
+		//				}
+		//				
+		//			}
+		//		}, 10000);
+
 		mNewPageLoader = new PageLoader();
 
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+		Log.v(TAG, "onAttach");
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		// TODO Auto-generated method stub
+		super.onConfigurationChanged(newConfig);
+		Log.v(TAG, "onConfigurationChanged");
+	}
+
+	@Override
+	public void onDetach() {
+		// TODO Auto-generated method stub
+		super.onDetach();
+		Log.v(TAG, "onDetach");
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		Log.v(TAG, "onSaveInstanceState");
+	}
+
+	@Override
+	public void onStart() 
+	{
+		super.onStart();
+		Log.v(TAG, "onStart");
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		Log.v(TAG, "onStop");
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		Log.v(TAG, "onViewCreated savedInstanceState=" + (savedInstanceState!=null?"true":"false"));
+	}
+
+	@Override
+	public void onViewStateRestored(Bundle savedInstanceState) {
+
+		super.onViewStateRestored(savedInstanceState);
+		Log.v(TAG, "onViewStateRestored savedInstanceState=" + (savedInstanceState!=null?"true":"false"));
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) 
 	{
 		super.onActivityCreated(savedInstanceState);
+		Log.v(TAG, "onActivityCreated savedInstanceState=" + (savedInstanceState!=null?"true":"false"));
 		this.getView().findViewById(R.id.typeTweet).setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -216,11 +276,10 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				launchPostTweetActivity();
 			}
 		});
+		
 
-		
-		
 		tweetUserLoader = new TweetUserLoader(mAdapter);
-		onScrollNext();
+
 	}
 
 	/**
@@ -234,7 +293,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		//TODO Build the request for the load
 		mNewPageLoader.load(tweetRequest, mode.getApi());
 	}
-	
+
 	public void launchPostTweetActivity()
 	{
 		Intent intent = new Intent(this.getActivity().getApplicationContext(),PostTweetActivity.class);
@@ -280,13 +339,13 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 
 		final View v = inflater.inflate(R.layout.tweetlist, container, false);
-		
+
 
 		mQuickReturnView = (LinearLayout) v.findViewById(R.id.footer);
 		if(getArguments().getBoolean("hideFooter", false))
 		{
 			mQuickReturnView.setVisibility(View.GONE);
-			
+
 		}
 		mListView = (QuickReturnListView) v.findViewById(R.id.listView);
 		mListView.setAdapter(mAdapter);
@@ -395,11 +454,16 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		// as the GridView has stretchMode=columnWidth. The column width is used to set the height
 		// of each view so we get nice square thumbnails.
 		mListView.getViewTreeObserver().addOnGlobalLayoutListener(
-				new ViewTreeObserver.OnGlobalLayoutListener() {
+				new ViewTreeObserver.OnGlobalLayoutListener() 
+				{
+
 					@TargetApi(VERSION_CODES.JELLY_BEAN)
 					@Override
 					public void onGlobalLayout() 
 					{
+						Log.v(TAG, "onGlobalLayout layout Done");
+						int visibleChildCount = (mListView.getLastVisiblePosition() - mListView.getFirstVisiblePosition()) + 1;
+						loadDataOnScroll(mListView, mListView.getFirstVisiblePosition(), visibleChildCount, mListView.getAdapter().getCount());
 						mQuickReturnHeight = mQuickReturnView.getHeight();
 					}
 				});
@@ -420,13 +484,21 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	public void onResume() 
 	{
 		super.onResume();
+		Log.v(TAG, "onResume");
 		TweetCommonData.mImageFetcher.setExitTasksEarly(false);
+		
+		boolean launchedFromNotification = this.getActivity().getIntent().getBooleanExtra(Constants.LAUNCHED_FROM_NOTIFICATIONS, false);
+		if(launchedFromNotification)
+		{
+			refreshTop();
+		}
 	}
 
 	@Override
 	public void onPause() 
 	{
 		super.onPause();
+		Log.v(TAG, "onPause");
 		TweetCommonData.mImageFetcher.setPauseWork(false);
 		TweetCommonData.mImageFetcher.setExitTasksEarly(true);
 		TweetCommonData.mImageFetcher.flushCache();
@@ -436,10 +508,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	public void onDestroy() 
 	{
 		super.onDestroy();
+		Log.v(TAG, "onDestroy ");
 		TweetCommonData.mImageFetcher.closeCache();
 	}
-	
-	
+
+
 	private void loadDataOnScroll(AbsListView absListView, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount)
 	{
@@ -447,12 +520,12 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		// of items in the adapter it reaches the bottom
 		int bufferItemsToShow = mAdapter.getCount() -(firstVisibleItem + visibleItemCount);
 		Log.d(TAG, "There are getCount()="+ mAdapter.getCount()+" firstVisibleItem="+firstVisibleItem+ " visibleItemCount="+visibleItemCount);
-		if (bufferItemsToShow < PageLoader.TWEET_LOAD_BUFFER  && mAdapter.canScroll) 
+		if((bufferItemsToShow < PageLoader.TWEET_LOAD_BUFFER  && mAdapter.canScroll) ||  mAdapter.getCount() < PageLoader.TWEET_LOAD_BUFFER )
 		{
 			onScrollNext();
 		}
 	}
-	
+
 
 	public void onScrollNext() 
 	{
@@ -525,7 +598,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 			{
 				Log.d(DEBUG_TAG,"onDown: " + event.toString()); 
 			}
-			
+
 			return true;
 		}
 
@@ -553,16 +626,17 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 			return false;
 		}
 	}
-	
-	
+
+
 	//TODO this has to be moved to a separate class
 	private class PageLoader extends NewPageLoader
 	{
-		
+
 		public static final int TWEET_LOAD_BUFFER = 10; //When the user is slowly scrolling throught he tweets, if the backing adapter has
-		                             //fewer than TWEET_LOAD_BUFFER tweets to show, we start loading the next batch
+		//fewer than TWEET_LOAD_BUFFER tweets to show, we start loading the next batch
 		private static final int SEVER_SIDE_BATCH_SIZE = 10;
 		private MobileServiceClient mClient;
+		private boolean isLoadInProgress = false;
 
 		public PageLoader()
 		{
@@ -572,63 +646,84 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		@Override
 		public void load(final JsonObject tweetRequest, String api ) 
 		{
-			final TweetAdapter adapter = (TweetAdapter)mListView.getAdapter();
+			if(isLoadInProgress)
+			{
+				return;
+			}
 			
+			final TweetAdapter adapter = (TweetAdapter)mListView.getAdapter();
+
 			final TweetListMode tweetListMode = adapter.getTweetListMode();
 			// Loading lock to allow only one instance of loading
 			adapter.lock();
 
-			
-//			JsonObject obj = new JsonObject();
-//			TweetListMode mode = getTweetListMode();
 
-//			if(mode == TweetListMode.HOME_FEED)
-//			{
-//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
-//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
-//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-//				obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
-//			}
-//			else if(mode == TweetListMode.USER_FEED)
-//			{
-//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
-//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
-//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-//			}
-//			else if(mode == TweetListMode.TRENDING_FEED)
-//			{
-//				obj.addProperty(ApiInfo.kTrendingTopicKey, mTrendTag);
-//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
-//				api = ApiInfo.GET_TWEETS_FOR_TREND;
-//			}
-			
+			//			JsonObject obj = new JsonObject();
+			//			TweetListMode mode = getTweetListMode();
+
+			//			if(mode == TweetListMode.HOME_FEED)
+			//			{
+			//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
+			//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kHomeFeedTypeValue);
+			//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+			//				obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kOldTweetRequest);
+			//			}
+			//			else if(mode == TweetListMode.USER_FEED)
+			//			{
+			//				obj.addProperty(ApiInfo.kRequestingUserKey, mUserName);
+			//				obj.addProperty(ApiInfo.kFeedTypeKey, ApiInfo.kUserFeedTypeValue);
+			//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+			//			}
+			//			else if(mode == TweetListMode.TRENDING_FEED)
+			//			{
+			//				obj.addProperty(ApiInfo.kTrendingTopicKey, mTrendTag);
+			//				obj.addProperty(ApiInfo.kLastTweetIterator, getLastTweetIterator());
+			//				api = ApiInfo.GET_TWEETS_FOR_TREND;
+			//			}
+
 			Log.d(TAG, "Trying to load the next set of tweets");
-			
+			isLoadInProgress = true;
 			mClient.invokeApi(tweetListMode.getApi() , tweetRequest, new ApiJsonOperationCallback() {
 
 				@Override
-				public void onCompleted(JsonElement arg0, Exception arg1,
+				public void onCompleted(JsonElement response, Exception arg1,
 						ServiceFilterResponse arg2) {
+					isLoadInProgress = false;
 					if(arg1 == null)
 					{
-						
+
+
+
+						//The teceived data contains an inner join of tweets and tweet users. 
+						//Read them both.
+						Gson gson = new Gson();
+
+						Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
+						List<Tweet> list = gson.fromJson(response, collectionType);
+
+						Type tweetusertype = new TypeToken<List<TweetUser>>(){}.getType();
+						List<TweetUser> tweetUserlist = gson.fromJson(response, tweetusertype);
+
+
+
 						// save index and top position
 						int index = mListView.getFirstVisiblePosition();
 						View v = mListView.getChildAt(0);
 						int top = (v == null) ? 0 : v.getTop();
 
-						int positionOfList = tweetListMode.processReceivedTweets(arg0,tweetRequest,index);
+						int positionOfList = tweetListMode.processReceivedTweets(list,tweetUserlist,response,tweetRequest,index);
 						adapter.notifyDataSetChanged();
-						
+
 						mListView.setSelectionFromTop(positionOfList, top);
-						
+
 						// Add or remove the loading view depend on if there might be more to load
 						//TODO spinner at the bottom
-//						if (list.size() < SEVER_SIDE_BATCH_SIZE) {
-//							notifyEndOfList();
-//						} else {
-//							notifyHasMore();
-//						}
+						if (list.size() < SEVER_SIDE_BATCH_SIZE) 
+						{
+							mAdapter.notifyEndOfList();
+						} else {
+							mAdapter.notifyHasMore();
+						}
 
 						tweetUserLoader.load();
 

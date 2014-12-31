@@ -2,9 +2,12 @@ package com.tweetco.tweets;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.collections4.map.LinkedMap;
 
 import android.text.TextUtils;
 
@@ -19,9 +22,11 @@ public class TweetCommonData
 	//Use only one of these through out
 	public static MobileServiceClient mClient;
 	
-	
 	//All the tweets that we are currently holding in memory
-    public static List<Tweet> tweetsList = Collections.synchronizedList(new ArrayList<Tweet>());
+    
+    //public static Map<Integer,Tweet> tweetsList = Collections.synchronizedMap(new LinkedHashMap<Integer, Tweet>());
+    
+    public static LinkedMap<Integer,Tweet> bookmarkedTweetList = new LinkedMap<Integer, Tweet>();
 
     public static Map<String,List<Tweet>> userTweetsList = new ConcurrentHashMap<String, List<Tweet>>();
     

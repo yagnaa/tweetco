@@ -54,7 +54,7 @@ public  class TweetUserLoader
 	{
 		List<String> usersToLoad = new ArrayList<String>();
 
-		Collection<Tweet> tweetsList = TweetCommonData.bookmarkedTweetList.values();
+		Collection<Tweet> tweetsList = TweetCommonData.homeFeedTweets.values();
 
 		Map<String,TweetUser> tweetUsersList = TweetCommonData.tweetUsers;
 

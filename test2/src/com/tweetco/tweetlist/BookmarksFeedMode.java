@@ -132,6 +132,12 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	}
 	
 	@Override
+	public Object removeItem(int position)
+	{
+		return bookmarkedTweetList.remove(bookmarkedTweetList.get(position));
+	}
+	
+	@Override
 	public Object getItem(int position) 
 	{
 		return bookmarkedTweetList.get(bookmarkedTweetList.get(position));

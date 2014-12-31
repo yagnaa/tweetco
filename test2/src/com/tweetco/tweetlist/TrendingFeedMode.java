@@ -141,6 +141,12 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 	{
 		return trendingTweetList.size();
 	}
+	
+	@Override
+	public Object removeItem(int position)
+	{
+		return trendingTweetList.remove(position);
+	}
 
 	@Override
 	public Object getItem(int position) 

@@ -168,6 +168,21 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 		}
 		return retValue;
 	}
+	
+	@Override
+	public Object removeItem(int position)
+	{
+		// TODO Auto-generated method stub
+		Tweet tweet = null;
+
+		// Add entries to the bottom of the list
+		List<Tweet> userTweetList = TweetCommonData.userTweetsList.get(mUserName);
+		if(userTweetList!=null)
+		{
+			tweet = userTweetList.remove(position);
+		}
+		return tweet;
+	}
 
 	@Override
 	public Object getItem(int position) 

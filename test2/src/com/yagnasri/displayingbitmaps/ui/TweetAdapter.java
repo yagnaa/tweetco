@@ -62,7 +62,7 @@ public class TweetAdapter extends BaseAdapter
 	private int mItemHeight = 0;
 	private int mActionBarHeight = 0;
 	private ImageFetcher mImageFetcher; //Fetches the images
-	
+
 	private ImageFetcher mImageFetcher2; //Fetches the images
 
 
@@ -83,8 +83,16 @@ public class TweetAdapter extends BaseAdapter
 	public void unlock() {
 		canScroll = true;
 	}
-	
+
 	private TweetListMode mTweetListMode = null; 
+
+
+	private static class ViewHolderForBookmarkUpVoteAndHide
+	{
+		int position;
+		int iterator;
+		String OwenerName;
+	}
 
 	public TweetAdapter(Context context, ImageFetcher imageFetcher, ImageFetcher imageFetcher2, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback) 
 	{
@@ -92,7 +100,7 @@ public class TweetAdapter extends BaseAdapter
 		mContext = context;
 		mImageFetcher = imageFetcher;
 		mImageFetcher2 = imageFetcher2;
-		
+
 		mTweetListMode = mode;
 
 		mOnProfilePicClickCallback = onProfilePicClickCallback;
@@ -181,48 +189,51 @@ public class TweetAdapter extends BaseAdapter
 
 			tweetTime.setText(Utils.getTime(tweet.__createdAt));
 			
+			ViewHolderForBookmarkUpVoteAndHide holder = new ViewHolderForBookmarkUpVoteAndHide();
+			holder.iterator = tweet.iterator;
+			holder.OwenerName = tweet.tweetowner;
+			holder.position = position;
+
 			//UpVote ImageView
 			ImageView upvoteView = (ImageView) convertView.findViewById(R.id.upvote);
-			upvoteView.setTag(position);
-			setUpVoteFlag(upvoteView,TweetCommonData.getUserName());
+			upvoteView.setTag(holder);
+			setUpVoteFlag(upvoteView,tweet,TweetCommonData.getUserName());
 			upvoteView.setOnClickListener(new OnClickListener() 
 			{	
 				@Override
-				public void onClick(View v) 
+				public void onClick(View upvoteView) 
 				{
-					Integer position = (Integer)v.getTag();
-					//Show user profile view
-					Tweet linkedTweet = (Tweet)getItem(position);
-					if(linkedTweet != null)
-					{
-						String owner = linkedTweet.tweetowner;
-						if(!TextUtils.isEmpty(owner))
-						{
-							upVote(v,TweetCommonData.getUserName(), linkedTweet.iterator, owner);
-						}
-					}
+					upvoteView.setSelected(true);
+					ViewHolderForBookmarkUpVoteAndHide holder = (ViewHolderForBookmarkUpVoteAndHide) upvoteView.getTag();
+					upVote(upvoteView,TweetCommonData.getUserName(), holder.iterator, holder.OwenerName);
 				}
+
 			});
 
 			ImageView bookmarkView = (ImageView) convertView.findViewById(R.id.bookmark);
-			bookmarkView.setTag(position);
-			setBookMarkFlag(bookmarkView,TweetCommonData.getUserName());
+			bookmarkView.setTag(holder);
+			setBookMarkFlag(bookmarkView,tweet,TweetCommonData.getUserName());
 			bookmarkView.setOnClickListener(new OnClickListener() 
+			{	
+				@Override
+				public void onClick(View bookmarkView) 
+				{
+					bookmarkView.setSelected(true);
+					ViewHolderForBookmarkUpVoteAndHide holder = (ViewHolderForBookmarkUpVoteAndHide) bookmarkView.getTag();
+					bookmark(bookmarkView,TweetCommonData.getUserName(), holder.iterator, holder.OwenerName);
+				}
+			});
+
+
+			ImageView hideTweet = (ImageView) convertView.findViewById(R.id.hide);
+			hideTweet.setTag(holder);
+			hideTweet.setOnClickListener(new OnClickListener() 
 			{	
 				@Override
 				public void onClick(View v) 
 				{
-					Integer position = (Integer)v.getTag();
-					//Show user profile view
-					Tweet linkedTweet = (Tweet)getItem(position);
-					if(linkedTweet != null)
-					{
-						String owner = linkedTweet.tweetowner;
-						if(!TextUtils.isEmpty(owner))
-						{
-							bookmark(v,TweetCommonData.getUserName(), linkedTweet.iterator, owner);
-						}
-					}
+					ViewHolderForBookmarkUpVoteAndHide holder = (ViewHolderForBookmarkUpVoteAndHide) v.getTag();
+					hide(v,TweetCommonData.getUserName(), holder.iterator);
 				}
 			});
 
@@ -241,31 +252,36 @@ public class TweetAdapter extends BaseAdapter
 		return convertView;
 		//END_INCLUDE(load_gridview_item)
 	}
-	
+
 	public TweetListMode getTweetListMode()
 	{
 		return mTweetListMode;
 	}
-	
+
 
 	@Override
 	public int getCount() 
 	{
 		return mTweetListMode.getCount();
 	}
-	
+
+	public Object removeItem(int position)
+	{
+		return mTweetListMode.removeItem(position);
+	}
+
 	@Override
 	public Object getItem(int position) 
 	{
 		return mTweetListMode.getItem(position);
 	}
-	
+
 	@Override
 	public long getItemId(int position) 
 	{
 		return mTweetListMode.getItemId(position);
 	}
-	
+
 	private void loadProfileImage(TweetUser tweeter,ImageView imageView)
 	{
 		Log.d(TAG,"tweeter.profileimageurl="+tweeter.profileimageurl+ "   imageView="+imageView.toString());
@@ -279,7 +295,7 @@ public class TweetAdapter extends BaseAdapter
 			mImageFetcher.loadImage(tweeter.profileimageurl, imageView);
 		}
 	}
-	
+
 	private void loadTweetImage(Tweet tweet,ImageView imageView)
 	{
 		Log.d(TAG,"tweeter.profileimageurl="+tweet.imageurl+ "   imageView="+imageView.toString());
@@ -299,29 +315,22 @@ public class TweetAdapter extends BaseAdapter
 		this.notifyDataSetChanged();
 	}
 
-	private void setUpVoteFlag(ImageView imageView,String userName)
+	private void setUpVoteFlag(ImageView imageView,Tweet linkedTweet,String userName)
 	{
-		Integer position = (Integer)imageView.getTag();
-		//Show user profile view
-		Tweet linkedTweet = (Tweet)getItem(position);
-		if(linkedTweet != null)
+		if(linkedTweet != null && imageView!=null)
 		{
 			boolean isCurrentUserUpVoted  = TweetUtils.isStringPresent(linkedTweet.upvoters, userName);
-			imageView.setPressed(isCurrentUserUpVoted);
+			imageView.setSelected(isCurrentUserUpVoted);
 		}
 	}
-
-	private void setBookMarkFlag(ImageView imageView,String userName)
+	
+	private void setBookMarkFlag(ImageView imageView,Tweet linkedTweet,String userName)
 	{
-		Integer position = (Integer)imageView.getTag();
-		//Show user profile view
-		Tweet linkedTweet = (Tweet)getItem(position);
-		if(linkedTweet != null)
+		if(linkedTweet != null && imageView!=null)
 		{
-			boolean didCurrentUserBookmark = TweetUtils.isStringPresent(linkedTweet.bookmarkers, userName);
-			imageView.setPressed(didCurrentUserBookmark);
+			boolean didCurrentUserBookmark  = TweetUtils.isStringPresent(linkedTweet.bookmarkers, userName);
+			imageView.setSelected(didCurrentUserBookmark);
 		}
-
 	}
 
 	/**
@@ -363,7 +372,7 @@ public class TweetAdapter extends BaseAdapter
 
 
 
-	public void upVote(final View upvoteView,final String requestingUser,int iterator,String tweetOwner)
+	public void upVote(final View upvoteView,final String requestingUser,final int iterator,String tweetOwner)
 	{
 		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
@@ -374,14 +383,25 @@ public class TweetAdapter extends BaseAdapter
 
 			@Override
 			public void onCompleted(JsonElement arg0, Exception arg1,
-					ServiceFilterResponse arg2) {
+					ServiceFilterResponse arg2) 
+			{
+				ViewHolderForBookmarkUpVoteAndHide holder = (ViewHolderForBookmarkUpVoteAndHide) upvoteView.getTag();
 				if(arg1 == null)
 				{
-					//TODO This has to be optimized on the server side.
-					refreshAdapter();
+					//This will ensure that we are dealing with the same view
+					if(upvoteView!=null && (holder.iterator == iterator))
+					{
+						upvoteView.setSelected(true);
+					}
+					//TODO change the adapter underneath
 				}
 				else
 				{
+					//This will ensure that we are dealing with the same view
+					if(upvoteView!=null && (holder.iterator == iterator))
+					{
+						upvoteView.setSelected(false);
+					}
 					Log.e(TAG,"Exception upVoting a tweet") ;
 					arg1.printStackTrace();
 				}
@@ -390,7 +410,7 @@ public class TweetAdapter extends BaseAdapter
 		},false);
 	}
 
-	public void bookmark(final View bookmarkView,final String requestingUser,int iterator,String tweetOwner)
+	public void bookmark(final View bookmarkView,final String requestingUser,final int iterator,String tweetOwner)
 	{
 		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
@@ -404,12 +424,50 @@ public class TweetAdapter extends BaseAdapter
 			public void onCompleted(JsonElement arg0, Exception arg1,
 					ServiceFilterResponse arg2) 
 			{
+				ViewHolderForBookmarkUpVoteAndHide holder = (ViewHolderForBookmarkUpVoteAndHide) bookmarkView.getTag();
 				if(arg1 == null)
 				{
-					if(bookmarkView!=null && (bookmarkView instanceof ImageView))
+					//This will ensure that we are dealing with the same view
+					if(bookmarkView!=null && (holder.iterator == iterator))
 					{
-						setBookMarkFlag( (ImageView)bookmarkView, requestingUser);
+						bookmarkView.setSelected(true);
 					}
+					//TODO change the adapter underneath
+				}
+				else
+				{
+					//This will ensure that we are dealing with the same view
+					if(bookmarkView!=null && (holder.iterator == iterator))
+					{
+						bookmarkView.setSelected(false);
+					}
+					Log.e(TAG,"Exception bookmarking a tweet") ;
+					arg1.printStackTrace();
+				}
+
+			}
+		},false);
+	}
+
+	public void hide(final View hideTweetView,final String requestingUser,int iterator)
+	{
+		MobileServiceClient mClient = TweetCommonData.mClient;
+		JsonObject obj = new JsonObject();
+		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
+		obj.addProperty(ApiInfo.kIteratorKey, iterator);
+		mClient.invokeApi(ApiInfo.HIDE_TWEET, obj, new ApiJsonOperationCallback() 
+		{
+
+			@Override
+			public void onCompleted(JsonElement arg0, Exception arg1,
+					ServiceFilterResponse arg2) 
+			{
+				if(arg1 == null)
+				{
+					ViewHolderForBookmarkUpVoteAndHide holder = (ViewHolderForBookmarkUpVoteAndHide) hideTweetView.getTag();
+					//TODO change the adapter underneath
+					TweetAdapter.this.removeItem(holder.position);
+					refreshAdapter();
 				}
 				else
 				{

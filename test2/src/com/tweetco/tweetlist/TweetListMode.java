@@ -18,6 +18,8 @@ public abstract class TweetListMode
 	
 	public abstract int getCount();
 	
+	public abstract Object removeItem(int position);
+	
 	public abstract Object getItem(int position);
 	
 	public abstract long getItemId(int position);

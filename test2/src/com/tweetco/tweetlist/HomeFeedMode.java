@@ -58,12 +58,12 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	public int getLastTweetIterator()
 	{
 		int retValue =0;
-		if(TweetCommonData.bookmarkedTweetList.size()>0)
+		if(TweetCommonData.homeFeedTweets.size()>0)
 		{
-			Integer lastKey = TweetCommonData.bookmarkedTweetList.lastKey();
+			Integer lastKey = TweetCommonData.homeFeedTweets.lastKey();
 			if(lastKey!=null)
 			{
-				Tweet tweet = TweetCommonData.bookmarkedTweetList.get(lastKey);
+				Tweet tweet = TweetCommonData.homeFeedTweets.get(lastKey);
 				retValue = tweet.iterator;
 			}
 		}
@@ -73,12 +73,12 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	public int getFirstTweetIterator()
 	{
 		int retValue =0;
-		if(TweetCommonData.bookmarkedTweetList.size()>0)
+		if(TweetCommonData.homeFeedTweets.size()>0)
 		{
-			Integer firstKey = TweetCommonData.bookmarkedTweetList.firstKey();
+			Integer firstKey = TweetCommonData.homeFeedTweets.firstKey();
 			if(firstKey!=null)
 			{
-				Tweet tweet = TweetCommonData.bookmarkedTweetList.get(firstKey);
+				Tweet tweet = TweetCommonData.homeFeedTweets.get(firstKey);
 				retValue = tweet.iterator;
 			}
 		}
@@ -130,7 +130,7 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 		// Add entries to the bottom of the list
 		for(Tweet tweet:entries)
 		{
-			TweetCommonData.bookmarkedTweetList.put(tweet.iterator, tweet);
+			TweetCommonData.homeFeedTweets.put(tweet.iterator, tweet);
 		}
 	}
 	
@@ -140,21 +140,21 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 		
 		if(entries!=null && !entries.isEmpty())
 		{
-			LinkedMap<Integer,Tweet> tweetList = TweetCommonData.bookmarkedTweetList.clone();//(tweet.iterator, tweet);
-			TweetCommonData.bookmarkedTweetList.clear();
+			LinkedMap<Integer,Tweet> tweetList = TweetCommonData.homeFeedTweets.clone();//(tweet.iterator, tweet);
+			TweetCommonData.homeFeedTweets.clear();
 			// Add entries to the bottom of the list
 			for(Tweet tweet:entries)
 			{		
-				TweetCommonData.bookmarkedTweetList.put(tweet.iterator, tweet);
+				TweetCommonData.homeFeedTweets.put(tweet.iterator, tweet);
 			}
-			TweetCommonData.bookmarkedTweetList.putAll(tweetList);
+			TweetCommonData.homeFeedTweets.putAll(tweetList);
 		}
 	}
 
 
 	public void clearEntries() 
 	{
-		TweetCommonData.bookmarkedTweetList.clear();
+		TweetCommonData.homeFeedTweets.clear();
 	}
 
 	public void addUsers(Map<String,TweetUser> tweetUsers) 
@@ -172,13 +172,19 @@ public class HomeFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public int getCount() 
 	{	
-		return TweetCommonData.bookmarkedTweetList.size();
+		return TweetCommonData.homeFeedTweets.size();
+	}
+	
+	@Override
+	public Object removeItem(int position)
+	{
+		return TweetCommonData.homeFeedTweets.remove(TweetCommonData.homeFeedTweets.get(position));
 	}
 	
 	@Override
 	public Object getItem(int position) 
 	{
-		return TweetCommonData.bookmarkedTweetList.get(TweetCommonData.bookmarkedTweetList.get(position));
+		return TweetCommonData.homeFeedTweets.get(TweetCommonData.homeFeedTweets.get(position));
 	}
 
 

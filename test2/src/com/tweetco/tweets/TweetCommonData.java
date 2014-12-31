@@ -22,15 +22,11 @@ public class TweetCommonData
 	//Use only one of these through out
 	public static MobileServiceClient mClient;
 	
-	//All the tweets that we are currently holding in memory
-    
-    //public static Map<Integer,Tweet> tweetsList = Collections.synchronizedMap(new LinkedHashMap<Integer, Tweet>());
-    
-    public static LinkedMap<Integer,Tweet> bookmarkedTweetList = new LinkedMap<Integer, Tweet>();
+	//All the tweets that we are currently holding in memory    
+    public static LinkedMap<Integer,Tweet> homeFeedTweets = new LinkedMap<Integer, Tweet>();
 
     public static Map<String,List<Tweet>> userTweetsList = new ConcurrentHashMap<String, List<Tweet>>();
     
-    //All the tweets that we are currently holding in memory
     public static Map<String,TweetUser> tweetUsers = new ConcurrentHashMap<String, TweetUser>();
     
     public static ImageFetcher mImageFetcher;

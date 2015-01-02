@@ -37,9 +37,9 @@ public class UsersListFragment extends ListFragment
 	List<TweetUser> usersList = new ArrayList<TweetUser>();
 
 	private  MobileServiceTable<TweetUser> mTweetUsersTable;
-	
+
 	private UserListAdapter userListAdapter = null;
-		
+
 	private String mUserName = null;
 
 	public UsersListFragment() {}
@@ -52,21 +52,22 @@ public class UsersListFragment extends ListFragment
 
 		mTweetUsersTable = TweetCommonData.mClient.getTable("tweetusers",TweetUser.class);
 		mUserName = TweetCommonData.getUserName();
-		
+
 		if(usersList == null || usersList.isEmpty())
 		{
 			loadUsers();
 		}
 	}
-	
-	
+
+
 
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(Bundle savedInstanceState) 
+	{
 		super.onActivityCreated(savedInstanceState);
 		userListAdapter = new UserListAdapter(this.getActivity(), R.layout.users_list_row, usersList);
-		
+
 		this.setListAdapter(userListAdapter);
 		userListAdapter.notifyDataSetChanged();
 	}
@@ -77,7 +78,7 @@ public class UsersListFragment extends ListFragment
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
-				
+
 
 				// Get the items that weren't marked as completed and add them in the
 				// adapter
@@ -102,31 +103,92 @@ public class UsersListFragment extends ListFragment
 						}
 					}
 				});
-				
+
 				return null;
 			}
 		}.execute();
 	}
 
-	
-	public void followOrUnfollowUser(final Button followButton,final String requestingUser, final boolean requestForFollow)
+	//TODO this is not complete yet
+	public void loadUser(final TweetUser user)
 	{
-		String userToFollowOrUnfollow = (String)followButton.getTag();
+		// Get the items that weren't marked as completed and add them in the adapter
+		new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+
+				mTweetUsersTable.where().field("username").eq(user.username).execute(new TableQueryCallback<TweetUser>() 
+				{
+
+					public void onCompleted(List<TweetUser> result, int count, Exception exception, ServiceFilterResponse response) 
+					{
+						if (exception == null) 
+						{
+							userListAdapter.getPosition(user);
+							for (TweetUser tweetUser : result) 
+							{
+								TweetCommonData.tweetUsers.put(tweetUser.username, tweetUser);
+								if(!mUserName.equals(tweetUser.username))
+								{
+									//Don't add the same user
+									userListAdapter.add(tweetUser);
+								}
+							}
+							userListAdapter.notifyDataSetChanged();
+						} else 
+						{
+							//TODO Do we need to roll back the changes here???
+						}
+					}
+				});
+				// Get the items that weren't marked as completed and add them in the
+				// adapter
+				//				mTweetUsersTable.setQueryText("select * from TweetUsers where username ='"+userName+"'");
+				//				mTweetUsersTable.execute(new TableQueryCallback<TweetUser>() {
+				//
+				//					public void onCompleted(List<TweetUser> result, int count, Exception exception, ServiceFilterResponse response) {
+				//						if (exception == null) {
+				//							Log.e("tag", "msg");
+				//							userListAdapter.clear();
+				//							for (TweetUser tweetUser : result) 
+				//							{
+				//								TweetCommonData.tweetUsers.put(tweetUser.username, tweetUser);
+				//								if(!mUserName.equals(tweetUser.username))
+				//								{
+				//									//Don't add the same user
+				//									userListAdapter.add(tweetUser);
+				//								}
+				//							}
+				//							userListAdapter.notifyDataSetChanged();
+				//						} else {
+				//							//createAndShowDialog(exception, "Error");
+				//						}
+				//					}
+				//				});
+				//				
+				return null;
+			}
+		}.execute();
+	}
+
+
+	public void followOrUnfollowUser(final Button followButton,final String userWhomShouldBeFollowed, final boolean requestForFollow)
+	{
 		String customApiName = null;
 		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
-		obj.addProperty(ApiInfo.kApiRequesterKey, requestingUser);
+		obj.addProperty(ApiInfo.kApiRequesterKey, TweetCommonData.getUserName());
 		if(requestForFollow)
 		{
-			obj.addProperty(ApiInfo.kUserToFollowKey, userToFollowOrUnfollow);
+			obj.addProperty(ApiInfo.kUserToFollowKey, userWhomShouldBeFollowed);
 			customApiName = ApiInfo.FOLLOW_USER;
 		}
 		else
 		{
-			obj.addProperty(ApiInfo.kUserToUnFollowKey, userToFollowOrUnfollow);
+			obj.addProperty(ApiInfo.kUserToUnFollowKey, userWhomShouldBeFollowed);
 			customApiName =  ApiInfo.UN_FOLLOW_USER;
 		}
-		
+
 		mClient.invokeApi(customApiName, obj, new ApiJsonOperationCallback() 
 		{	
 			@Override
@@ -134,10 +196,11 @@ public class UsersListFragment extends ListFragment
 			{
 				if(arg1 == null)
 				{
-					setFollowButton(followButton, requestForFollow);
 					//TODO update the adapter
-					if(followButton!=null)
+					TweetUser userToFollowOrUnFollow = (TweetUser)followButton.getTag();
+					if(followButton!=null && userToFollowOrUnFollow.username.equalsIgnoreCase(userWhomShouldBeFollowed))
 					{
+						setFollowButton(followButton, requestForFollow);
 						Log.d("Item clicked","Follow/Unfollow succeeded") ;
 						loadUsers();
 					}
@@ -148,29 +211,29 @@ public class UsersListFragment extends ListFragment
 					Log.e("Item clicked","Exception upVoting a tweet") ;
 					arg1.printStackTrace();
 				}
-				
+
 			}
 		},false);
 	}
-	
-    private void setFollowButton(Button followButton,boolean isCurrentUserAFollower)
-    {
-        if(isCurrentUserAFollower)
-        {
-        	followButton.setText("Unfollow");
-        	followButton.setSelected(false);
-        }
-        else
-        {
-        	followButton.setText("Follow");
-        	followButton.setSelected(true);
-        }
-    }
 
-	
+	private void setFollowButton(Button followButton,boolean isCurrentUserAFollower)
+	{
+		if(isCurrentUserAFollower)
+		{
+			followButton.setText("Unfollow");
+			followButton.setSelected(false);
+		}
+		else
+		{
+			followButton.setText("Follow");
+			followButton.setSelected(true);
+		}
+	}
+
+
 	private class UserListAdapter extends ArrayAdapter<TweetUser>
 	{
-        Context mContext = null;
+		Context mContext = null;
 		public UserListAdapter(Context context, int resource,List<TweetUser> objects) {
 			super(context, resource, objects);
 			mContext = context;
@@ -185,17 +248,17 @@ public class UsersListFragment extends ListFragment
 				LayoutInflater inflator = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				convertView = inflator.inflate(R.layout.users_list_row, parent,false);
 			}
-			
-			TweetUser user = getItem(position);
-			
+
+			final TweetUser user = getItem(position);
+
 			if(user!=null)
 			{
-		        // Now handle the main ImageView thumbnails
-		        ImageView imageView =  (ImageView)convertView.findViewById(R.id.profile_pic);
-		        
-		        imageView.setTag(position);
-		        imageView.setOnClickListener(new OnClickListener() 
-		        {	
+				// Now handle the main ImageView thumbnails
+				ImageView imageView =  (ImageView)convertView.findViewById(R.id.profile_pic);
+
+				imageView.setTag(position);
+				imageView.setOnClickListener(new OnClickListener() 
+				{	
 					@Override
 					public void onClick(View v) 
 					{
@@ -209,39 +272,36 @@ public class UsersListFragment extends ListFragment
 						}
 					}
 				});
-		        
-		        TweetCommonData.mImageFetcher .loadImage(user.profileimageurl, imageView);
-		        
-		        TextView textView = (TextView)convertView.findViewById(R.id.user_name);
-		        textView.setText(user.displayname);
-		        
-		        TextView handle = (TextView)convertView.findViewById(R.id.handle);
-		        handle.setText(user.username);
-		        
-		        
-		        Button followButton = (Button)convertView.findViewById(R.id.follow_button);
-		        followButton.setTag(user.username);
-		        
-		        final boolean isCurrentUserAFollower  = TweetUtils.isStringPresent(user.followers, mUserName);
-		        setFollowButton(followButton,isCurrentUserAFollower);
-		        
-		        followButton.setOnClickListener(new View.OnClickListener() 
-		        {	
+
+				TweetCommonData.mImageFetcher .loadImage(user.profileimageurl, imageView);
+
+				TextView textView = (TextView)convertView.findViewById(R.id.user_name);
+				textView.setText(user.displayname);
+
+				TextView handle = (TextView)convertView.findViewById(R.id.handle);
+				handle.setText(user.username);
+
+
+				Button followButton = (Button)convertView.findViewById(R.id.follow_button);
+				followButton.setTag(user);
+
+				final boolean isCurrentUserAFollower  = TweetUtils.isStringPresent(user.followers, mUserName);
+				setFollowButton(followButton,isCurrentUserAFollower);
+
+				followButton.setOnClickListener(new View.OnClickListener() 
+				{	
 					@Override
 					public void onClick(View v) 
 					{
 						setFollowButton((Button)v,!isCurrentUserAFollower);
 
-		        		followOrUnfollowUser((Button)v, mUserName,!isCurrentUserAFollower);				
+						followOrUnfollowUser((Button)v, user.username,!isCurrentUserAFollower);				
 					}
 				});
-				
+
 			}
-			
+
 			return convertView;
 		}
-		
-		
-		
 	}
 }

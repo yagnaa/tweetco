@@ -1,19 +1,16 @@
 package com.tweetco.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 
 import com.tweetco.R;
-import com.tweetco.tweetlist.HomeFeedMode;
 import com.tweetco.tweetlist.TrendingFeedMode;
-import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.displayingbitmaps.ui.TweetAdapter;
 import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
-public class TrendingFragmentActivity extends FragmentActivity 
+public class TrendingFragmentActivity extends ActionBarActivity 
 {
 	private String mTag = null;
 	
@@ -31,6 +28,9 @@ public class TrendingFragmentActivity extends FragmentActivity
         setContentView(R.layout.trendingfragmentactivity);
        
         mTag = getIntent().getExtras().getString(Constants.TREND_TAG_STR);
+        
+        ActionBar actionbar = this.getSupportActionBar();
+        actionbar.setTitle(mTag);
     	
     	if(UiUtility.getView(this, R.id.trendingTweetsListFragmentContainer) != null)
 		{

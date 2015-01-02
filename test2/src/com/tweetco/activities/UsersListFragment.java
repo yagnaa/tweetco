@@ -97,7 +97,7 @@ public class UsersListFragment extends ListFragment
 							userListAdapter.clear();
 							for (TweetUser tweetUser : result) 
 							{
-								TweetCommonData.tweetUsers.put(tweetUser.username, tweetUser);
+								TweetCommonData.tweetUsers.put(tweetUser.username.toLowerCase(), tweetUser);
 								if(!mUserName.equals(tweetUser.username))
 								{
 									//Don't add the same user
@@ -134,7 +134,7 @@ public class UsersListFragment extends ListFragment
 							userListAdapter.getPosition(user);
 							for (TweetUser tweetUser : result) 
 							{
-								TweetCommonData.tweetUsers.put(tweetUser.username, tweetUser);
+								TweetCommonData.tweetUsers.put(tweetUser.username.toLowerCase(), tweetUser);
 								if(!mUserName.equals(tweetUser.username))
 								{
 									//Don't add the same user

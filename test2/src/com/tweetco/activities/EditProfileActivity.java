@@ -58,7 +58,7 @@ public class EditProfileActivity extends TweetCoBaseActivity
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Saving...");
 		
 		String username = TweetCommonData.getUserName();
-		TweetUser user = TweetCommonData.tweetUsers.get(username);
+		TweetUser user = TweetCommonData.tweetUsers.get(username.toLowerCase());
 		TweetCommonData.mImageFetcher.loadImage(user.profileimageurl, mProfilePic);
 		TweetCommonData.mImageFetcher.loadImage(user.profilebgurl, mHeaderPic);
 		

@@ -184,13 +184,21 @@ public class TweetAdapter extends BaseAdapter
 		final Tweet tweet = (Tweet) getItem(position);
 		TweetUser tweeter = null;
 		if (tweet != null) {
-			tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner);
+			tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner.toLowerCase());
 			TextView handle = (TextView) convertView.findViewById(R.id.handle);
 			TextView userName = (TextView) convertView.findViewById(R.id.username);
 			TextView tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);
 			TextView tweetTime = (TextView) convertView.findViewById(R.id.time);
-
-			handle.setText(Utils.getTweetHandle(tweeter.username));
+			
+			if(tweeter!=null)
+			{
+				handle.setText(Utils.getTweetHandle(tweeter.username));
+			}
+			else
+			{
+				Log.e(TAG, "TweetUser Not found for tweet with content "+tweet.tweetcontent);
+			}
+			
 			if(tweeter!=null && !TextUtils.isEmpty(tweeter.displayname))
 			{
 				userName.setText(tweeter.displayname);

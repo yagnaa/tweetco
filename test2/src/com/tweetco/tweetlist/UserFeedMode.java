@@ -70,7 +70,7 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 		{
 			if(!TextUtils.isEmpty(user.username))
 			{
-				TweetCommonData.tweetUsers.put(user.username, user);
+				TweetCommonData.tweetUsers.put(user.username.toLowerCase(), user);
 			}
 		}
 		return index;
@@ -124,7 +124,7 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	public void addUser(String user,TweetUser userInfo) 
 	{
 		// Clear all the data points
-		TweetCommonData.tweetUsers.put(user, userInfo);
+		TweetCommonData.tweetUsers.put(user.toLowerCase(), userInfo);
 	}
 
 	protected UserFeedMode(Parcel in) {

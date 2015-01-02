@@ -115,7 +115,7 @@ public  class TweetUserLoader
 							if(tweetUser.length > 0)
 							{
 								// Clear all the data points
-								TweetCommonData.tweetUsers.put(mUserForWhomDataIsBeingLoaded, tweetUser[0]);
+								TweetCommonData.tweetUsers.put(mUserForWhomDataIsBeingLoaded.toLowerCase(), tweetUser[0]);
 							}
 						}
 						catch(JsonSyntaxException exception)

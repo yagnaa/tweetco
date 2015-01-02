@@ -56,7 +56,7 @@ public class UserProfileFragment extends FragmentActivity
         setContentView(R.layout.userprofilefragment);
        
         mUserName = getIntent().getExtras().getString(Constants.USERNAME_STR);
-        TweetUser user = TweetCommonData.tweetUsers.get(mUserName);
+        TweetUser user = TweetCommonData.tweetUsers.get(mUserName.toLowerCase());
     	if(user != null)
     	{
     		mUserProfileBg = UiUtility.getView(this, R.id.userProfileBg);

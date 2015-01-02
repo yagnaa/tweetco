@@ -9,14 +9,17 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/img_ftubg_portrait" />
+        android:src="@drawable/logo" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
         android:text="Retry" 
+        android:background="@drawable/retry_button_selector"
         android:id="@+id/retryButton"/>
         
     

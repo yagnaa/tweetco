@@ -27,6 +27,8 @@ import com.yagnasri.displayingbitmaps.ui.CustomFragmentPagerAdapter;
 import com.yagnasri.displayingbitmaps.ui.CustomUserProfileFragmentPagerAdapter;
 import com.yagnasri.displayingbitmaps.ui.TweetAdapter;
 import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
+import com.yagnasri.displayingbitmaps.util.ImageFetcher;
+import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class UserProfileFragment extends FragmentActivity 
 {
@@ -65,6 +67,9 @@ public class UserProfileFragment extends FragmentActivity
     		mUserProfileHandleName = UiUtility.getView(this, R.id.userProfileHandle);
     		mFolloweeCount = UiUtility.getView(this, R.id.followeesCount);
     		mFollowerCount = UiUtility.getView(this, R.id.followersCount);
+    		
+    		ImageFetcher imageFectcher = Utils.getImageFetcher(this, 50, 50);
+    		imageFectcher.loadImage(user.profileimageurl, mUserProfilePic);
     		
     		mUserProfileDisplayName.setText((TextUtils.isEmpty(user.displayname))?mUserName:user.displayname);
     		mUserProfileHandleName.setText("@"+mUserName);

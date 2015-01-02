@@ -8,10 +8,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -25,8 +28,10 @@ import com.tweetco.asynctasks.EditProfileTaskParams;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
+import com.yagnasri.displayingbitmaps.util.ImageCache;
+import com.yagnasri.displayingbitmaps.util.ImageFetcher;
+import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class EditProfileActivity extends TweetCoBaseActivity 
 {
@@ -38,13 +43,14 @@ public class EditProfileActivity extends TweetCoBaseActivity
 	private static final int PROFILE_PIC = 1;
 	private static final int HEADER_PIC = 2;
 	
+	ImageFetcher mImageFetcher = null;
 	
-	ImageView mProfilePic;
-	ImageView mHeaderPic;
-	Button mSaveButton;
-	AsyncTaskEventHandler asyncTaskEventHandler = null;
-	boolean mProfilePicChanged = false;
-	boolean mHeaderPicChanged = false;
+	private ImageView mProfilePic;
+	private ImageView mHeaderPic;
+	private Button mSaveButton;
+	private AsyncTaskEventHandler asyncTaskEventHandler = null;
+	private boolean mProfilePicChanged = false;
+	private boolean mHeaderPicChanged = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -59,8 +65,12 @@ public class EditProfileActivity extends TweetCoBaseActivity
 		
 		String username = TweetCommonData.getUserName();
 		TweetUser user = TweetCommonData.tweetUsers.get(username.toLowerCase());
-		TweetCommonData.mImageFetcher.loadImage(user.profileimageurl, mProfilePic);
-		TweetCommonData.mImageFetcher.loadImage(user.profilebgurl, mHeaderPic);
+		
+		
+		mImageFetcher = Utils.getImageFetcher(this, 50, 50);
+		
+		mImageFetcher.loadImage(user.profileimageurl, mProfilePic);
+		mImageFetcher.loadImage(user.profilebgurl, mHeaderPic);
 		
 		
 		mProfilePic.setOnClickListener(new OnClickListener() {

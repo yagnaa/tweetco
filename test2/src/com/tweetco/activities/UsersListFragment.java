@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +27,13 @@ import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 import com.tweetco.R;
 import com.tweetco.tweets.TweetCommonData;
+import com.yagnasri.dao.LeaderboardUser;
 import com.yagnasri.dao.TweetUser;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 import com.yagnasri.displayingbitmaps.ui.TweetUtils;
 import com.yagnasri.displayingbitmaps.util.AsyncTask;
+import com.yagnasri.displayingbitmaps.util.ImageFetcher;
+import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class UsersListFragment extends ListFragment
 {
@@ -40,6 +44,8 @@ public class UsersListFragment extends ListFragment
 	private UserListAdapter userListAdapter = null;
 
 	private String mUserName = null;
+	
+	ImageFetcher imageFetcher = null;
 
 	public UsersListFragment() {}
 
@@ -73,6 +79,9 @@ public class UsersListFragment extends ListFragment
 	public void onActivityCreated(Bundle savedInstanceState) 
 	{
 		super.onActivityCreated(savedInstanceState);
+		
+		imageFetcher = Utils.getImageFetcher(this.getActivity(), 60, 60);
+		
 		userListAdapter = new UserListAdapter(this.getActivity(), R.layout.users_list_row, usersList);
 
 		this.setListAdapter(userListAdapter);
@@ -236,6 +245,20 @@ public class UsersListFragment extends ListFragment
 			followButton.setSelected(true);
 		}
 	}
+	
+	
+	private void loadProfileImage(TweetUser user,ImageView imageView)
+	{
+		if(TextUtils.isEmpty(user.profileimageurl))
+		{
+			String initials = Utils.getInitials(user.displayname);
+			imageFetcher.loadImage(initials, imageView);
+		}
+		else
+		{
+			imageFetcher.loadImage(user.profileimageurl, imageView);
+		}
+	}
 
 
 	private class UserListAdapter extends ArrayAdapter<TweetUser>
@@ -279,8 +302,10 @@ public class UsersListFragment extends ListFragment
 						}
 					}
 				});
+				
+				
+				loadProfileImage(user,imageView);
 
-				TweetCommonData.mImageFetcher .loadImage(user.profileimageurl, imageView);
 
 				TextView textView = (TextView)convertView.findViewById(R.id.user_name);
 				textView.setText(user.displayname);

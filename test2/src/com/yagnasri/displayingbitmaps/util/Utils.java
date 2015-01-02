@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.joda.time.DateTime;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -34,10 +35,13 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.TypedValue;
 
 import com.google.common.base.CharMatcher;
 import com.tweetco.R;
+import com.tweetco.activities.Constants;
 
 /**
  * Class containing some static utility methods.
@@ -176,6 +180,10 @@ public class Utils {
 				{
 					initials = initials + firstName.charAt(0) + secondname.charAt(0);
 				}
+				else
+				{
+					initials = initials + firstName.charAt(0);
+				}
 				
 			}		
 			return initials.toUpperCase(Locale.getDefault());
@@ -278,6 +286,27 @@ public class Utils {
     		return diff+ " seconds ago";
     	}
 
+    }
+    
+    
+    
+    public static ImageFetcher getImageFetcher(FragmentActivity activity,float width, float height)
+    {
+		ImageCache.ImageCacheParams cacheParams =
+				new ImageCache.ImageCacheParams(activity, Constants.IMAGE_CACHE_DIR);
+		
+
+		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+
+		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
+		Resources r = activity.getResources();
+		int widthPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, r.getDisplayMetrics());
+		int heightPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, r.getDisplayMetrics());
+		
+		ImageFetcher mImageFetcher = new ImageFetcher(activity, widthPx, heightPx, true);
+		mImageFetcher.setLoadingImage(R.drawable.ic_launcher);
+		mImageFetcher.addImageCache(activity.getSupportFragmentManager(), cacheParams);
+		return mImageFetcher;
     }
 
     

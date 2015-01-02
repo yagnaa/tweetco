@@ -1,10 +1,9 @@
 package com.tweetco.activities.adapter;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tweetco.R;
-import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.LeaderboardUser;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
@@ -27,17 +25,18 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderboardUser>
 		void onItemClick(int position);
 	}
 
+	private static final String TAG = "LeaderboardAdapter";
 	private Context mContext = null;
 	private OnProfilePicClick mOnProfilePicClickCallback = null;
 	private ImageFetcher mImageFetcher; //Fetches the images
 
 
-	public LeaderboardAdapter(Activity context, int resoureId, OnProfilePicClick onProfilePicClickCallback)
+	public LeaderboardAdapter(Activity context, int resoureId, ImageFetcher imageFectcher,OnProfilePicClick onProfilePicClickCallback)
 	{
 		super(context, resoureId);
 		mContext = context;
 		mOnProfilePicClickCallback = onProfilePicClickCallback;
-		mImageFetcher = TweetCommonData.mImageFetcher;
+		mImageFetcher = imageFectcher;
 	}
 
 	@Override
@@ -77,10 +76,23 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderboardUser>
 			leaderHandle.setText(Utils.getTweetHandle(user.username));
 			likesCount.setText((!TextUtils.isEmpty(user.upvotes)?user.upvotes: "0"));
 			bookmarkedCount.setText((!TextUtils.isEmpty(user.bookmarks)?user.bookmarks: "0"));
-			mImageFetcher.loadImage(user.profileimageurl, profilePic);
+			loadProfileImage(user,profilePic);
 		}
 
 		return convertView;
+	}
+	
+	private void loadProfileImage(LeaderboardUser user,ImageView imageView)
+	{
+		if(TextUtils.isEmpty(user.profileimageurl))
+		{
+			String initials = Utils.getInitials(user.displayname);
+			mImageFetcher.loadImage(initials, imageView);
+		}
+		else
+		{
+			mImageFetcher.loadImage(user.profileimageurl, imageView);
+		}
 	}
 
 }

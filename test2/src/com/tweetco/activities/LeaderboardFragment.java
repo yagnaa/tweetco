@@ -15,11 +15,14 @@ import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.asynctasks.GetLeaderboardTask;
 import com.tweetco.asynctasks.GetLeaderboardTask.GetLeaderboardTaskCompletionCallback;
 import com.yagnasri.dao.LeaderboardUser;
+import com.yagnasri.displayingbitmaps.util.ImageFetcher;
+import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class LeaderboardFragment extends ListFragment 
 {
 	private AsyncTaskEventHandler asyncTaskEventHandler = null;
 	private LeaderboardAdapter mAdapter = null;
+	ImageFetcher imageFetcher = null;
 	
 	public LeaderboardFragment()
 	{
@@ -30,7 +33,8 @@ public class LeaderboardFragment extends ListFragment
     public void onCreate(Bundle savedInstanceState) 
 	{
         super.onCreate(savedInstanceState);
-		mAdapter = new LeaderboardAdapter(LeaderboardFragment.this.getActivity(), R.layout.leaderview, onProfileClick);
+        imageFetcher = Utils.getImageFetcher(this.getActivity(), 60, 60);
+		mAdapter = new LeaderboardAdapter(LeaderboardFragment.this.getActivity(), R.layout.leaderview, imageFetcher,onProfileClick);
     }
 	
 	

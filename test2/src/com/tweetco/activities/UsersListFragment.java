@@ -27,7 +27,6 @@ import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 import com.tweetco.R;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 import com.yagnasri.displayingbitmaps.ui.TweetUtils;
 import com.yagnasri.displayingbitmaps.util.AsyncTask;
@@ -49,14 +48,22 @@ public class UsersListFragment extends ListFragment
 	{
 		super.onCreate(savedInstanceState);
 
-
-		mTweetUsersTable = TweetCommonData.mClient.getTable("tweetusers",TweetUser.class);
-		mUserName = TweetCommonData.getUserName();
-
-		if(usersList == null || usersList.isEmpty())
+		if(TweetCommonData.mClient != null)
 		{
-			loadUsers();
+			mTweetUsersTable = TweetCommonData.mClient.getTable("tweetusers",TweetUser.class);
+			mUserName = TweetCommonData.getUserName();
+			
+			if(usersList == null || usersList.isEmpty())
+			{
+				loadUsers();
+			}
 		}
+		else
+		{
+			Log.e("UsersListFragment", "MobileServiceClient is null");
+		}
+
+		
 	}
 
 

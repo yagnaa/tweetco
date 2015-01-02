@@ -55,6 +55,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializer;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -710,9 +711,17 @@ public class MobileServiceClient {
 				if (callback != null) {
 					if (exception == null) {
 						String content = response.getContent();
-						JsonElement json = new JsonParser().parse(content);
+						JsonElement json ;
+						try {
+							json = new JsonParser().parse(content);
+							callback.onCompleted(json, null, response);
+						} catch (JsonSyntaxException e) 
+						{
+							e.printStackTrace();
+							callback.onCompleted(null, e, response);
+						}
 						
-						callback.onCompleted(json, null, response);
+						
 					} else {
 						callback.onCompleted(null, exception, response);
 					}

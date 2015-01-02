@@ -43,7 +43,7 @@ public class UserFeedMode extends TweetListMode implements Parcelable
 	public JsonObject getPreviousTweetRequest() 
 	{
 		// TODO Auto-generated method stub
-		return new JsonObject();
+		throw new IllegalArgumentException("GetPreviousTweetRequest not supported");
 	}
 
 

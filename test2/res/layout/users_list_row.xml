@@ -16,28 +16,39 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="70dp"
-    android:paddingBottom="3dip"
+    xmlns:custom="http://schemas.android.com/apk/res/com.tweetco"
+    android:layout_width="fill_parent"
+    android:layout_height="90dp"
+    android:orientation="horizontal"
+    android:paddingBottom="5dip"
     android:paddingLeft="6dip"
-    android:paddingRight="6dip" >
-
-    <com.yagnasri.displayingbitmaps.ui.RecyclingImageView
+    android:paddingRight="6dip"
+    android:paddingTop="5dip" >
+    
+    
+    <com.yagnasri.displayingbitmaps.ui.RoundedImageView
         android:id="@+id/profile_pic"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:clickable="true"
+        android:gravity="center_vertical"
         android:scaleType="fitXY"
-        android:src="@drawable/ico_profile_default" />
+        custom:selector="true"
+        custom:selector_color="#44FFBB33"
+        custom:selector_stroke_color="#88FF8800"
+        custom:selector_stroke_width="2dp"
+        android:src="@drawable/ico_profile_default"  />
 
     <LinearLayout
         android:id="@+id/name_and_bio"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:minHeight="80dp"
+        android:layout_marginTop="15dp"
         android:orientation="vertical"
         android:paddingBottom="3dip"
         android:paddingLeft="6dip"
@@ -48,8 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
             android:layout_marginLeft="16dp"
+            android:gravity="center_vertical"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/display_name_color"
@@ -60,25 +71,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
             android:layout_marginLeft="16dp"
+            android:gravity="center_vertical"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/purple_theme_color"
             android:textSize="14dp" />
-
     </LinearLayout>
 
     <Button
         android:id="@+id/follow_button"
-        android:layout_width="wrap_content"
+        android:background="@drawable/follow_button_background"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
         android:layout_marginRight="8dp"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:text="Follow"
         android:textColor="#FFFFFF" />
 

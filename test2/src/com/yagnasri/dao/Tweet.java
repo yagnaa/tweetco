@@ -18,6 +18,8 @@ public class Tweet implements Parcelable {
     public String contenttags;
     public String bookmarkers;
     public String hiders;
+    public String __createdAt;
+    public String __updatedAt;
     
 
   protected Tweet(Parcel in) {
@@ -35,6 +37,8 @@ public class Tweet implements Parcelable {
       contenttags = in.readString();
       bookmarkers = in.readString();
       hiders = in.readString();
+      __createdAt = in.readString();
+      __updatedAt = in.readString();
   }
 
   @Override
@@ -58,6 +62,8 @@ public class Tweet implements Parcelable {
       dest.writeString(contenttags);
       dest.writeString(bookmarkers);
       dest.writeString(hiders);
+      dest.writeString(__createdAt);
+      dest.writeString(__updatedAt);
   }
 
   public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {

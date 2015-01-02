@@ -33,6 +33,7 @@ public class ApiInfo
 	
 	public static final String UPVOTE = "upvote";
 	public static final String BOOKMARK = "bookmark";
+	public static final String HIDE_TWEET = "hidetweet";
 	public static final String FOLLOW_USER = "followuser";
 	public static final String UN_FOLLOW_USER = "unfollowuser";
 	public static final String TRENDING = "gettrending";

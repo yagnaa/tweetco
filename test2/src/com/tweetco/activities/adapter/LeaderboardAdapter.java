@@ -18,6 +18,7 @@ import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.dao.LeaderboardUser;
 import com.yagnasri.displayingbitmaps.util.ImageFetcher;
+import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class LeaderboardAdapter extends ArrayAdapter<LeaderboardUser> 
 {
@@ -73,7 +74,7 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderboardUser>
 			TextView bookmarkedCount = UiUtility.getView(convertView, R.id.leaderBookmarkedCount);
 
 			leaderDisplayName.setText((!TextUtils.isEmpty(user.displayname)?user.displayname: user.username));
-			leaderHandle.setText(user.username);
+			leaderHandle.setText(Utils.getTweetHandle(user.username));
 			likesCount.setText((!TextUtils.isEmpty(user.upvotes)?user.upvotes: "0"));
 			bookmarkedCount.setText((!TextUtils.isEmpty(user.bookmarks)?user.bookmarks: "0"));
 			mImageFetcher.loadImage(user.profileimageurl, profilePic);

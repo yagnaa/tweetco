@@ -24,6 +24,14 @@ import com.yagnasri.dao.Tweet;
 public class AllInOneActivity extends TweetCoBaseActivity
 {
 
+	@Override
+	protected void onNewIntent(Intent intent) 
+	{
+		super.onNewIntent(intent);
+		this.setIntent(intent);
+	}
+
+
 	public static final String SENDER_ID = "721884328218";
 	
 	
@@ -41,11 +49,12 @@ public class AllInOneActivity extends TweetCoBaseActivity
 	private static CustomFragmentPagerAdapter mPagerAdapter = null;
 	
 	private Controller mController = null;
-	
+			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+
 		
 		mController = new Controller();
 
@@ -57,8 +66,8 @@ public class AllInOneActivity extends TweetCoBaseActivity
         
         customizeActionBar();
 	}
-	
-	
+
+
 	public void customizeActionBar()
 	{
 		m_actionbar = getActionBar();

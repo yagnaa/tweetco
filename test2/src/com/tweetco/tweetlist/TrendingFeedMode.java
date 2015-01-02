@@ -60,19 +60,8 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 	}
 
 	@Override
-	public int processReceivedTweets(JsonElement response,JsonObject tweetRequest,int index ) 
+	public int processReceivedTweets(List<Tweet> list,List<TweetUser> tweetUserlist , JsonElement response,JsonObject tweetRequest,int index ) 
 	{
-		
-		//The teceived data contains an inner join of tweets and tweet users. 
-		//Read them both.
-		Gson gson = new Gson();
-
-		Type collectionType = new TypeToken<List<Tweet>>(){}.getType();
-		List<Tweet> list = gson.fromJson(response, collectionType);
-		
-		Type tweetusertype = new TypeToken<List<TweetUser>>(){}.getType();
-		List<TweetUser> tweetUserlist = gson.fromJson(response, tweetusertype);
-
 		addEntriesToBottom(list);
 		
 		for(TweetUser user:tweetUserlist)
@@ -151,6 +140,12 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 	public int getCount() 
 	{
 		return trendingTweetList.size();
+	}
+	
+	@Override
+	public Object removeItem(int position)
+	{
+		return trendingTweetList.remove(position);
 	}
 
 	@Override

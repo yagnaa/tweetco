@@ -47,7 +47,7 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 		switch(position)
 		{
 		case 0:
-			return "Tweets";
+			return "Home";
 		case 1:
 			return "LeaderBoard";
 		case 2:

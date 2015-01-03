@@ -24,7 +24,7 @@
     android:paddingRight="6dip" >
 
     <com.yagnasri.displayingbitmaps.ui.RoundedImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/profile_pic"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_centerVertical="true"
@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/imageView1"
+        android:layout_toRightOf="@+id/profile_pic"
         android:orientation="horizontal"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
@@ -87,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tweet_user_info"
-        android:layout_toRightOf="@+id/imageView1"
+        android:layout_toRightOf="@+id/profile_pic"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -104,7 +104,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginTop="8dp"
-        android:layout_toRightOf="@+id/imageView1"
+        android:layout_toRightOf="@+id/profile_pic"
         android:clickable="true"
         android:scaleType="centerCrop" />
 
@@ -114,7 +114,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/tweet_content_image"
-        android:layout_toRightOf="@+id/imageView1"
+        android:layout_toRightOf="@+id/profile_pic"
         android:orientation="horizontal"
         android:paddingBottom="5dp"
         android:paddingTop="5dp" >

@@ -5,8 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
@@ -16,19 +18,19 @@ import com.tweetco.R;
 public class ImageUtility 
 {
 	private static final String IMG_EXTN = ".jpg";
-	
+
 	private static Uri msAttachmentUri = null;
-	
+
 	public static final String[] ACCEPTABLE_ATTACHMENT_SEND_UI_TYPES = new String[] {
-    	"image/*"
-    };
-    
+		"image/*"
+	};
+
 
 	public static Intent getImageChooserIntent(Context context)
 	{
 		return getImageChooserIntent(context, getImageAttachmentUri(context));
 	}
-	
+
 	public static Intent getImageChooserIntent(Context context, Uri outputFileUri)
 	{
 		Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -40,35 +42,47 @@ public class ImageUtility
 
 		return returnIntent;
 	}
-	
+
 	public static Intent getImageCaptureIntent(Context context)
 	{
-		return getImageCaptureIntent(context, getImageAttachmentUri(context));
+		Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		ComponentName componentName = cameraIntent.resolveActivity(context.getPackageManager());
+		if(componentName!= null)
+		{
+			String pack = componentName.getPackageName();
+			Uri outputFileUri = getImageAttachmentUri(context);
+			context.grantUriPermission(pack, outputFileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+			cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+			cameraIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			return cameraIntent;
+		}
+
+		return null;
 	}
-	
+
 	public static Intent getImageCaptureIntent(Context context, Uri outputFileUri)
 	{
-			Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			
-			if(cameraIntent.resolveActivity(context.getPackageManager()) != null)
-			{
-				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-				cameraIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-			}
+		Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+		if(cameraIntent.resolveActivity(context.getPackageManager()) != null)
+		{
+			cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+			cameraIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		}
 
 		return cameraIntent;
 	}
-	
+
 	private static Uri getImageAttachmentUri(Context context)
 	{	
 		String fileName = UUID.randomUUID().toString() + IMG_EXTN;
 		File file = AttachmentHelper.getAttachmentFile(fileName);
-		
+
 		msAttachmentUri = FileProvider.getUriForFile(context, "com.tweetco.fileprovider", file);
-		
+
 		return msAttachmentUri;
 	}
-	
+
 	public static void onImageAttachmentCancelled()
 	{
 		if(msAttachmentUri != null)
@@ -77,7 +91,7 @@ public class ImageUtility
 			msAttachmentUri = null;
 		}
 	}
-	
+
 	private static class AttachmentDeleteThread extends Thread
 	{
 		Uri mAttachment = null;
@@ -95,7 +109,7 @@ public class ImageUtility
 			}
 		}
 	}
-	
+
 	public static Uri onImageAttachmentReceived(Context context, Intent data) throws FileNotFoundException, IOException
 	{
 		final boolean isCamera;
@@ -129,5 +143,5 @@ public class ImageUtility
 		msAttachmentUri = null;
 		return selectedImageUri;
 	}
-	
+
 }

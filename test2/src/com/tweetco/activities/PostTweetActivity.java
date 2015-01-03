@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.Toast;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import android.widget.TextView;
 
@@ -225,7 +226,14 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			public void onClick(View v) 
 			{
 				Intent intent = ImageUtility.getImageCaptureIntent(getApplicationContext());
-				startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
+				if(intent!=null)
+				{
+					startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
+				}
+				else
+				{
+					Toast.makeText(PostTweetActivity.this.getApplicationContext(), "Your device doesn't support this", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 	}

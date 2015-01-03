@@ -18,6 +18,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="40dp"
+        android:visibility="invisible"
         android:text="Retry" 
         android:background="@drawable/retry_button_selector"
         android:id="@+id/retryButton"/>

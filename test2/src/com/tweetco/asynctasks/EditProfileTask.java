@@ -96,8 +96,8 @@ public class EditProfileTask extends AsyncTask<Void, Void, Void>
 			client.invokeApi(ApiInfo.UPDATE_USER_IMAGE, element, new ApiJsonOperationCallback() {
 				
 				@Override
-				public void onCompleted(JsonElement element, Exception exception,
-						ServiceFilterResponse arg2) {
+				public void onCompleted(JsonElement element, Exception exception, ServiceFilterResponse arg2) 
+				{
 					if(exception == null)
 					{
 						Log.d("EditProfile", "Profile edit saved");

@@ -92,7 +92,7 @@
         <provider
             android:name="com.tweetco.provider.TweetCoProvider"
             android:authorities="com.tweetco.provider"
-            android:exported="false" >
+            android:exported="true" >
         </provider>
         <provider
             android:name="android.support.v4.content.FileProvider"

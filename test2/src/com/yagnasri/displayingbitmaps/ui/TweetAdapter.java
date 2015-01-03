@@ -229,7 +229,7 @@ public class TweetAdapter extends BaseAdapter
 
 			//UpVote ImageView
 
-			holder.upvoteView.setTag(holder);
+			holder.upvoteView.setTag(viewHolderBookMarkUpvoteAndHide);
 			setUpVoteFlag(holder.upvoteView,tweet,TweetCommonData.getUserName());
 			holder.upvoteView.setOnClickListener(new OnClickListener() 
 			{	
@@ -244,7 +244,7 @@ public class TweetAdapter extends BaseAdapter
 			});
 
 
-			holder.bookmarkView.setTag(holder);
+			holder.bookmarkView.setTag(viewHolderBookMarkUpvoteAndHide);
 			setBookMarkFlag(holder.bookmarkView,tweet,TweetCommonData.getUserName());
 			holder.bookmarkView.setOnClickListener(new OnClickListener() 
 			{	
@@ -258,7 +258,7 @@ public class TweetAdapter extends BaseAdapter
 			});
 
 
-			holder.hideTweet.setTag(holder);
+			holder.hideTweet.setTag(viewHolderBookMarkUpvoteAndHide);
 			holder.hideTweet.setOnClickListener(new OnClickListener() 
 			{	
 				@Override

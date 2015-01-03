@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
@@ -137,9 +138,8 @@ public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity
 		catch (MalformedURLException e) 
 		{
 			e.printStackTrace();
-			Log.e(TAG, "Login error: "+e.getMessage());
-
-			getAddAccountFailedDialog("Add account failed.").show();
+			Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
+			mRetryButton.setVisibility(View.VISIBLE);
 		}
 	}
 

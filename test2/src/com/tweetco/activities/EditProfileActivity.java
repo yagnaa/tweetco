@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.tweetco.R;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
@@ -47,6 +48,10 @@ public class EditProfileActivity extends TweetCoBaseActivity
 	
 	private ImageView mProfilePic;
 	private ImageView mHeaderPic;
+	
+	private Uri mProfilePicUri;
+	private Uri mHeaderPicUri;
+	
 	private Button mSaveButton;
 	private AsyncTaskEventHandler asyncTaskEventHandler = null;
 	private boolean mProfilePicChanged = false;
@@ -67,29 +72,33 @@ public class EditProfileActivity extends TweetCoBaseActivity
 		TweetUser user = TweetCommonData.tweetUsers.get(username.toLowerCase());
 		
 		
-		mImageFetcher = Utils.getImageFetcher(this, 50, 50);
+		mImageFetcher = Utils.getImageFetcher(this, 80, 80);
 		
 		mImageFetcher.loadImage(user.profileimageurl, mProfilePic);
 		mImageFetcher.loadImage(user.profilebgurl, mHeaderPic);
 		
 		
-		mProfilePic.setOnClickListener(new OnClickListener() {
-			
+		mProfilePic.setOnClickListener(new OnClickListener() 
+		{	
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v)
+			{
 				getDialog(EditProfileActivity.this, PROFILE_PIC).show();
 			}
 		});
 		
-		mHeaderPic.setOnClickListener(new OnClickListener() {
-			
+		
+		mHeaderPic.setOnClickListener(new OnClickListener() 
+		{	
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) 
+			{
 				getDialog(EditProfileActivity.this, HEADER_PIC).show();
 			}
 		});
 		
-		mSaveButton.setOnClickListener(new OnClickListener() {
+		mSaveButton.setOnClickListener(new OnClickListener() 
+		{
 			
 			@Override
 			public void onClick(View v) 
@@ -102,7 +111,7 @@ public class EditProfileActivity extends TweetCoBaseActivity
 				
 				if(mHeaderPicChanged)
 				{
-					params.setProfileImage((BitmapDrawable)mHeaderPic.getDrawable());
+					params.setHeaderImage((BitmapDrawable)mHeaderPic.getDrawable());
 				}
 				
 				new EditProfileTask(getApplicationContext(), params, asyncTaskEventHandler, new EditProfileTaskCompletionCallback() {
@@ -111,6 +120,10 @@ public class EditProfileActivity extends TweetCoBaseActivity
 					public void onEditProfileTaskSuccess() 
 					{
 						Log.d("EditProfile", "Success");
+						Intent intent = new Intent();
+						intent.putExtra(Constants.PROFILE_PIC_URI, mProfilePicUri);
+						intent.putExtra(Constants.PROFILE_BG_PIC_URI, mHeaderPicUri);
+						EditProfileActivity.this.setResult(RESULT_OK, intent);
 						finish();
 					}
 					
@@ -164,8 +177,14 @@ public class EditProfileActivity extends TweetCoBaseActivity
 						intent = ImageUtility.getImageCaptureIntent(activity);
 					}
 				}
-				
-				activity.startActivityForResult(intent, requestCode);
+				if(intent!=null)
+				{
+					activity.startActivityForResult(intent, requestCode);
+				}
+				else
+				{
+					Toast.makeText(activity.getApplicationContext(), "Your device doesn't support this", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 
@@ -208,13 +227,15 @@ public class EditProfileActivity extends TweetCoBaseActivity
 			if (requestCode == REQUEST_CODE_PROFILE_PIC_IMAGE_SELECT || requestCode == REQUEST_CODE_PROFILE_PIC_IMAGE_CAPTURE)
 			{
 				Uri fileUri = getFileUri(getApplicationContext(), data);
-				mProfilePic.setImageURI(fileUri);
+				mProfilePicUri = fileUri;
+				mProfilePic.setImageURI(mProfilePicUri);			
 				mProfilePicChanged = true;
 			}
 			else if (requestCode == REQUEST_CODE_HEADER_PIC_IMAGE_SELECT || requestCode == REQUEST_CODE_HEADER_PIC_IMAGE_CAPTURE)
 			{
 				Uri fileUri = getFileUri(getApplicationContext(), data);
-				mHeaderPic.setImageURI(fileUri);
+				mHeaderPicUri = fileUri;
+				mHeaderPic.setImageURI(mHeaderPicUri);
 				mHeaderPicChanged = true;
 			}
 		}
@@ -223,6 +244,5 @@ public class EditProfileActivity extends TweetCoBaseActivity
 			ImageUtility.onImageAttachmentCancelled();
 			Log.i("PostTweet","onActivityResult result code: " + resultCode + " for request code: " + requestCode);
 		}
-
 	}
 }

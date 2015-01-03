@@ -1,18 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_margin="30dp">
-    	<ImageView android:id="@+id/editProfileUserPic" android:layout_width="50dp" android:layout_height="50dp" android:padding="10dp" android:background="@drawable/ico_profile_default"/>
-        <TextView android:text="Photo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:padding="20dp"/>
-    </LinearLayout>
-    
-    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_margin="30dp">
-    	<ImageView android:id="@+id/editProfileBackgroundPic" android:layout_width="50dp" android:layout_height="50dp" android:padding="10dp" android:background="@drawable/ico_profile_default"/>
-        <TextView android:text="Header" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:padding="20dp"/>
-    </LinearLayout>
-    
-    <Button android:id="@+id/editProfileSaveButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Save" android:layout_gravity="center"/>
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/profile_pic_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="20dp"
+        android:text="Photo" />
+
+    <com.yagnasri.displayingbitmaps.ui.RoundedImageView
+        android:id="@+id/editProfileUserPic"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/profile_pic_text"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ico_profile_default"
+        android:padding="10dp" />
+
+    <TextView
+        android:id="@+id/background_pic_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editProfileUserPic"
+        android:layout_centerHorizontal="true"
+        android:padding="20dp"
+        android:text="Background" />
+
+    <ImageView
+        android:id="@+id/editProfileBackgroundPic"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/background_pic_text"
+        android:background="@drawable/empty_background"
+        android:padding="10dp" />
+
+    <Button
+        android:id="@+id/editProfileSaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/editProfileBackgroundPic"
+        android:layout_centerHorizontal="true"
+        android:text="Save" />
+
+</RelativeLayout>

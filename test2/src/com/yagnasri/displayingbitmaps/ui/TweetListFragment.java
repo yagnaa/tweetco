@@ -390,73 +390,73 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 				//Loading the Quick return View - begin
 
-				mScrollY = 0;
-
-
-
-				mScrollY = mListView.getComputedScrollY();
-				int diff = mScrollY - mMinRawY;
-				boolean abrupt = Math.abs(mScrollY - mMinRawY) > 50;
-				boolean currentSign = (mScrollY < mMinRawY) ;
-
-				if(!abrupt)
-				{
-					switch (mState) {
-
-					case STATE_ONSCREEN:
-						if((diff > 0) )
-						{
-							mState = STATE_RETURNING;
-							translationY = diff;
-						}
-						else
-						{
-							translationY = 0;
-						}
-						break;
-
-					case STATE_OFFSCREEN:
-						if(currentSign!=prevSign)
-						{
-							mState = STATE_RETURNING;
-						}
-						translationY = mQuickReturnHeight;
-						break;
-
-
-					case STATE_RETURNING:
-
-						translationY += diff;
-
-						if (translationY < 0) 
-						{
-							translationY = 0;
-							mState = STATE_ONSCREEN;
-						}
-
-
-						if (translationY > mQuickReturnHeight) 
-						{
-							mState = STATE_OFFSCREEN;
-						}
-						break;
-					}
-					prevSign = currentSign;
-				}
-
-				mMinRawY = mScrollY;
-
-				/** this can be used if the build is below honeycomb **/
-				if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) 
-				{
-					anim = new TranslateAnimation(0, 0, translationY,
-							translationY);
-					anim.setFillAfter(true);
-					anim.setDuration(0);
-					mQuickReturnView.startAnimation(anim);
-				} else {
-					mQuickReturnView.setTranslationY(translationY);
-				}
+//				mScrollY = 0;
+//
+//
+//
+//				mScrollY = mListView.getComputedScrollY();
+//				int diff = mScrollY - mMinRawY;
+//				boolean abrupt = Math.abs(mScrollY - mMinRawY) > 50;
+//				boolean currentSign = (mScrollY < mMinRawY) ;
+//
+//				if(!abrupt)
+//				{
+//					switch (mState) {
+//
+//					case STATE_ONSCREEN:
+//						if((diff > 0) )
+//						{
+//							mState = STATE_RETURNING;
+//							translationY = diff;
+//						}
+//						else
+//						{
+//							translationY = 0;
+//						}
+//						break;
+//
+//					case STATE_OFFSCREEN:
+//						if(currentSign!=prevSign)
+//						{
+//							mState = STATE_RETURNING;
+//						}
+//						translationY = mQuickReturnHeight;
+//						break;
+//
+//
+//					case STATE_RETURNING:
+//
+//						translationY += diff;
+//
+//						if (translationY < 0) 
+//						{
+//							translationY = 0;
+//							mState = STATE_ONSCREEN;
+//						}
+//
+//
+//						if (translationY > mQuickReturnHeight) 
+//						{
+//							mState = STATE_OFFSCREEN;
+//						}
+//						break;
+//					}
+//					prevSign = currentSign;
+//				}
+//
+//				mMinRawY = mScrollY;
+//
+//				/** this can be used if the build is below honeycomb **/
+//				if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) 
+//				{
+//					anim = new TranslateAnimation(0, 0, translationY,
+//							translationY);
+//					anim.setFillAfter(true);
+//					anim.setDuration(0);
+//					mQuickReturnView.startAnimation(anim);
+//				} else {
+//					mQuickReturnView.setTranslationY(translationY);
+//				}
 
 				//Loading the Quick return View - end
 
@@ -618,9 +618,10 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 		@Override
 		public boolean onFling(MotionEvent event1, MotionEvent event2, 
-				float velocityX, float velocityY) {
-			mQuickReturnView.setTranslationY(mQuickReturnHeight);
-			mState = STATE_OFFSCREEN;
+				float velocityX, float velocityY) 
+		{
+		//	mQuickReturnView.setTranslationY(mQuickReturnHeight);
+		//	mState = STATE_OFFSCREEN;
 			if(event1 != null && event2 != null)
 			{
 				Log.d(DEBUG_TAG, "onFling: " + event1.toString()+event2.toString());

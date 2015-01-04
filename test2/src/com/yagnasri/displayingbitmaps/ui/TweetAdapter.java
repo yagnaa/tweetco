@@ -146,7 +146,7 @@ public class TweetAdapter extends BaseAdapter
 		ImageView tweetContentImage;
 		ImageView upvoteView;
 		ImageView bookmarkView;
-		ImageView hideTweet;
+	//	ImageView hideTweet;
 	}
 	
 	@Override
@@ -169,24 +169,10 @@ public class TweetAdapter extends BaseAdapter
 			viewholder.tweetContentImage = (ImageView) convertView.findViewById(R.id.tweet_content_image);
 			viewholder.upvoteView = (ImageView) convertView.findViewById(R.id.upvote);
 			viewholder.bookmarkView = (ImageView) convertView.findViewById(R.id.bookmark);
-			viewholder.hideTweet = (ImageView) convertView.findViewById(R.id.hide);
+	//		viewholder.hideTweet = (ImageView) convertView.findViewById(R.id.hide);
 			convertView.setTag(viewholder);
 
 		} 
-		else 
-		{ // Otherwise re-use the converted view
-//			imageView = (ImageView)convertView.findViewById(R.id.profile_pic);
-		}
-//
-//		imageView.setTag(position);
-//		imageView.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				int position = Integer.parseInt(v.getTag().toString());
-//				mOnProfilePicClickCallback.onItemClick(position);
-//			}
-//		});
 		
 		ViewHolder holder = (ViewHolder) convertView.getTag();
 		holder.profilePicImage.setOnClickListener(new OnClickListener() 
@@ -258,16 +244,16 @@ public class TweetAdapter extends BaseAdapter
 			});
 
 
-			holder.hideTweet.setTag(viewHolderBookMarkUpvoteAndHide);
-			holder.hideTweet.setOnClickListener(new OnClickListener() 
-			{	
-				@Override
-				public void onClick(View hideTweet) 
-				{
-					ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = (ViewHolderForBookmarkUpVoteAndHide) hideTweet.getTag();
-					hide(hideTweet,TweetCommonData.getUserName(), viewHolderBookMarkUpvoteAndHide.iterator);
-				}
-			});
+//			holder.hideTweet.setTag(viewHolderBookMarkUpvoteAndHide);
+//			holder.hideTweet.setOnClickListener(new OnClickListener() 
+//			{	
+//				@Override
+//				public void onClick(View hideTweet) 
+//				{
+//					ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = (ViewHolderForBookmarkUpVoteAndHide) hideTweet.getTag();
+//					hide(hideTweet,TweetCommonData.getUserName(), viewHolderBookMarkUpvoteAndHide.iterator);
+//				}
+//			});
 			
 
 			// Finally load the image asynchronously into the ImageView, this also takes care of
@@ -418,6 +404,7 @@ public class TweetAdapter extends BaseAdapter
 						upvoteView.setSelected(true);
 					}
 					//TODO change the adapter underneath
+					TweetCommonData.like(viewHolderBookMarkUpvoteAndHide.iterator,TweetCommonData.getUserName());
 				}
 				else
 				{
@@ -457,6 +444,7 @@ public class TweetAdapter extends BaseAdapter
 						bookmarkView.setSelected(true);
 					}
 					//TODO change the adapter underneath
+					TweetCommonData.bookmark(viewHolderBookMarkUpvoteAndHide.iterator,TweetCommonData.getUserName());
 				}
 				else
 				{

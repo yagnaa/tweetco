@@ -63,6 +63,7 @@ public class PushNotificationHandler extends com.microsoft.windowsazure.notifica
 
 	private void sendNotification(String tweeterName, String tweetContent) 
 	{	
+		Log.d(TAG, "Received a push Notification with tweetContent="+tweetContent);
 		if(TweetCoBaseActivity.isAppInForeground)
 		{
 			if(TweetCoBaseActivity.topActivity instanceof AllInOneActivity)

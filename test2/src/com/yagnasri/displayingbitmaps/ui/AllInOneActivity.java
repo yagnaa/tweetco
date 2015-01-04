@@ -1,23 +1,37 @@
 package com.yagnasri.displayingbitmaps.ui;
+import java.net.MalformedURLException;
+
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 import com.tweetco.R;
+import com.tweetco.TweetCo;
 import com.tweetco.activities.Constants;
+import com.tweetco.activities.LauncherActivity;
 import com.tweetco.activities.TweetCoBaseActivity;
+import com.tweetco.activities.progress.AsyncTaskEventHandler;
+import com.tweetco.database.dao.Account;
 import com.tweetco.notifications.PushNotificationHandler;
+import com.tweetco.provider.TweetCoProviderConstants;
+import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
+import com.yagnasri.displayingbitmaps.util.AsyncTask;
 
 
 
@@ -33,38 +47,48 @@ public class AllInOneActivity extends TweetCoBaseActivity
 
 
 	public static final String SENDER_ID = "721884328218";
-	
-	
-	private static final int SEVER_SIDE_BATCH_SIZE = 10; //Number of tweets fetched from server at one time
-    private static final String IMAGE_CACHE_DIR = "thumbs"; //Name of directory where images are saved
 
-	
+
+	private static final int SEVER_SIDE_BATCH_SIZE = 10; //Number of tweets fetched from server at one time
+	private static final String IMAGE_CACHE_DIR = "thumbs"; //Name of directory where images are saved
+
+
 	private Handler handler;
-	
+
 	private ActionBar m_actionbar;
-	
+
 	private static final String TAG = "AllInOneActivity";
-	
+
 	private ViewPager mViewPager;
 	private static CustomFragmentPagerAdapter mPagerAdapter = null;
-	
+	private AsyncTaskEventHandler asyncTaskEventHandler = null;
 	private Controller mController = null;
-			
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-
 		
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);  
+
+		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Loading...");
 		mController = new Controller();
 
 		setContentView(R.layout.all_in_one_activity_layout);
-		
+
 		NotificationsManager.handleNotifications(this, SENDER_ID, PushNotificationHandler.class);
-        
-        initializePager();
-        
-        customizeActionBar();
+		
+
+		customizeActionBar();
+		
+		if(TweetCommonData.getAccount()!=null && TweetCommonData.mClient!=null)
+		{
+			initializePager();
+		}
+		else
+		{
+			(new InitializeTask()).execute();
+		}
 	}
 
 
@@ -79,17 +103,17 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		m_actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ~ActionBar.DISPLAY_SHOW_HOME);
 		m_actionbar.setDisplayShowCustomEnabled(true);
 	}
-	
+
 	private void hideKeyboard() 
 	{   
-	    // Check if no view has focus:
-	    View view = this.getCurrentFocus();
-	    if (view != null) {
-	        InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-	        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-	    }
+		// Check if no view has focus:
+		View view = this.getCurrentFocus();
+		if (view != null) {
+			InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+		}
 	}
-	
+
 	public void initializePager()
 	{	
 		// init pager
@@ -113,13 +137,13 @@ public class AllInOneActivity extends TweetCoBaseActivity
 				hideKeyboard();
 			}
 		});
-		
+
 		mPagerAdapter = new CustomFragmentPagerAdapter(this.getApplicationContext(), getSupportFragmentManager());
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount() - 1);
 		mViewPager.setCurrentItem(0);
 	}
-	
+
 	public FragmentStatePagerAdapter getPagerAdapter()
 	{
 		return mPagerAdapter;
@@ -138,12 +162,12 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		// TODO Auto-generated method stub
 		super.onPause();
 	}
-//	
-//	public static void tweetsListRefresh()
-//	{
-//		mController.
-//	}
-	
+	//	
+	//	public static void tweetsListRefresh()
+	//	{
+	//		mController.
+	//	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -155,14 +179,90 @@ public class AllInOneActivity extends TweetCoBaseActivity
 				mController.tweetsListRefresh(tweet);
 			}
 		}
+		else
+		{
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
-	
+
+
+	private class InitializeTask extends AsyncTask<Void, Void, Account>
+	{
+
+		
+		@Override
+		protected void onPreExecute()
+		{
+			Log.d("tag","onPreExecute");
+			setProgressBarIndeterminateVisibility(true);
+		}
+
+		@Override
+		protected void onPostExecute(Account result) 
+		{
+			android.os.Debug.waitForDebugger();
+			Log.e(TAG,"AllInOneActivity post execute");
+			setProgressBarIndeterminateVisibility(false);
+			if(result == null)
+			{
+				Intent intent = new Intent(TweetCo.mContext,LauncherActivity.class);
+				TweetCo.mContext.startActivity(intent);
+				AllInOneActivity.this.finish();
+			}
+			else
+			{
+				initializePager();
+			}
+		}
+
+		@Override
+		protected Account doInBackground(Void... params) 
+		{
+			Account account = getAccount();
+			if(account != null)
+			{
+
+				MobileServiceClient mobileServiceClient;
+				try 
+				{
+					mobileServiceClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, TweetCo.mContext);
+					MobileServiceUser user = new MobileServiceUser(account.getUsername());
+					user.setAuthenticationToken(account.getAuthToken());
+					mobileServiceClient.setCurrentUser(user);
+					TweetCommonData.mClient = mobileServiceClient;
+					TweetCommonData.setAccount(account);
+				} 
+				catch (MalformedURLException e) 
+				{
+					e.printStackTrace();
+				}
+
+			}
+			return account;
+		}
+
+		private Account getAccount()
+		{
+			Account account = null;
+
+			Cursor c = TweetCo.mContext.getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
+			if(c.moveToFirst())
+			{
+				account = new Account();
+				account.restoreFromCursor(c);
+			}
+
+			return account;
+		}
+
+	}
+
 	public Controller getController()
 	{
 		return mController;
 	}
-	
-	
+
+
 	/**
 	 * All the actions that has to be done on the fragments will be done here.
 	 *
@@ -176,5 +276,5 @@ public class AllInOneActivity extends TweetCoBaseActivity
 			twwetListFragment.refreshTop();
 		}
 	}
-	
+
 }

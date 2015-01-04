@@ -16,4 +16,8 @@ public final class Constants
 	public static final String PROFILE_PIC_URI = "profilePicUri";
 	public static final String PROFILE_BG_PIC_URI = "profileBGPicUri";
 	
+	public static final String HIDE_FOOTER = "hide_footer";
+	public static final String FOOTER_TAG = "footer_tag";
+	public static final String EXISTING_STRING = "exisitngString";
+	
 }

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -78,6 +79,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mTweetContent.setAdapter(new ArrayAdapter<String>(PostTweetActivity.this,
 				android.R.layout.simple_dropdown_item_1line, mUsernames));
 		mTweetContent.setThreshold(1);
+		
 
 		//From http://stackoverflow.com/questions/12691679/android-autocomplete-textview-similar-to-the-facebook-app
 		//Create a new Tokenizer which will get text after '@' and terminate on ' '
@@ -136,7 +138,8 @@ public class PostTweetActivity extends TweetCoBaseActivity
 
 		mCharCount.setText(String.valueOf(mCharCountInt));
 
-		mTweetContent.addTextChangedListener(new TextWatcher() {
+		mTweetContent.addTextChangedListener(new TextWatcher() 
+		{
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) 
@@ -157,21 +160,27 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) 
+			{
 
 			}
 
 			@Override
-			public void afterTextChanged(Editable s) {
-
+			public void afterTextChanged(Editable s) 
+			{
 
 			}
 		});
+		
+		String existingString= getIntent().getStringExtra(Constants.EXISTING_STRING);
+		if(!TextUtils.isEmpty(existingString))
+		{
+			mTweetContent.setText(existingString);
+			mTweetContent.setSelection(existingString.length());
+		}
 
-		mSendButton.setOnClickListener(new OnClickListener() {
-
+		mSendButton.setOnClickListener(new OnClickListener() 
+		{
 			@Override
 			public void onClick(View v) 
 			{
@@ -195,13 +204,15 @@ public class PostTweetActivity extends TweetCoBaseActivity
 					}
 
 					@Override
-					public void onPostTweetTaskFailure() {
+					public void onPostTweetTaskFailure() 
+					{
 						asyncTaskEventHandler.dismiss();
 						Log.e(TAG, "Posting tweet failed");
 					}
 
 					@Override
-					public void onPostTweetTaskCancelled() {
+					public void onPostTweetTaskCancelled() 
+					{
 						asyncTaskEventHandler.dismiss();
 
 					}

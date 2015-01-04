@@ -39,8 +39,7 @@ public class TrendingFragmentActivity extends ActionBarActivity
             Bundle bundle = new Bundle();
 			TrendingFeedMode mode = new TrendingFeedMode(mTag);
 			bundle.putParcelable(Constants.TWEET_LIST_MODE, mode);
-			
-            bundle.putBoolean("hideFooter", true);
+            bundle.putString(Constants.FOOTER_TAG, "#"+mTag+" ");
             tweetListFragment.setArguments(bundle);
             ft.replace(R.id.trendingTweetsListFragmentContainer, tweetListFragment);
             ft.commit();

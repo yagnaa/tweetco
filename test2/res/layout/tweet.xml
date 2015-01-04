@@ -121,30 +121,21 @@
 
         <ImageView
             android:id="@+id/upvote"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="40dp"
             android:clickable="true"
-            android:src="@drawable/upvote_selector" />
+            android:src="@drawable/like_selector" />
 
         <ImageView
             android:id="@+id/bookmark"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="60dp"
             android:clickable="true"
-            android:src="@drawable/flag_selector" />
-        
-        <ImageView
-            android:id="@+id/hide"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="60dp"
-            android:clickable="true"
-            android:src="@drawable/flag_selector" />
+            android:src="@drawable/bookmark_selector" />
     </LinearLayout>
 
 </RelativeLayout>

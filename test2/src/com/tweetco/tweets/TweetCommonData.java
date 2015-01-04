@@ -8,11 +8,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections4.map.LinkedMap;
 
+import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.tweetco.TweetCo;
 import com.tweetco.activities.TrendingFragment;
 import com.tweetco.database.dao.Account;
+import com.tweetco.provider.TweetCoProviderConstants;
 import com.yagnasri.dao.Tweet;
 import com.yagnasri.dao.TweetUser;
 
@@ -49,5 +52,18 @@ public class TweetCommonData
 	public static void setAccount(Account account) 
 	{
 		mAccount = account;
+	}
+	
+	
+	public static void bookmark(Integer iterator,String userName)
+	{
+		Tweet tweet = homeFeedTweets.get(iterator);
+		tweet.bookmarkers = tweet.bookmarkers +  userName + ";";
+	}
+	
+	public static void like(Integer iterator,String userName)
+	{
+		Tweet tweet = homeFeedTweets.get(iterator);
+		tweet.upvoters = tweet.upvoters +  userName + ";";
 	}
 }

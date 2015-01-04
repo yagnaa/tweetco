@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/com.tweetco"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/backgroundImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:background="@color/selector_blue"
+        android:orientation="vertical" >
+
+        <com.yagnasri.displayingbitmaps.ui.RoundedImageView
+            android:id="@+id/userProfilePic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ico_profile_default"
+            android:clickable="true"
+            android:scaleType="fitXY"
+            custom:selector="true"
+            custom:selector_color="#44FFBB33"
+            custom:selector_stroke_color="#88FF8800"
+            custom:selector_stroke_width="2dp" />
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/userProfileDisplayName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingTop="3dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/display_name_color"
+                    android:textSize="14dp" >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/userProfileHandle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingTop="2dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/purple_theme_color"
+                    android:textSize="12dp" >
+                </TextView>
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp" >
+
+            <LinearLayout
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Followers: " />
+
+                <TextView
+                    android:id="@+id/followersCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Followees: " />
+
+                <TextView
+                    android:id="@+id/followeesCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="0" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/editProfileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:text="Edit Profile" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -89,7 +89,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center_vertical"
                 android:clickable="true"
-                android:src="@drawable/upvote_pressed" />
+                android:src="@drawable/like_pressed" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -118,7 +118,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center_vertical"
                 android:clickable="true"
-                android:src="@drawable/flag_pressed" />
+                android:src="@drawable/bookmark_pressed" />
 
             <TextView
                 android:layout_width="wrap_content"

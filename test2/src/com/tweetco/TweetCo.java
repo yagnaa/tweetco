@@ -5,8 +5,8 @@ import android.content.Context;
 
 public class TweetCo extends Application 
 {
-	public static String APP_KEY = "GeDacEmoZtCjASmINhXiLWpBujCtJI48";
-	public static String APP_URL = "https://tweetcosap.azure-mobile.net/";
+	public static String APP_KEY = "VUEWlsSVIAIzDgOARiSbWZGKzbAZKP43";
+	public static String APP_URL = "https://tweetcoahwr.azure-mobile.net/";
 	
 	public static Context mContext;
 	

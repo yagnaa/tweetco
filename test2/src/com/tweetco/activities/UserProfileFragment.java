@@ -79,6 +79,13 @@ public class UserProfileFragment extends FragmentActivity
        
         mUserName = getIntent().getExtras().getString(Constants.USERNAME_STR);
         TweetUser user = TweetCommonData.tweetUsers.get(mUserName.toLowerCase());
+        
+        loadUser(user);
+    		
+    }
+    
+    public void loadUser(TweetUser user)
+    {
     	if(user != null)
     	{
     		mBackgroundImage = UiUtility.getView(this, R.id.backgroundImage);
@@ -110,9 +117,9 @@ public class UserProfileFragment extends FragmentActivity
     		}
     		mFollowerCount.setText(String.valueOf(followersCount));
     		
+    		mEditProfileButton = UiUtility.getView(this, R.id.editProfileButton);
     		if(mUserName.equals((TweetCommonData.getUserName())))
     		{
-    			mEditProfileButton = UiUtility.getView(this, R.id.editProfileButton);
     			mEditProfileButton.setVisibility(View.VISIBLE);
     			mEditProfileButton.setOnClickListener(new OnClickListener() {
 					
@@ -122,6 +129,10 @@ public class UserProfileFragment extends FragmentActivity
 						startActivityForResult(new Intent(getApplicationContext(), EditProfileActivity.class),EDIT_PROFILE_REQUEST);
 					}
 				});
+    		}
+    		else
+    		{
+    			mEditProfileButton.setVisibility(View.INVISIBLE);
     		}
     		
     		if(mUserName.equals(TweetCommonData.getUserName()))
@@ -146,8 +157,18 @@ public class UserProfileFragment extends FragmentActivity
     		
     		
     	}
-    	
-    	
+    }
+    
+    public void reloadUser(TweetUser user)
+    {
+		if(user!=null)
+		{
+			ImageFetcher imageFectcher = Utils.getImageFetcher(this, 50, 50);
+			imageFectcher.loadImage(user.profileimageurl, mUserProfilePic);
+			
+			BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(user.profilebgurl, mBackgroundImage, this);
+			bitmapWorkerTask.execute();
+		}
     }
     
     private void hideKeyboard() 
@@ -311,16 +332,23 @@ public class UserProfileFragment extends FragmentActivity
 		{
 			if (requestCode == EDIT_PROFILE_REQUEST || resultCode == RESULT_OK)
 			{
+				TweetUser user = TweetCommonData.tweetUsers.get(mUserName.toLowerCase());
+		        
+		        reloadUser(user);
+		        
 				mProfilePicUri = (Uri) intent.getParcelableExtra(Constants.PROFILE_PIC_URI);
 				mHeaderPicUri = (Uri) intent.getParcelableExtra(Constants.PROFILE_BG_PIC_URI);
 				
 				if(mProfilePicUri!=null)
 				{
 	    	        Bitmap bitmap;
-					try {
+					try 
+					{
 						bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mProfilePicUri);
 						mUserProfilePic.setBackground( new BitmapDrawable(this.getResources(), bitmap));
-					} catch (IOException e) {
+					} 
+					catch (IOException e) 
+					{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -329,10 +357,13 @@ public class UserProfileFragment extends FragmentActivity
 	    		if(mHeaderPicUri!=null)
 	    		{
 	    	        Bitmap bitmap;
-					try {
+					try 
+					{
 						bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mHeaderPicUri);
 		    	        mBackgroundImage.setBackground( new BitmapDrawable(this.getResources(), bitmap));
-					} catch (IOException e) {
+					} 
+					catch (IOException e) 
+					{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

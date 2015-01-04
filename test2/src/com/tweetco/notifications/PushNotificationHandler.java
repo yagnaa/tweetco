@@ -73,23 +73,23 @@ public class PushNotificationHandler extends com.microsoft.windowsazure.notifica
 		}
 		else
 		{			
-			mNotificationManager = (NotificationManager)
-					ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-			Intent intent = new Intent(ctx, AllInOneActivity.class);
-			intent.putExtra(Constants.LAUNCHED_FROM_NOTIFICATIONS, true);
-			PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
-					intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-
-			NotificationCompat.Builder mBuilder =
-					new NotificationCompat.Builder(ctx)
-			.setSmallIcon(R.drawable.icon_main)
-			.setContentTitle(tweeterName)
-			.setStyle(new NotificationCompat.BigTextStyle()
-			.bigText(tweetContent))
-			.setContentText(tweetContent);
-
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+//			mNotificationManager = (NotificationManager)
+//					ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+//			Intent intent = new Intent(ctx, AllInOneActivity.class);
+//			intent.putExtra(Constants.LAUNCHED_FROM_NOTIFICATIONS, true);
+//			PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
+//					intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+//
+//			NotificationCompat.Builder mBuilder =
+//					new NotificationCompat.Builder(ctx)
+//			.setSmallIcon(R.drawable.icon_main)
+//			.setContentTitle(tweeterName)
+//			.setStyle(new NotificationCompat.BigTextStyle()
+//			.bigText(tweetContent))
+//			.setContentText(tweetContent);
+//
+//			mBuilder.setContentIntent(contentIntent);
+//			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 		}
 
 	}

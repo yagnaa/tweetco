@@ -20,6 +20,7 @@ import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
+import com.tweetco.activities.Constants;
 import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.yagnasri.dao.Tweet;
@@ -40,7 +41,8 @@ public class TweetAdapter extends BaseAdapter
 
 
 	// A demo listener to pass actions from view to adapter
-	public static abstract class NewPageLoader {
+	public static abstract class NewPageLoader 
+	{
 		public abstract void load(JsonObject tweetRequest,String api);
 	}
 
@@ -68,6 +70,8 @@ public class TweetAdapter extends BaseAdapter
 	protected boolean rowEnabled = true;
 	private long lastDataSetChangedTime = System.currentTimeMillis();
 
+	private TweetListMode mTweetListMode = null; 
+
 
 	public void lock() 
 	{
@@ -81,14 +85,14 @@ public class TweetAdapter extends BaseAdapter
 	
 	public boolean canScroll()
 	{
-		if((lastDataSetChangedTime - System.currentTimeMillis()) > 60000)
+		long currentTime = System.currentTimeMillis();
+		if((currentTime- lastDataSetChangedTime) > Constants.THROTTLE_TIME_BETWEEN_DOWN_SCROLL)
 		{
 			canScroll = true;
 		}
 		return canScroll;
 	}
 
-	private TweetListMode mTweetListMode = null; 
 
 
 	private static class ViewHolderForBookmarkUpVoteAndHide

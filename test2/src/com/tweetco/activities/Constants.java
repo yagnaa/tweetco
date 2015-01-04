@@ -20,4 +20,7 @@ public final class Constants
 	public static final String FOOTER_TAG = "footer_tag";
 	public static final String EXISTING_STRING = "exisitngString";
 	
+	public static final int THROTTLE_TIME_BETWEEN_DOWN_SCROLL = 15000;
+	
+	
 }

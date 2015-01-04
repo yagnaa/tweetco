@@ -13,6 +13,12 @@ public class Account extends DBContent
 	public static final String COLUMN_AUTH_TOKEN	        = "authToken";
 	public static final String COLUMN_USERID           		= "userid";
 	public static final String COLUMN_DISPLAY_NAME          = "displayname";
+	public static final String COLUMN_FOLLOWERS                   = "followers";
+	public static final String COLUMN_FOLLOWEES                    = "followees";
+	public static final String COLUMN_PROFILE_IMAGE_URL            = "profile_image_url";
+	public static final String COLUMN_PROFILE_BG_URL               = "profile_bg_url";
+	public static final String COLUMN_BOOKMARKED_TWEETS            = "bookmarked_tweets";
+	public static final String COLUMN_INTEREST_TAGS                = "interest_tags";
 	
 	
 	public static final int COLUMN_ID_INDEX                 	= 0;
@@ -22,6 +28,13 @@ public class Account extends DBContent
 	public static final int COLUMN_AUTH_TOKEN_INDEX           	= 4;
 	public static final int COLUMN_USERID_INDEX           		= 5;
 	public static final int COLUMN_DISPLAY_NAME_INDEX           = 6;
+	public static final int COLUMN_FOLLOWERS_INDEX                    = 7;
+	public static final int COLUMN_FOLLOWEES_INDEX                    = 8;
+	public static final int COLUMN_PROFILE_IMAGE_URL_INDEX            = 9;
+	public static final int COLUMN_PROFILE_BG_URL_INDEX               = 10;
+	public static final int COLUMN_BOOKMARKED_TWEETS_INDEX            = 11;
+	public static final int COLUMN_INTEREST_TAGS_INDEX                = 12;
+	
 	
 	
 	private String	mUsername;
@@ -30,6 +43,13 @@ public class Account extends DBContent
 	private String mAuthToken;
 	private String mUserId;
 	private String mDisplayName;
+	
+	public String followers;
+	public String followees;
+	public String profileimageurl;
+	public String profilebgurl;
+	public String bookmarkedtweets;
+	public String interesttags;
 	
 	
 	public String getUsername() {
@@ -57,6 +77,14 @@ public class Account extends DBContent
 			setAuthToken(c.getString(COLUMN_AUTH_TOKEN_INDEX));
 			setUserId(c.getString(COLUMN_USERID_INDEX));
 			setDisplayName(c.getString(COLUMN_DISPLAY_NAME_INDEX));
+			
+			followers = c.getString(COLUMN_FOLLOWERS_INDEX);
+			followees = c.getString(COLUMN_FOLLOWEES_INDEX);
+			profileimageurl = c.getString(COLUMN_PROFILE_IMAGE_URL_INDEX);
+			profilebgurl = c.getString(COLUMN_PROFILE_BG_URL_INDEX);
+			bookmarkedtweets = c.getString(COLUMN_BOOKMARKED_TWEETS_INDEX);
+			interesttags = c.getString(COLUMN_INTEREST_TAGS_INDEX);
+			
 		}
 	}
 	
@@ -71,6 +99,14 @@ public class Account extends DBContent
 		cv.put(COLUMN_AUTH_TOKEN, getAuthToken());
 		cv.put(COLUMN_USERID, getUserId());
 		cv.put(COLUMN_DISPLAY_NAME, getDisplayName());
+		
+		cv.put(COLUMN_FOLLOWERS, followers);
+		cv.put(COLUMN_FOLLOWEES, followees);
+		cv.put(COLUMN_PROFILE_IMAGE_URL, profileimageurl);
+		cv.put(COLUMN_PROFILE_BG_URL, profilebgurl);
+		cv.put(COLUMN_BOOKMARKED_TWEETS, bookmarkedtweets);
+		cv.put(COLUMN_INTEREST_TAGS, interesttags);
+		
 		
 		return cv;
 	}

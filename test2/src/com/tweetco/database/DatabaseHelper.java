@@ -36,7 +36,14 @@ public class DatabaseHelper extends SQLiteOpenHelper
 								Account.COLUMN_SERVER_ADDRESS + " text, " +
 								Account.COLUMN_AUTH_TOKEN + " text, " + 
 								Account.COLUMN_USERID + " text, " +
-								Account.COLUMN_DISPLAY_NAME + " text";
+								Account.COLUMN_DISPLAY_NAME + " text, " +
+								Account.COLUMN_FOLLOWERS + " text, " +
+								Account.COLUMN_FOLLOWEES + " text, " +
+								Account.COLUMN_PROFILE_IMAGE_URL + " text, " +
+								Account.COLUMN_PROFILE_BG_URL + " text, " +
+								Account.COLUMN_BOOKMARKED_TWEETS + " text, " +
+								Account.COLUMN_INTEREST_TAGS + " text ";
+
 		
 		String createString = "create table if not exists " + Account.TABLE_NAME + "(" + columns + ");";
 	

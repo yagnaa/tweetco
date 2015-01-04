@@ -99,8 +99,8 @@ public  class TweetUserLoader
 		protected TweetUser doInBackground(Void... params) {
 
 			JsonObject obj = new JsonObject();
-			obj.addProperty("user", mUserForWhomDataIsBeingLoaded);
-			mClient.invokeApi("getuserinfo", obj, new ApiJsonOperationCallback() {
+			obj.addProperty(ApiInfo.kApiRequesterKey, mUserForWhomDataIsBeingLoaded);
+			mClient.invokeApi(ApiInfo.GET_USER_INFO, obj, new ApiJsonOperationCallback() {
 
 				@Override
 				public void onCompleted(JsonElement arg0, Exception arg1,

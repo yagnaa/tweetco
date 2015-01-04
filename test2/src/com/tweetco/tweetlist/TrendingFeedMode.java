@@ -37,11 +37,28 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 
 	@Override
 	public JsonObject getPreviousTweetRequest() 
-	{
-		throw new IllegalAccessError("getPreviousTweetRequest is not implemented for TrendingFeedMode");
+	{	
+		JsonObject obj = new JsonObject();
+		obj.addProperty(ApiInfo.kTrendingTopicKey, mTag);
+		obj.addProperty(ApiInfo.kLastTweetIterator, getFirstTweetIterator());
+		obj.addProperty(ApiInfo.kTweetRequestTypeKey, ApiInfo.kNewTweetRequest);
+		return obj;
 	}
 
-
+	public int getFirstTweetIterator()
+	{
+		int retValue =0;
+		if(trendingTweetList.size()>0)
+		{
+			Integer firstKey = trendingTweetList.firstKey();
+			if(firstKey!=null)
+			{
+				Tweet tweet = trendingTweetList.get(firstKey);
+				retValue = tweet.iterator;
+			}
+		}
+		return retValue;
+	}
 
 	public int getLastTweetIterator()
 	{
@@ -60,8 +77,31 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 
 	@Override
 	public int processReceivedTweets(List<Tweet> list,List<TweetUser> tweetUserlist , JsonElement response,JsonObject tweetRequest,int index ) 
-	{
-		addEntriesToBottom(list);
+	{		
+		int returnIndex = index;
+		//populate set
+		boolean requestWasForOldTweets = true;
+		
+		JsonElement elem = tweetRequest.get(ApiInfo.kTweetRequestTypeKey);
+		if(elem!=null)
+		{
+			if(elem.getAsString().equalsIgnoreCase(ApiInfo.kNewTweetRequest))
+			{
+				 requestWasForOldTweets = false;
+			}
+		}
+
+
+        if(requestWasForOldTweets)
+        {
+    		addEntriesToBottom(list);
+        }
+        else
+        {
+        	returnIndex += list.size();
+        	addEntriesToTop(list);
+        }
+
 
 		for(TweetUser user:tweetUserlist)
 		{
@@ -70,8 +110,8 @@ public class TrendingFeedMode extends TweetListMode implements Parcelable
 				TweetCommonData.tweetUsers.put(user.username.toLowerCase(), user);
 			}
 		}
-
-		return index;
+		
+		return returnIndex;
 
 	}
 

@@ -10,7 +10,7 @@ import com.tweetco.tweetlist.TrendingFeedMode;
 import com.tweetco.utility.UiUtility;
 import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
-public class TrendingFragmentActivity extends ActionBarActivity 
+public class TrendingFragmentActivity extends TweetCoBaseActivity 
 {
 	private String mTag = null;
 	

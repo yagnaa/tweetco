@@ -696,8 +696,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 	public void showNewTweetPopup()
 	{
-		View activityViewRoot = ((ViewGroup)this.getView().findViewById(R.id.listView));
-		if(!popupWindow.isShowing())
+//		View activityViewRoot = ((ViewGroup)this.getView().findViewById(R.id.listView));
+//		if(!popupWindow.isShowing())
 		{
 			//TODO - Make the popup location right
 //			View v = mListView.getChildAt(0);

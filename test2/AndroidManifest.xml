@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.yagnasri.displayingbitmaps.ui.AllInOneActivity"
+            android:name="com.tweetco.activities.AllInOneActivity"
             android:launchMode="singleTop"
             android:configChanges="keyboardHidden|orientation"
             android:windowSoftInputMode="stateHidden"

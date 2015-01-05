@@ -14,10 +14,10 @@ import android.text.TextUtils;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.tweetco.TweetCo;
 import com.tweetco.activities.TrendingFragment;
+import com.tweetco.dao.Tweet;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.dao.TweetUser;
 
 public class TweetCommonData 
 {

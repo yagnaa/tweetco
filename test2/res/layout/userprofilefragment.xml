@@ -26,7 +26,7 @@
                 android:gravity="center"
                 android:orientation="vertical" >
 
-                <com.yagnasri.displayingbitmaps.ui.RoundedImageView
+                <com.tweetco.activities.RoundedImageView
                     android:id="@+id/userProfilePic"
                     android:layout_width="50dp"
                     android:layout_height="50dp"

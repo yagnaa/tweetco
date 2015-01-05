@@ -26,7 +26,7 @@
     android:paddingTop="5dip" >
     
     
-    <com.yagnasri.displayingbitmaps.ui.RoundedImageView
+    <com.tweetco.activities.RoundedImageView
         android:id="@+id/profile_pic"
         android:layout_width="60dp"
         android:layout_height="60dp"

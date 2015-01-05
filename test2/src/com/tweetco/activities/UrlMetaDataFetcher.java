@@ -1,4 +1,4 @@
-package com.yagnasri.displayingbitmaps.ui;
+package com.tweetco.activities;
 
 import java.io.IOException;
 import java.io.InputStream;

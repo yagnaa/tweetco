@@ -1,4 +1,4 @@
-package com.yagnasri.displayingbitmaps.ui;
+package com.tweetco.activities;
 
 import java.lang.ref.WeakReference;
 
@@ -14,16 +14,18 @@ import com.tweetco.activities.Constants;
 import com.tweetco.activities.LeaderboardFragment;
 import com.tweetco.activities.TrendingFragment;
 import com.tweetco.activities.UsersListFragment;
+import com.tweetco.tweetlist.BookmarksFeedMode;
 import com.tweetco.tweetlist.HomeFeedMode;
+import com.tweetco.tweetlist.UserFeedMode;
 import com.tweetco.tweets.TweetCommonData;
 
-public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
+public class CustomUserProfileFragmentPagerAdapter extends FragmentStatePagerAdapter
 {
-	public static final int FRAGMENT_COUNT = 4;
+	public static final int FRAGMENT_COUNT = 2;
 	
 	 SparseArray<WeakReference<Fragment>> mFragmentsMap = new SparseArray<WeakReference<Fragment>>();
 
-	public CustomFragmentPagerAdapter(Context context, FragmentManager fm)
+	public CustomUserProfileFragmentPagerAdapter(Context context, FragmentManager fm)
 	{
 		super(fm);
 	}
@@ -47,13 +49,9 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 		switch(position)
 		{
 		case 0:
-			return "Home";
+			return "Tweets";
 		case 1:
-			return "LeaderBoard";
-		case 2:
-			return "Users";
-		case 3:
-			return "Trending";
+			return "Bookmarks";
 		}
 		return null;
 	}
@@ -62,22 +60,22 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
 	@Override
 	public Fragment getItem(int i)
 	{
+		Fragment fragment = new TweetListFragment();
+		Bundle bundle = new Bundle();
 		switch(i)
 		{
 		case 0:
-			Fragment fragment = new TweetListFragment();
-			Bundle bundle = new Bundle();
-			HomeFeedMode mode = new HomeFeedMode(TweetCommonData.getUserName());
-			bundle.putParcelable(Constants.TWEET_LIST_MODE, mode);
+			UserFeedMode userFeedMode = new UserFeedMode(TweetCommonData.getUserName());
+			bundle.putParcelable(Constants.TWEET_LIST_MODE, userFeedMode);
+			bundle.putBoolean("hideFooter", true);
             fragment.setArguments(bundle);
 			return fragment;
 		case 1:
-			return new LeaderboardFragment();
-		case 2:	
-			fragment = new UsersListFragment();
+			BookmarksFeedMode bookMarksMode = new BookmarksFeedMode(TweetCommonData.getUserName());
+			bundle.putParcelable(Constants.TWEET_LIST_MODE, bookMarksMode);
+			bundle.putBoolean("hideFooter", true);
+            fragment.setArguments(bundle);
 			return fragment;
-		case 3:
-			return new TrendingFragment();
 		}
 		return null;
 	}

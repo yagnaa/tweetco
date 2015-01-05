@@ -1,20 +1,16 @@
 package com.tweetco.notifications;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.microsoft.windowsazure.mobileservices.Registration;
 import com.microsoft.windowsazure.mobileservices.RegistrationCallback;
-import com.tweetco.R;
-import com.tweetco.activities.Constants;
+import com.tweetco.activities.AllInOneActivity;
 import com.tweetco.activities.TweetCoBaseActivity;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 
 public class PushNotificationHandler extends com.microsoft.windowsazure.notifications.NotificationsHandler
 {

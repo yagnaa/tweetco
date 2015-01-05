@@ -20,20 +20,17 @@ import android.widget.TextView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.imagedisplay.util.AsyncTask;
+import com.imagedisplay.util.ImageFetcher;
+import com.imagedisplay.util.Utils;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 import com.tweetco.R;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.LeaderboardUser;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.ApiInfo;
-import com.yagnasri.displayingbitmaps.ui.TweetUtils;
-import com.yagnasri.displayingbitmaps.util.AsyncTask;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
-import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class UsersListFragment extends ListFragment
 {

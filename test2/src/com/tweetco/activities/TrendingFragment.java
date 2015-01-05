@@ -6,7 +6,6 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,9 +25,6 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.displayingbitmaps.ui.ApiInfo;
-import com.yagnasri.displayingbitmaps.ui.TweetAdapter;
-import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
 public class TrendingFragment extends ListFragment
 {

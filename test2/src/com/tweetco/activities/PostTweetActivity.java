@@ -36,11 +36,11 @@ import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.asynctasks.PostTweetTask;
 import com.tweetco.asynctasks.PostTweetTask.PostTweetTaskCompletionCallback;
 import com.tweetco.asynctasks.PostTweetTaskParams;
+import com.tweetco.dao.Tweet;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.dao.TweetUser;
 
 
 public class PostTweetActivity extends TweetCoBaseActivity 

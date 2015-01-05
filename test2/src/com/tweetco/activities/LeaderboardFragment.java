@@ -8,15 +8,15 @@ import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.imagedisplay.util.ImageFetcher;
+import com.imagedisplay.util.Utils;
 import com.tweetco.R;
 import com.tweetco.activities.adapter.LeaderboardAdapter;
 import com.tweetco.activities.adapter.LeaderboardAdapter.OnProfilePicClick;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.asynctasks.GetLeaderboardTask;
 import com.tweetco.asynctasks.GetLeaderboardTask.GetLeaderboardTaskCompletionCallback;
-import com.yagnasri.dao.LeaderboardUser;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
-import com.yagnasri.displayingbitmaps.util.Utils;
+import com.tweetco.dao.LeaderboardUser;
 
 public class LeaderboardFragment extends ListFragment 
 {

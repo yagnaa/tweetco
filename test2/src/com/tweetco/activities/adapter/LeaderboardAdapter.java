@@ -12,11 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.imagedisplay.util.ImageFetcher;
+import com.imagedisplay.util.Utils;
 import com.tweetco.R;
+import com.tweetco.dao.LeaderboardUser;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.dao.LeaderboardUser;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
-import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class LeaderboardAdapter extends ArrayAdapter<LeaderboardUser> 
 {

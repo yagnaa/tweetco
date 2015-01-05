@@ -13,7 +13,6 @@ import com.tweetco.TweetCo;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 
 public class LauncherActivity extends TweetCoBaseActivity 
 {

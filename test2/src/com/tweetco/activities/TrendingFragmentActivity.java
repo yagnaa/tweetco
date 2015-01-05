@@ -6,10 +6,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 
 import com.tweetco.R;
+import com.tweetco.dao.Tweet;
 import com.tweetco.tweetlist.TrendingFeedMode;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
 
 public class TrendingFragmentActivity extends TweetCoBaseActivity 
 {

@@ -1,4 +1,4 @@
-package com.yagnasri.displayingbitmaps.ui;
+package com.tweetco.activities;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -16,17 +16,17 @@ import android.widget.TextView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.imagedisplay.util.ImageFetcher;
+import com.imagedisplay.util.Utils;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
 import com.tweetco.activities.Constants;
+import com.tweetco.dao.Tweet;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
-import com.yagnasri.displayingbitmaps.util.Utils;
 
 
 

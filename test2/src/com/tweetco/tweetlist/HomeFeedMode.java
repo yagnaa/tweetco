@@ -1,7 +1,5 @@
 package com.tweetco.tweetlist;
 
-import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -11,14 +9,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import com.tweetco.activities.ApiInfo;
+import com.tweetco.dao.Tweet;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 
 public class HomeFeedMode extends TweetListMode implements Parcelable
 {

@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.dao.TweetUser;
+import com.tweetco.dao.Tweet;
+import com.tweetco.dao.TweetUser;
 
 public abstract class TweetListMode 
 {

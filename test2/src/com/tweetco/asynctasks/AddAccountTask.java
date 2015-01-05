@@ -16,13 +16,12 @@ import com.google.gson.JsonSyntaxException;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.tweetco.activities.ApiInfo;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
-import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 
 public class AddAccountTask extends AsyncTask<Void, Void, Uri> 
 {

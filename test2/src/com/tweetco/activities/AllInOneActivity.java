@@ -1,4 +1,4 @@
-package com.yagnasri.displayingbitmaps.ui;
+package com.tweetco.activities;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -31,6 +31,10 @@ import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
+import com.imagedisplay.util.AsyncTask;
+import com.imagedisplay.util.ImageFetcher;
+import com.imagedisplay.util.RecyclingBitmapDrawable;
+import com.imagedisplay.util.Utils;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
@@ -44,15 +48,11 @@ import com.tweetco.activities.TweetCoBaseActivity;
 import com.tweetco.activities.UserProfileActivity;
 import com.tweetco.activities.UsersListFragment;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
+import com.tweetco.dao.Tweet;
 import com.tweetco.database.dao.Account;
 import com.tweetco.notifications.PushNotificationHandler;
 import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.displayingbitmaps.util.AsyncTask;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
-import com.yagnasri.displayingbitmaps.util.RecyclingBitmapDrawable;
-import com.yagnasri.displayingbitmaps.util.Utils;
 
 
 

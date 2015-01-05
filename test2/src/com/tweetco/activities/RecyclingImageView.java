@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yagnasri.displayingbitmaps.ui;
+package com.tweetco.activities;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -22,7 +22,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import com.yagnasri.displayingbitmaps.util.RecyclingBitmapDrawable;
+import com.imagedisplay.util.RecyclingBitmapDrawable;
 
 /**
  * Sub-class of ImageView which automatically notifies the drawable when it is

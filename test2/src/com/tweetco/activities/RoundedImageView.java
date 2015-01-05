@@ -1,4 +1,4 @@
-package com.yagnasri.displayingbitmaps.ui;
+package com.tweetco.activities;
 
 import android.annotation.TargetApi;
 import android.content.Context;

@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,13 +19,13 @@ import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.TweetCo;
+import com.tweetco.activities.ApiInfo;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 
 public class EditProfileTask extends AsyncTask<Void, Void, Void> 
 {

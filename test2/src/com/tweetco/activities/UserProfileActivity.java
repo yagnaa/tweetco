@@ -15,7 +15,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -32,18 +31,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.imagedisplay.util.AsyncTask;
+import com.imagedisplay.util.ImageFetcher;
+import com.imagedisplay.util.RecyclingBitmapDrawable;
+import com.imagedisplay.util.Utils;
 import com.tweetco.BuildConfig;
 import com.tweetco.R;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.tweetlist.UserFeedMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.CustomUserProfileFragmentPagerAdapter;
-import com.yagnasri.displayingbitmaps.ui.TweetListFragment;
-import com.yagnasri.displayingbitmaps.util.AsyncTask;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
-import com.yagnasri.displayingbitmaps.util.RecyclingBitmapDrawable;
-import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class UserProfileActivity extends FragmentActivity 
 {

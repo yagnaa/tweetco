@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yagnasri.displayingbitmaps.util;
+package com.imagedisplay.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

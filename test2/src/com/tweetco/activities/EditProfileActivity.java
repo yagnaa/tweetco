@@ -18,17 +18,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.imagedisplay.util.ImageFetcher;
+import com.imagedisplay.util.Utils;
 import com.tweetco.R;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.asynctasks.EditProfileTask;
 import com.tweetco.asynctasks.EditProfileTask.EditProfileTaskCompletionCallback;
 import com.tweetco.asynctasks.EditProfileTaskParams;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
-import com.yagnasri.displayingbitmaps.util.Utils;
 
 public class EditProfileActivity extends TweetCoBaseActivity 
 {

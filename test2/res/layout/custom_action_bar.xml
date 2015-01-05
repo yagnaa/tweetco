@@ -5,7 +5,7 @@
     android:gravity="fill_horizontal"
     android:background="@color/white" >
 
-    <com.yagnasri.displayingbitmaps.ui.RoundedImageView
+    <com.tweetco.activities.RoundedImageView
         android:id="@+id/imageView1"
         android:layout_width="50dp" 
         android:layout_height="50dp"

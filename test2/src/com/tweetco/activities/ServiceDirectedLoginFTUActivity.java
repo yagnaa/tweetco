@@ -29,7 +29,6 @@ import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.AlertDialogUtility;
 import com.tweetco.utility.UiUtility;
-import com.yagnasri.displayingbitmaps.ui.AllInOneActivity;
 
 public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity 
 {

@@ -16,7 +16,7 @@
  * 
  */
 
-package com.yagnasri.displayingbitmaps.ui;
+package com.tweetco.activities;
 
 /**
  * A listener to pass actions from view to adapter

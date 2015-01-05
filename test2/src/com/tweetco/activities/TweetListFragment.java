@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yagnasri.displayingbitmaps.ui;
+package com.tweetco.activities;
 
 
 import java.lang.reflect.Type;
@@ -23,7 +23,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +35,6 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,24 +56,20 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.imagedisplay.util.ImageFetcher;
+import com.imagedisplay.util.Utils;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
 import com.tweetco.TweetCo;
-import com.tweetco.activities.Constants;
-import com.tweetco.activities.PostTweetActivity;
-import com.tweetco.activities.QuickReturnListView;
-import com.tweetco.activities.UserProfileActivity;
+import com.tweetco.activities.TweetAdapter.NewPageLoader;
+import com.tweetco.activities.TweetAdapter.OnProfilePicClick;
+import com.tweetco.dao.Tweet;
+import com.tweetco.dao.TweetUser;
 import com.tweetco.tweetlist.TrendingFeedMode;
 import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.dao.TweetUser;
-import com.yagnasri.displayingbitmaps.ui.TweetAdapter.NewPageLoader;
-import com.yagnasri.displayingbitmaps.ui.TweetAdapter.OnProfilePicClick;
-import com.yagnasri.displayingbitmaps.util.ImageFetcher;
-import com.yagnasri.displayingbitmaps.util.Utils;
 
 /**
  * The main fragment that powers the ImageGridActivity screen. Fairly straight forward GridView

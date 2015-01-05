@@ -1,4 +1,4 @@
-package com.yagnasri.dao;
+package com.tweetco.dao;
 
 public class LeaderboardUser extends TweetUser
 {

@@ -23,7 +23,7 @@
     android:paddingLeft="6dip"
     android:paddingRight="6dip" >
 
-    <com.yagnasri.displayingbitmaps.ui.RoundedImageView
+    <com.tweetco.activities.RoundedImageView
         android:id="@+id/profile_pic"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -95,7 +95,7 @@
         android:textSize="15sp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <com.yagnasri.displayingbitmaps.ui.RecyclingImageView
+    <com.tweetco.activities.RecyclingImageView
         android:id="@+id/tweet_content_image"
         android:layout_width="120dp"
         android:layout_height="120dp"

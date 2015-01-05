@@ -1,7 +1,6 @@
 package com.tweetco.asynctasks;
 
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +18,11 @@ import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.tweetco.activities.ApiInfo;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
+import com.tweetco.dao.LeaderboardUser;
 import com.tweetco.tweets.TweetCommonData;
-import com.yagnasri.dao.LeaderboardUser;
-import com.yagnasri.displayingbitmaps.ui.ApiInfo;
 
 public class GetLeaderboardTask extends AsyncTask <Void, Void, List<LeaderboardUser>>
 {

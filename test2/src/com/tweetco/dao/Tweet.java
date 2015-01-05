@@ -1,4 +1,4 @@
-package com.yagnasri.dao;
+package com.tweetco.dao;
 
 import android.os.Parcel;
 import android.os.Parcelable;

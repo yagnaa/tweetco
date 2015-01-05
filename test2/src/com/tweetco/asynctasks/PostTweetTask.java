@@ -18,10 +18,10 @@ import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.tweetco.activities.ApiInfo;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
-import com.yagnasri.dao.Tweet;
-import com.yagnasri.displayingbitmaps.ui.ApiInfo;
+import com.tweetco.dao.Tweet;
 
 public class PostTweetTask extends AsyncTask<Void, Void, Tweet> 
 {

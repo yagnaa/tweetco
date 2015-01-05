@@ -84,6 +84,7 @@ public class TrendingFragment extends ListFragment
 					
 					if(trendingTagList!=null && !trendingTagList.isEmpty())
 					{
+						TweetCommonData.trendingTagLists.addAll(trendingTagList);
 						mAdapter.clear();
 						mAdapter.addAll(trendingTagList);
 						mAdapter.notifyDataSetChanged();

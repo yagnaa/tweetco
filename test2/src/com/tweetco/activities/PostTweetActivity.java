@@ -38,6 +38,7 @@ import com.google.api.services.urlshortener.Urlshortener;
 import com.google.api.services.urlshortener.model.Url;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.tweetco.R;
+import com.tweetco.activities.TrendingFragment.TrendingTag;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
@@ -86,7 +87,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mTweetImage = UiUtility.getView(this, R.id.tweetImaage);
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Posting...");
 		asyncTaskEventHandler2 = new AsyncTaskEventHandler(this, "Shortening Urls...");
-		mUsernames = getUsernames(TweetCommonData.tweetUsers.values().iterator());
+		mUsernames = getUsernamesAndHashtags(TweetCommonData.tweetUsers.values().iterator(), TweetCommonData.trendingTagLists.iterator());
 		mTweetContent.setAdapter(new ArrayAdapter<String>(PostTweetActivity.this,
 				android.R.layout.simple_dropdown_item_1line, mUsernames));
 		mTweetContent.setThreshold(1);
@@ -118,16 +119,16 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			public int findTokenStart(CharSequence text, int cursor) {
 				int i = cursor;
 
-				while (i > 0 && text.charAt(i - 1) != '@') {
+				while (i > 0 && text.charAt(i - 1) != '@' && text.charAt(i - 1) != '#') {
 					i--;
 				}
 
 				//Check if token really started with @, else we don't have a valid token
-				if (i < 1 || text.charAt(i - 1) != '@') {
+				if (i < 1 || (text.charAt(i - 1) != '@' && text.charAt(i - 1) != '#') ) {
 					return cursor;
 				}
 
-				return i;
+				return i - 1;
 			}
 
 			@Override
@@ -326,20 +327,27 @@ public class PostTweetActivity extends TweetCoBaseActivity
 
 	}
 
-	public static String[] getUsernames(Iterator<TweetUser> tweetUsers)
+	public static String[] getUsernamesAndHashtags(Iterator<TweetUser> tweetUsers, Iterator<TrendingTag> hashTags)
 	{
-		List<String> usernames = new ArrayList<String>();
-		usernames.add("feedback");
+		List<String> usernamesAndHashtags = new ArrayList<String>();
+		usernamesAndHashtags.add("@feedback");
 
 		for (TweetUser user; tweetUsers.hasNext(); ) 
 		{
 			user = tweetUsers.next();
-			usernames.add(user.username);
+			usernamesAndHashtags.add("@"+user.username);
 		}
 
-		String[] usernamesList = new String[usernames.size()];
+		//usernamesAndHashtags.add("#feedback");
+		for (TrendingTag tag; hashTags.hasNext(); ) 
+		{
+			tag = hashTags.next();
+			usernamesAndHashtags.add("#"+tag.hashtag);
+		}
+		
+		String[] usernamesList = new String[usernamesAndHashtags.size()];
 
-		return usernames.toArray(usernamesList);
+		return usernamesAndHashtags.toArray(usernamesList);
 	}
 
 	public class URLShortenerTask extends AsyncTask<Void, Void, String> 

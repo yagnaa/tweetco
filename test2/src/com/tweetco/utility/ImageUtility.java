@@ -3,15 +3,26 @@ package com.tweetco.utility;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.UUID;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.tweetco.R;
 
@@ -110,6 +121,103 @@ public class ImageUtility
 		}
 	}
 
+	/**
+     * rotate bitmap code reference:
+     * http://stackoverflow.com/questions/20478765/how-to-get-the-correct-orientation-of-the-image-selected-from-the-default-image
+     */
+	private static Bitmap rotateBitmap(Bitmap bitmap, int orientation)
+	{
+		Matrix matrix = new Matrix();
+		switch (orientation)
+		{
+		case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+			matrix.setScale(-1, 1);
+			break;
+		case ExifInterface.ORIENTATION_ROTATE_180:
+			matrix.setRotate(180);
+			break;
+		case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+			matrix.setRotate(180);
+			matrix.postScale(-1, 1);
+			break;
+		case ExifInterface.ORIENTATION_TRANSPOSE:
+			matrix.setRotate(90);
+			matrix.postScale(-1, 1);
+			break;
+		case ExifInterface.ORIENTATION_ROTATE_90:
+			matrix.setRotate(90);
+			break;
+		case ExifInterface.ORIENTATION_TRANSVERSE:
+			matrix.setRotate(-90);
+			matrix.postScale(-1, 1);
+			break;
+		case ExifInterface.ORIENTATION_ROTATE_270:
+			matrix.setRotate(-90);
+			break;
+		case ExifInterface.ORIENTATION_NORMAL:
+		case ExifInterface.ORIENTATION_UNDEFINED:
+		default:
+			return bitmap;
+		}
+		try
+		{
+			Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+			bitmap.recycle();
+			return bmRotated;
+		}
+		catch (OutOfMemoryError e)
+		{
+			Log.e("ImageUtility", "OutOfMemoryError occured while rotating the image");
+			return bitmap;
+		}
+	}
+
+	public static String getFileNameByUri(Context context, Uri uri)
+	{
+	    String fileName="unknown";//default fileName
+	    Uri filePathUri = uri;
+	    if (uri.getScheme().toString().compareTo("content")==0)
+	    {      
+	        String folderAbsolutePath = context.getFilesDir().getAbsolutePath() +"/attachments";
+	        Cursor returnCursor =
+	                context.getContentResolver().query(uri, null, null, null, null);
+	        /*
+	         * Get the column indexes of the data in the Cursor,
+	         * move to the first row in the Cursor, get the data,
+	         * and display it.
+	         */
+	        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+	        returnCursor.moveToFirst();
+	        fileName = folderAbsolutePath + "/" + returnCursor.getString(nameIndex);
+	    }
+	    else if (uri.getScheme().compareTo("file")==0)
+	    {
+	        fileName = filePathUri.getLastPathSegment().toString();
+	    }
+	    else
+	    {
+	        fileName = fileName+"_"+filePathUri.getLastPathSegment();
+	    }
+	    
+	    return fileName;
+	}
+	
+	public static Bitmap correctImageRotation( Context context, Bitmap bitmap , Uri inputUri ) throws FileNotFoundException
+	{
+		int orientation = ExifInterface.ORIENTATION_UNDEFINED;
+		
+		try
+		{
+			ExifInterface exif = new ExifInterface(getFileNameByUri(context, inputUri));
+			orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+		}
+		catch (IOException e)
+		{
+		}
+		
+		return rotateBitmap(bitmap, orientation);
+	}
+	
 	public static Uri onImageAttachmentReceived(Context context, Intent data) throws FileNotFoundException, IOException
 	{
 		final boolean isCamera;
@@ -140,8 +248,68 @@ public class ImageUtility
 			selectedImageUri = data == null ? null : data.getData();
 		}
 
+		selectedImageUri = getCorrectedImageUri(context, selectedImageUri, isCamera);
+		
 		msAttachmentUri = null;
 		return selectedImageUri;
+	}
+	
+	private static Uri getCorrectedImageUri(Context context, Uri fileUri, boolean isCamera)
+	{
+		Uri uri = fileUri;
+		
+		if(isCamera)
+		{
+			try 
+			{
+				InputStream is = context.getContentResolver().openInputStream(uri);
+				// Decode bitmap with inSampleSize set
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = false;
+				options.inPreferredConfig = Config.RGB_565;		
+				Bitmap bmp = BitmapFactory.decodeStream(is, null, options);
+				is.close();
+				
+				if(isCamera && bmp != null)
+				{
+					bmp = correctImageRotation(context, bmp, uri);
+					
+					OutputStream os = context.getContentResolver().openOutputStream(uri);
+					try 
+					{
+						boolean result = bmp.compress(CompressFormat.JPEG, 25 , os);
+					} 
+					finally
+					{
+						if(os != null)
+						{
+							try 
+							{
+								os.close();
+							} 
+							catch (IOException e) 
+							{
+								Log.e("ImageUtility", "Failed closing file when copying image"+e);
+							}
+						}
+					}
+				}
+				
+				
+				
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return uri;
 	}
 
 }

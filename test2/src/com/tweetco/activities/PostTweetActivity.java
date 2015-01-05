@@ -2,7 +2,6 @@ package com.tweetco.activities;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
@@ -19,6 +19,8 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,13 +28,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.Toast;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.services.urlshortener.Urlshortener;
+import com.google.api.services.urlshortener.model.Url;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.tweetco.R;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
+import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
+import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
 import com.tweetco.asynctasks.PostTweetTask;
 import com.tweetco.asynctasks.PostTweetTask.PostTweetTaskCompletionCallback;
 import com.tweetco.asynctasks.PostTweetTaskParams;
@@ -41,6 +49,7 @@ import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
+
 
 
 public class PostTweetActivity extends TweetCoBaseActivity 
@@ -61,6 +70,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 
 	private int mCharCountInt = TWEET_MAX_CHARS;
 	AsyncTaskEventHandler asyncTaskEventHandler = null;
+	AsyncTaskEventHandler asyncTaskEventHandler2 = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -75,11 +85,12 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mImageCameraButton = UiUtility.getView(this, R.id.imageCameraButton);
 		mTweetImage = UiUtility.getView(this, R.id.tweetImaage);
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Posting...");
+		asyncTaskEventHandler2 = new AsyncTaskEventHandler(this, "Shortening Urls...");
 		mUsernames = getUsernames(TweetCommonData.tweetUsers.values().iterator());
 		mTweetContent.setAdapter(new ArrayAdapter<String>(PostTweetActivity.this,
 				android.R.layout.simple_dropdown_item_1line, mUsernames));
 		mTweetContent.setThreshold(1);
-		
+
 
 		//From http://stackoverflow.com/questions/12691679/android-autocomplete-textview-similar-to-the-facebook-app
 		//Create a new Tokenizer which will get text after '@' and terminate on ' '
@@ -166,12 +177,25 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			}
 
 			@Override
-			public void afterTextChanged(Editable s) 
+			public void afterTextChanged(Editable tweetContent) 
 			{
-
+				mCharCountInt = TWEET_MAX_CHARS - tweetContent.length();
+				mCharCount.setText(String.valueOf(mCharCountInt));
+				Linkify.addLinks(tweetContent, Linkify.WEB_URLS);
+				URLSpan[] spansList = tweetContent.getSpans(0, tweetContent.length()-1, URLSpan.class);
+				for(URLSpan span:spansList)
+				{
+					Log.i(TAG,"Shortening URL");
+					int start = tweetContent.getSpanStart(span);
+					int end = tweetContent.getSpanEnd(span);
+					if((end - start) > 21)
+					{
+						(new URLShortenerTask(tweetContent, span, asyncTaskEventHandler2)).execute();
+					}
+				}
 			}
 		});
-		
+
 		String existingString= getIntent().getStringExtra(Constants.EXISTING_STRING);
 		if(!TextUtils.isEmpty(existingString))
 		{
@@ -316,5 +340,80 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		String[] usernamesList = new String[usernames.size()];
 
 		return usernames.toArray(usernamesList);
+	}
+
+	public class URLShortenerTask extends AsyncTask<Void, Void, String> 
+	{
+		private final static String TAG = "URLShortenerTask";
+		private UIEventSink m_uicallback;
+		private Editable mEditable;
+		private URLSpan mUrlSpan = null;
+
+		public URLShortenerTask(Editable editable, URLSpan urlSpan,UIEventSink uicallback)
+		{
+			m_uicallback = uicallback; 
+			mEditable = editable;
+			mUrlSpan = urlSpan;
+		}
+
+		@Override
+		protected void onPreExecute()
+		{
+			Log.d("tag","onPreExecute");
+			if(m_uicallback!=null)
+			{
+				m_uicallback.onAysncTaskPreExecute(this, new AsyncTaskCancelCallback()
+				{
+					@Override
+					public void onCancelled()
+					{
+						cancel(true);
+					}
+				}, true);
+			}
+		}
+
+		@Override
+		protected String doInBackground(Void... params) 
+		{
+
+			String shortUrl = null;
+			Urlshortener.Builder builder = new Urlshortener.Builder (AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
+			Urlshortener urlshortener = builder.build();
+
+			com.google.api.services.urlshortener.model.Url url = new Url();
+
+			int start = mEditable.getSpanStart(mUrlSpan);
+			int end = mEditable.getSpanEnd(mUrlSpan);
+			String str = mEditable.toString();
+			String seq = str.substring(start, end);
+
+			url.setLongUrl(seq);
+			try {
+				url = urlshortener.url().insert(url).execute();
+				shortUrl = url.getId();
+			} catch (IOException e) {
+				return null;
+			}
+
+
+			return shortUrl;
+		}
+
+		@Override
+		protected void onPostExecute(String  shortUrl)
+		{
+			asyncTaskEventHandler.dismiss();
+			if(shortUrl != null)
+			{
+
+				int start = mEditable.getSpanStart(mUrlSpan);
+				int end = mEditable.getSpanEnd(mUrlSpan);
+				mEditable.replace(start, end, shortUrl);
+
+				mTweetContent.setText(mEditable);
+				mTweetContent.setSelection(mEditable.length());
+			}
+		}
 	}
 }

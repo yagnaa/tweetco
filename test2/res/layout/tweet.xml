@@ -25,12 +25,12 @@
 
     <com.tweetco.activities.RoundedImageView
         android:id="@+id/profile_pic"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_centerVertical="true"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="8dp"
         android:clickable="true"
         android:scaleType="fitXY"

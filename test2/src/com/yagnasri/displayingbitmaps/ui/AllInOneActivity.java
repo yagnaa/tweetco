@@ -39,8 +39,10 @@ import com.tweetco.R;
 import com.tweetco.TweetCo;
 import com.tweetco.activities.Constants;
 import com.tweetco.activities.LauncherActivity;
+import com.tweetco.activities.LeaderboardFragment;
 import com.tweetco.activities.TweetCoBaseActivity;
-import com.tweetco.activities.UserProfileFragment;
+import com.tweetco.activities.UserProfileActivity;
+import com.tweetco.activities.UsersListFragment;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.database.dao.Account;
 import com.tweetco.notifications.PushNotificationHandler;
@@ -183,9 +185,9 @@ public class AllInOneActivity extends TweetCoBaseActivity
 			@Override
 			public void onClick(View v) 
 			{
-				Intent intent = new Intent(AllInOneActivity.this , UserProfileFragment.class);
+				Intent intent = new Intent(AllInOneActivity.this , UserProfileActivity.class);
 				intent.putExtra(Constants.USERNAME_STR, TweetCommonData.getUserName());
-				AllInOneActivity.this.startActivity(intent);	
+				AllInOneActivity.this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
 			}
 		});
 
@@ -408,7 +410,7 @@ public class AllInOneActivity extends TweetCoBaseActivity
                 {
                     Log.d(TAG, "onPostExecute - setting bitmap");
                 }
-                imageView.setBackground(value);
+                imageView.setBackgroundDrawable(value);
             }
         }
     }

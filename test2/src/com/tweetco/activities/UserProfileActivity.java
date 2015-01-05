@@ -17,7 +17,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -46,7 +45,7 @@ import com.yagnasri.displayingbitmaps.util.ImageFetcher;
 import com.yagnasri.displayingbitmaps.util.RecyclingBitmapDrawable;
 import com.yagnasri.displayingbitmaps.util.Utils;
 
-public class UserProfileFragment extends FragmentActivity 
+public class UserProfileActivity extends FragmentActivity 
 {
 	private static final String TAG = "UserProfileFragment";
 	private static final int EDIT_PROFILE_REQUEST = 100;
@@ -68,7 +67,7 @@ public class UserProfileFragment extends FragmentActivity
 	/**
      * Empty constructor as per the Fragment documentation
      */
-    public UserProfileFragment() {}
+    public UserProfileActivity() {}
     
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -317,7 +316,7 @@ public class UserProfileFragment extends FragmentActivity
                 {
                     Log.d(TAG, "onPostExecute - setting bitmap");
                 }
-                imageView.setBackground(value);
+                imageView.setBackgroundDrawable(value);
             }
         }
     }
@@ -325,8 +324,6 @@ public class UserProfileFragment extends FragmentActivity
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent)
 	{
-		 Uri mProfilePicUri;
-		 Uri mHeaderPicUri;
 		
 		if (resultCode == Activity.RESULT_OK)
 		{
@@ -335,39 +332,7 @@ public class UserProfileFragment extends FragmentActivity
 				TweetUser user = TweetCommonData.tweetUsers.get(mUserName.toLowerCase());
 		        
 		        reloadUser(user);
-		        
-				mProfilePicUri = (Uri) intent.getParcelableExtra(Constants.PROFILE_PIC_URI);
-				mHeaderPicUri = (Uri) intent.getParcelableExtra(Constants.PROFILE_BG_PIC_URI);
-				
-				if(mProfilePicUri!=null)
-				{
-	    	        Bitmap bitmap;
-					try 
-					{
-						bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mProfilePicUri);
-						mUserProfilePic.setBackground( new BitmapDrawable(this.getResources(), bitmap));
-					} 
-					catch (IOException e) 
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-	    		
-	    		if(mHeaderPicUri!=null)
-	    		{
-	    	        Bitmap bitmap;
-					try 
-					{
-						bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mHeaderPicUri);
-		    	        mBackgroundImage.setBackground( new BitmapDrawable(this.getResources(), bitmap));
-					} 
-					catch (IOException e) 
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	    		}
+
 			}
 		}
 	}

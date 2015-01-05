@@ -46,7 +46,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.tweetco.activities.UserProfileFragment"
+            android:name="com.tweetco.activities.UserProfileActivity"
             android:launchMode="singleTop"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" >

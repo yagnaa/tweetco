@@ -130,7 +130,7 @@ public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity
 					else
 					{
 						Log.e(TAG, "Login error: "+exception.getMessage());
-						getAddAccountFailedDialog("Authentication failed during adding account.").show();
+				//		getAddAccountFailedDialog("Authentication failed during adding account.").show();
 					}
 				}
 			});

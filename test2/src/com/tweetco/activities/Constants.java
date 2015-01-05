@@ -13,6 +13,7 @@ public final class Constants
 	
 	public static final String LAUNCHED_FROM_NOTIFICATIONS = "launchedFromNOtification";
 	
+	
 	public static final String PROFILE_PIC_URI = "profilePicUri";
 	public static final String PROFILE_BG_PIC_URI = "profileBGPicUri";
 	

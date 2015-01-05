@@ -296,9 +296,9 @@ public class UsersListFragment extends ListFragment
 						TweetUser user = UserListAdapter.this.getItem(position);
 						if(user!=null)
 						{
-							Intent intent = new Intent(UserListAdapter.this.getContext(), UserProfileFragment.class);
+							Intent intent = new Intent(UserListAdapter.this.getContext(), UserProfileActivity.class);
 							intent.putExtra(Constants.USERNAME_STR, user.username);
-							UsersListFragment.this.startActivity(intent);
+							UsersListFragment.this.getActivity().startActivity(intent);
 						}
 					}
 				});

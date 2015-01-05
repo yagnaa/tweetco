@@ -406,9 +406,11 @@ public class TweetAdapter extends BaseAdapter
 					if(upvoteView!=null && (viewHolderBookMarkUpvoteAndHide.iterator == iterator))
 					{
 						upvoteView.setSelected(true);
+						//TODO change the adapter underneath
+						Tweet tweet = (Tweet)TweetAdapter.this.getItem(viewHolderBookMarkUpvoteAndHide.position);
+						TweetCommonData.like(tweet,TweetCommonData.getUserName());
 					}
-					//TODO change the adapter underneath
-					TweetCommonData.like(viewHolderBookMarkUpvoteAndHide.iterator,TweetCommonData.getUserName());
+
 				}
 				else
 				{
@@ -446,9 +448,9 @@ public class TweetAdapter extends BaseAdapter
 					if(bookmarkView!=null && (viewHolderBookMarkUpvoteAndHide.iterator == iterator))
 					{
 						bookmarkView.setSelected(true);
-					}
-					//TODO change the adapter underneath
-					TweetCommonData.bookmark(viewHolderBookMarkUpvoteAndHide.iterator,TweetCommonData.getUserName());
+						Tweet tweet = (Tweet)TweetAdapter.this.getItem(viewHolderBookMarkUpvoteAndHide.position);
+						TweetCommonData.bookmark(tweet,TweetCommonData.getUserName());
+					}			
 				}
 				else
 				{

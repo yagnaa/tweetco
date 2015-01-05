@@ -55,15 +55,19 @@ public class TweetCommonData
 	}
 	
 	
-	public static void bookmark(Integer iterator,String userName)
+	public static void bookmark(Tweet tweet, String userName)
 	{
-		Tweet tweet = homeFeedTweets.get(iterator);
-		tweet.bookmarkers = tweet.bookmarkers +  userName + ";";
+		if(tweet!=null && !TextUtils.isEmpty(userName))
+		{
+			tweet.bookmarkers = tweet.bookmarkers +  userName + ";";
+		}
 	}
 	
-	public static void like(Integer iterator,String userName)
+	public static void like(Tweet tweet, String userName)
 	{
-		Tweet tweet = homeFeedTweets.get(iterator);
-		tweet.upvoters = tweet.upvoters +  userName + ";";
+		if(tweet!=null && !TextUtils.isEmpty(userName))
+		{
+			tweet.upvoters = tweet.upvoters +  userName + ";" ;
+		}
 	}
 }

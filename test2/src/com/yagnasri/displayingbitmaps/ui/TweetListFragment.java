@@ -66,7 +66,7 @@ import com.tweetco.TweetCo;
 import com.tweetco.activities.Constants;
 import com.tweetco.activities.PostTweetActivity;
 import com.tweetco.activities.QuickReturnListView;
-import com.tweetco.activities.UserProfileFragment;
+import com.tweetco.activities.UserProfileActivity;
 import com.tweetco.tweetlist.TrendingFeedMode;
 import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
@@ -162,7 +162,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 					String owner = tweet.tweetowner;
 					if(!TextUtils.isEmpty(owner))
 					{
-						Intent intent = new Intent(getActivity(), UserProfileFragment.class);
+						Intent intent = new Intent(getActivity(), UserProfileActivity.class);
 						intent.putExtra(Constants.USERNAME_STR, owner);
 						getActivity().startActivity(intent);
 					}
@@ -730,6 +730,5 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 			timer.cancel();
 		}
 	}
-
 
 }

@@ -57,9 +57,9 @@ public class LeaderboardFragment extends ListFragment
 //                    ft.add(android.R.id.content, fragment, TAG);
 //                    ft.commit();
     				
-    				Intent intent = new Intent(LeaderboardFragment.this.getActivity(), UserProfileFragment.class);
-    				intent.putExtra(Constants.USERNAME_STR, owner);
-    				LeaderboardFragment.this.getActivity().startActivity(intent);
+    				Intent intent = new Intent(LeaderboardFragment.this.getActivity(), UserProfileActivity.class);
+					intent.putExtra(Constants.USERNAME_STR, owner);
+					getActivity().startActivity(intent);
                 }
     		}
     		
@@ -105,5 +105,4 @@ public class LeaderboardFragment extends ListFragment
 		}).execute();
     }
 
- 
 }

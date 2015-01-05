@@ -153,8 +153,8 @@ public class EditProfileTask extends AsyncTask<Void, Void, Void>
 							cv.put(Account.COLUMN_INTEREST_TAGS, tweetUser[0].interesttags);
 							cv.put(Account.COLUMN_PROFILE_BG_URL, tweetUser[0].profilebgurl);
 							cv.put(Account.COLUMN_PROFILE_IMAGE_URL, tweetUser[0].profileimageurl);
-							String where = Account.COLUMN_ID_INDEX + "= 1" ;
-							TweetCo.mContext.getContentResolver().update(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, cv, where , null);
+							String where = Account.COLUMN_ID + "= ? " ;
+							TweetCo.mContext.getContentResolver().update(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, cv, where , new String[]{String.valueOf("0")});
 							
 						}
 						catch(JsonSyntaxException exception)

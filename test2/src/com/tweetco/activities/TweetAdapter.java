@@ -1,11 +1,13 @@
 package com.tweetco.activities;
 
+import java.util.regex.Pattern;
+
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
+import android.text.style.ClickableSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +24,8 @@ import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.R;
-import com.tweetco.activities.Constants;
+import com.tweetco.TweetCo;
+import com.tweetco.activities.PageLoader.OnLoadCompletedCallback;
 import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweetlist.TweetListMode;
@@ -38,12 +41,16 @@ import com.tweetco.tweets.TweetCommonData;
 public class TweetAdapter extends BaseAdapter
 {
 	public static final String TAG = "TweetAdapter";
+	
+	private static final Pattern TAG_PATTERN = 
+			   Pattern.compile("(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)");
 
 
 	// A demo listener to pass actions from view to adapter
 	public static abstract class NewPageLoader 
 	{
-		public abstract void load(JsonObject tweetRequest,String api);
+		public abstract void loadNext(OnLoadCompletedCallback callback );
+		public abstract void loadTop(OnLoadCompletedCallback callback );
 	}
 
 	public interface OnProfilePicClick
@@ -52,8 +59,6 @@ public class TweetAdapter extends BaseAdapter
 	}
 
 	private final Context mContext;
-	private int mItemHeight = 0;
-	private int mActionBarHeight = 0;
 	private ImageFetcher mImageFetcher; //Fetches the images
 
 	private ImageFetcher mImageFetcher2; //Fetches the images
@@ -112,15 +117,6 @@ public class TweetAdapter extends BaseAdapter
 		mTweetListMode = mode;
 
 		mOnProfilePicClickCallback = onProfilePicClickCallback;
-		// Calculate ActionBar height
-		TypedValue tv = new TypedValue();
-		if (context.getTheme().resolveAttribute(
-				android.R.attr.actionBarSize, tv, true)) {
-			mActionBarHeight = TypedValue.complexToDimensionPixelSize(
-					tv.data, context.getResources().getDisplayMetrics());
-		}
-
-
 	}
 
 	@Override
@@ -152,7 +148,7 @@ public class TweetAdapter extends BaseAdapter
 		ImageView bookmarkView;
 	//	ImageView hideTweet;
 	}
-	
+
 	@Override
 	public View getView(final int position, View convertView, ViewGroup container) 
 	{
@@ -205,10 +201,20 @@ public class TweetAdapter extends BaseAdapter
 				holder.userName.setText(tweeter.username);
 			}
 			holder.tweetContent.setText(tweet.tweetcontent);	
-			Linkify.addLinks(holder.tweetContent, Linkify.WEB_URLS);
+			Linkify.addLinks(holder.tweetContent, Linkify.WEB_URLS,null);
+//			Linkify.addLinks(holder.tweetContent, TAG_PATTERN, "http", new ClickableSpan() {
+//				
+//				@Override
+//				public void onClick(View widget) 
+//				{
+//					EditableText text = ((TextView)widget).getEditableText();
+//				}
+//			});
+			
 			holder.tweetContent.setMovementMethod(new LinkMovementMethod());
 
 			loadTweetImage(tweet, holder.tweetContentImage);
+
 
 			holder.tweetTime.setText(Utils.getTime(tweet.__createdAt));
 			
@@ -320,7 +326,7 @@ public class TweetAdapter extends BaseAdapter
 		}
 	}
 
-	private void loadTweetImage(Tweet tweet,ImageView imageView)
+	private void loadTweetImage(final Tweet tweet,ImageView imageView)
 	{
 		if(TextUtils.isEmpty(tweet.imageurl))
 		{
@@ -330,6 +336,17 @@ public class TweetAdapter extends BaseAdapter
 		{
 			imageView.setVisibility(View.VISIBLE);
 			mImageFetcher2.loadImage(tweet.imageurl, imageView);
+			imageView.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) 
+				{
+					Intent intent = new Intent(TweetCo.mContext,ImageViewActivity.class);
+					intent.putExtra(Constants.IMAGE_TO_VIEW, tweet.imageurl);
+					intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NEW_TASK);
+					TweetCo.mContext.startActivity(intent);				
+				}
+			});
 		}
 	}
 

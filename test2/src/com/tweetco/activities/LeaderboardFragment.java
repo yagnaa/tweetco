@@ -65,6 +65,13 @@ public class LeaderboardFragment extends ListFragment
     		
 		}
 	};
+	
+	@Override
+	public void onResume() 
+	{
+		super.onResume();
+		mAdapter.notifyDataSetChanged();
+	}
     
     @Override
 	public void onActivityCreated(Bundle savedInstanceState) 

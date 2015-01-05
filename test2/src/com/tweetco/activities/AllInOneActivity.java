@@ -194,15 +194,12 @@ public class AllInOneActivity extends TweetCoBaseActivity
 	}
 
 	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
+	protected void onPause() 
+	{
+
 		super.onPause();
 	}
-	//	
-	//	public static void tweetsListRefresh()
-	//	{
-	//		mController.
-	//	}
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)

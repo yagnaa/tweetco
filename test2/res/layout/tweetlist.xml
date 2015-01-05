@@ -10,7 +10,7 @@ android:focusableInTouchMode="true"  >
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:verticalSpacing="@dimen/image_thumbnail_spacing" />
+        android:verticalSpacing="1dp" />
 
     <LinearLayout
         android:id="@+id/footer"

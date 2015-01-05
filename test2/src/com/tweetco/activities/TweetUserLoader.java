@@ -22,11 +22,9 @@ import com.tweetco.tweets.TweetCommonData;
 
 public  class TweetUserLoader
 {
-	TweetAdapter adapter = null;
 
-	public TweetUserLoader(TweetAdapter adapter)
+	public TweetUserLoader()
 	{
-		this.adapter = adapter;
 	}
 
 	public void load(List<Tweet> tweetsList,Map<String, TweetUser> users)
@@ -43,7 +41,7 @@ public  class TweetUserLoader
 
 		for(String user:usersToLoad)
 		{
-			TweetUserAsyncTask task = new TweetUserAsyncTask(user,adapter);
+			TweetUserAsyncTask task = new TweetUserAsyncTask(user);
 			
 			task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
@@ -70,29 +68,21 @@ public  class TweetUserLoader
 		{
 			if(!TextUtils.isEmpty(user))
 			{
-				TweetUserAsyncTask task = new TweetUserAsyncTask(user,adapter);
+				TweetUserAsyncTask task = new TweetUserAsyncTask(user);
 				
 				task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			}
-		}
-		
-		if(usersToLoad!=null && !usersToLoad.isEmpty())
-		{
-			adapter.notifyDataSetChanged();
-		}
-				
+		}	
 	}
 
 	public static class TweetUserAsyncTask extends AsyncTask<Void, Void, TweetUser>
 	{
 		MobileServiceClient mClient = TweetCommonData.mClient;
 		String mUserForWhomDataIsBeingLoaded = null;
-		TweetAdapter adapter = null;
 
-		public TweetUserAsyncTask(String userName,TweetAdapter adapter)
+		public TweetUserAsyncTask(String userName)
 		{
 			mUserForWhomDataIsBeingLoaded = userName;
-			this.adapter = adapter;
 		}
 
 		@Override

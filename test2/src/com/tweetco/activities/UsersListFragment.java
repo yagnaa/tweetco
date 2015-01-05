@@ -69,7 +69,12 @@ public class UsersListFragment extends ListFragment
 		
 	}
 
-
+	@Override
+	public void onResume() 
+	{
+		super.onResume();
+		userListAdapter.notifyDataSetChanged();
+	}
 
 
 	@Override

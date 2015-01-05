@@ -3,6 +3,6 @@
     android:id="@+id/leaderboardList"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:verticalSpacing="@dimen/image_thumbnail_spacing" >
+    android:verticalSpacing="1dp" >
 
 </ListView>

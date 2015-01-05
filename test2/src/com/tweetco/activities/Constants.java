@@ -24,4 +24,9 @@ public final class Constants
 	public static final int THROTTLE_TIME_BETWEEN_DOWN_SCROLL = 15000;
 	
 	
+	public static final String TWEETMODE_UPDATED = "TWEET_MODE_UPDATED";
+	
+	public static final String IMAGE_TO_VIEW = "image_to_view";
+	
+	
 }

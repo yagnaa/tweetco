@@ -1,16 +1,24 @@
 package com.tweetco.notifications;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.microsoft.windowsazure.mobileservices.Registration;
 import com.microsoft.windowsazure.mobileservices.RegistrationCallback;
+import com.tweetco.R;
 import com.tweetco.activities.AllInOneActivity;
+import com.tweetco.activities.Constants;
+import com.tweetco.activities.PageLoader;
 import com.tweetco.activities.TweetCoBaseActivity;
+import com.tweetco.tweetlist.HomeFeedMode;
 import com.tweetco.tweets.TweetCommonData;
+
+
 
 public class PushNotificationHandler extends com.microsoft.windowsazure.notifications.NotificationsHandler
 {
@@ -62,30 +70,29 @@ public class PushNotificationHandler extends com.microsoft.windowsazure.notifica
 		Log.d(TAG, "Received a push Notification with tweetContent="+tweetContent);
 		if(TweetCoBaseActivity.isAppInForeground)
 		{
-			if(TweetCoBaseActivity.topActivity instanceof AllInOneActivity)
-			{
-				((AllInOneActivity)TweetCoBaseActivity.topActivity).getController().tweetsListRefresh(null);
-			}
+			//TODO Move this to a service.
+			PageLoader loader = new PageLoader(new HomeFeedMode(TweetCommonData.getUserName()));
+			loader.loadTop(null);
 		}
 		else
 		{			
-//			mNotificationManager = (NotificationManager)
-//					ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-//			Intent intent = new Intent(ctx, AllInOneActivity.class);
-//			intent.putExtra(Constants.LAUNCHED_FROM_NOTIFICATIONS, true);
-//			PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
-//					intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-//
-//			NotificationCompat.Builder mBuilder =
-//					new NotificationCompat.Builder(ctx)
-//			.setSmallIcon(R.drawable.icon_main)
-//			.setContentTitle(tweeterName)
-//			.setStyle(new NotificationCompat.BigTextStyle()
-//			.bigText(tweetContent))
-//			.setContentText(tweetContent);
-//
-//			mBuilder.setContentIntent(contentIntent);
-//			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			mNotificationManager = (NotificationManager)
+					ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+			Intent intent = new Intent(ctx, AllInOneActivity.class);
+			intent.putExtra(Constants.LAUNCHED_FROM_NOTIFICATIONS, true);
+			PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
+					intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+
+			NotificationCompat.Builder mBuilder =
+					new NotificationCompat.Builder(ctx)
+			.setSmallIcon(R.drawable.icon_main)
+			.setContentTitle(tweeterName)
+			.setStyle(new NotificationCompat.BigTextStyle()
+			.bigText(tweetContent))
+			.setContentText(tweetContent);
+
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 		}
 
 	}

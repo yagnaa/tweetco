@@ -63,7 +63,7 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	}
 
 	@Override
-	public int processReceivedTweets(List<Tweet> list,List<TweetUser> tweetUserlist ,JsonElement response,JsonObject tweetRequest,int index ) 
+	public void processReceivedTweets(List<Tweet> list,List<TweetUser> tweetUserlist ,JsonElement response,JsonObject tweetRequest) 
 	{
 		addEntriesToBottom(list);
 
@@ -74,8 +74,6 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 				TweetCommonData.tweetUsers.put(user.username.toLowerCase(), user);
 			}
 		}
-		
-		return index;
 
 	}
 

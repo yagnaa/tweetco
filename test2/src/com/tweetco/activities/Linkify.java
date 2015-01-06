@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.annotation.SuppressLint;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -77,11 +76,15 @@ public class Linkify {
 	 */
 	public static final int MAP_ADDRESSES = 0x08;
 
+	public static final int HASH_TAGS = 0x10;
+
+	public static final int USER_HANDLE = 0x20;
+
 	/**
 	 *  Bit mask indicating that all available patterns should be matched in
 	 *  methods that take an options mask
 	 */
-	public static final int ALL = WEB_URLS | EMAIL_ADDRESSES | PHONE_NUMBERS | MAP_ADDRESSES;
+	public static final int ALL = WEB_URLS | EMAIL_ADDRESSES | PHONE_NUMBERS | MAP_ADDRESSES | HASH_TAGS | USER_HANDLE;
 
 	/**
 	 * Don't treat anything with fewer than this many digits as a
@@ -196,7 +199,8 @@ public class Linkify {
 	 *  attached to the Spannable, to avoid problems if you call it
 	 *  repeatedly on the same text.
 	 */
-	public static final boolean addLinks(Spannable text, int mask, ClickableSpan clickableSpan) {
+	public static final boolean addLinks(Spannable text, int mask)
+	{
 		if (mask == 0) {
 			return false;
 		}
@@ -229,17 +233,49 @@ public class Linkify {
 			gatherMapLinks(links, text);
 		}
 
+		if ((mask & HASH_TAGS) != 0) {
+			gatherHashTags(links, text, CustomClickableSpan.TAG_PATTERN,
+					new String[]{},
+					null, null);
+		}
+
+		if ((mask & USER_HANDLE) != 0) {
+			gatherHandles(links, text, CustomClickableSpan.HANDLE_PATTERN,
+					new String[]{},
+					null, null);
+		}
+
 		pruneOverlaps(links);
 
 		if (links.size() == 0) {
 			return false;
 		}
 
-		for (LinkSpec link: links) {
-			applyLink(link.url, link.start, link.end, text, clickableSpan);
+		for (LinkSpec link: links)
+		{
+			applyLink(link.url, link.start, link.end, text);
 		}
 
 		return true;
+	}
+
+	private static final void applyLink(String url, int start, int end, Spannable text) 
+	{
+		if(url.matches(CustomClickableSpan.HANDLE_REGEX))
+		{
+			CustomClickableSpan span = new CustomClickableSpan(url);
+			text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
+		else if(url.matches(CustomClickableSpan.TAG_REGEX))
+		{
+			CustomClickableSpan span = new CustomClickableSpan(url);
+			text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
+		else
+		{
+			URLSpan span = new URLSpan(url);
+			text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
 	}
 
 	/**
@@ -248,7 +284,7 @@ public class Linkify {
 	 *  are found the movement method for the TextView is set to
 	 *  LinkMovementMethod.
 	 */
-	public static final boolean addLinks(TextView text, int mask, ClickableSpan clickableSpan) {
+	public static final boolean addLinks(TextView text, int mask) {
 		if (mask == 0) {
 			return false;
 		}
@@ -256,7 +292,7 @@ public class Linkify {
 		CharSequence t = text.getText();
 
 		if (t instanceof Spannable) {
-			if (addLinks((Spannable) t, mask, clickableSpan)) {
+			if (addLinks((Spannable) t, mask)) {
 				addLinkMovementMethod(text);
 				return true;
 			}
@@ -265,7 +301,7 @@ public class Linkify {
 		} else {
 			SpannableString s = SpannableString.valueOf(t);
 
-			if (addLinks(s, mask, clickableSpan)) {
+			if (addLinks(s, mask)) {
 				addLinkMovementMethod(text);
 				text.setText(s);
 
@@ -298,8 +334,8 @@ public class Linkify {
 	 *                      prepended to the url of links that do not have
 	 *                      a scheme specified in the link text
 	 */
-	public static final void addLinks(TextView text, Pattern pattern, String scheme, ClickableSpan clickableSpan) {
-		addLinks(text, pattern, scheme, null, null,clickableSpan);
+	public static final void addLinks(TextView text, Pattern pattern, String scheme) {
+		addLinks(text, pattern, scheme, null, null);
 	}
 
 	/**
@@ -318,10 +354,10 @@ public class Linkify {
 	 *                      to be converted into links.
 	 */
 	public static final void addLinks(TextView text, Pattern p, String scheme,
-			MatchFilter matchFilter, TransformFilter transformFilter, ClickableSpan clickableSpan) {
+			MatchFilter matchFilter, TransformFilter transformFilter) {
 		SpannableString s = SpannableString.valueOf(text.getText());
 
-		if (addLinks(s, p, scheme, matchFilter, transformFilter,clickableSpan)) {
+		if (addLinks(s, p, scheme, matchFilter, transformFilter)) {
 			text.setText(s);
 			addLinkMovementMethod(text);
 		}
@@ -338,8 +374,8 @@ public class Linkify {
 	 *                      prepended to the url of links that do not have
 	 *                      a scheme specified in the link text
 	 */
-	public static final boolean addLinks(Spannable text, Pattern pattern, String scheme,ClickableSpan clickableSpan) {
-		return addLinks(text, pattern, scheme, null, null, clickableSpan);
+	public static final boolean addLinks(Spannable text, Pattern pattern, String scheme) {
+		return addLinks(text, pattern, scheme, null, null);
 	}
 
 	/**
@@ -358,7 +394,7 @@ public class Linkify {
 	 */
 	public static final boolean addLinks(Spannable s, Pattern p,
 			String scheme, MatchFilter matchFilter,
-			TransformFilter transformFilter, ClickableSpan clickableSpan) {
+			TransformFilter transformFilter) {
 		boolean hasMatches = false;
 		String prefix = (scheme == null) ? "" : scheme.toLowerCase(Locale.ROOT);
 		Matcher m = p.matcher(s);
@@ -376,27 +412,12 @@ public class Linkify {
 				String url = makeUrl(m.group(0), new String[] { prefix },
 						m, transformFilter);
 
-				applyLink(url, start, end, s, clickableSpan);
+				applyLink(url, start, end, s);
 				hasMatches = true;
 			}
 		}
 
 		return hasMatches;
-	}
-
-	@SuppressLint("NewApi")
-	private static final void applyLink(String url, int start, int end, Spannable text, ClickableSpan clickableSpan) {
-
-			if(clickableSpan == null)
-			{
-				URLSpan span = new URLSpan(url);
-				text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			}
-			else
-			{
-				text.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			}
-
 	}
 
 	private static final String makeUrl(String url, String[] prefixes,
@@ -423,7 +444,10 @@ public class Linkify {
 		}
 
 		if (!hasPrefix) {
-			url = prefixes[0] + url;
+			if(prefixes.length>0)
+			{
+				url = prefixes[0] + url;
+			}
 		}
 
 		return url;
@@ -443,6 +467,52 @@ public class Linkify {
 				String url = makeUrl(m.group(0), schemes, m, transformFilter);
 
 				spec.url = url;
+				spec.start = start;
+				spec.end = end;
+
+				links.add(spec);
+			}
+		}
+	}
+
+	private static final void gatherHashTags(ArrayList<LinkSpec> links,
+			Spannable s, Pattern pattern, String[] schemes,
+			MatchFilter matchFilter, TransformFilter transformFilter) {
+		Matcher m = pattern.matcher(s);
+
+		while (m.find()) {
+			int start = m.start();
+			int end = m.end();
+
+			if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
+				LinkSpec spec = new LinkSpec();
+				String url = makeUrl(m.group(0), schemes, m, transformFilter);
+
+				String seq = s.toString();
+				spec.url = seq.substring(start, end);
+				spec.start = start;
+				spec.end = end;
+
+				links.add(spec);
+			}
+		}
+	}
+
+	private static final void gatherHandles(ArrayList<LinkSpec> links,
+			Spannable s, Pattern pattern, String[] schemes,
+			MatchFilter matchFilter, TransformFilter transformFilter) {
+		Matcher m = pattern.matcher(s);
+
+		while (m.find()) {
+			int start = m.start();
+			int end = m.end();
+
+			if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
+				LinkSpec spec = new LinkSpec();
+				String url = makeUrl(m.group(0), schemes, m, transformFilter);
+
+				String seq = s.toString();
+				spec.url = seq.substring(start, end);
 				spec.start = start;
 				spec.end = end;
 
@@ -558,6 +628,7 @@ public class Linkify {
 }
 
 class LinkSpec {
+	int linkType = Linkify.WEB_URLS;
 	String url;
 	int start;
 	int end;

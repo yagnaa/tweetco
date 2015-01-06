@@ -41,9 +41,6 @@ import com.tweetco.tweets.TweetCommonData;
 public class TweetAdapter extends BaseAdapter
 {
 	public static final String TAG = "TweetAdapter";
-	
-	private static final Pattern TAG_PATTERN = 
-			   Pattern.compile("(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)");
 
 
 	// A demo listener to pass actions from view to adapter
@@ -82,12 +79,12 @@ public class TweetAdapter extends BaseAdapter
 	{
 		canScroll = false;
 	}
-	
+
 	public void unlock() 
 	{
 		canScroll = true;
 	}
-	
+
 	public boolean canScroll()
 	{
 		long currentTime = System.currentTimeMillis();
@@ -133,9 +130,9 @@ public class TweetAdapter extends BaseAdapter
 		super.notifyDataSetInvalidated();
 		lastDataSetChangedTime =  System.currentTimeMillis();
 	}
-	
-	
-	
+
+
+
 	private static class ViewHolder
 	{
 		ImageView profilePicImage;
@@ -146,7 +143,7 @@ public class TweetAdapter extends BaseAdapter
 		ImageView tweetContentImage;
 		ImageView upvoteView;
 		ImageView bookmarkView;
-	//	ImageView hideTweet;
+		//		ImageView hideTweet;
 	}
 
 	@Override
@@ -165,15 +162,15 @@ public class TweetAdapter extends BaseAdapter
 			viewholder.userName = (TextView) convertView.findViewById(R.id.username);
 			viewholder.tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);
 			viewholder.tweetTime = (TextView) convertView.findViewById(R.id.time);
-			
+
 			viewholder.tweetContentImage = (ImageView) convertView.findViewById(R.id.tweet_content_image);
 			viewholder.upvoteView = (ImageView) convertView.findViewById(R.id.upvote);
 			viewholder.bookmarkView = (ImageView) convertView.findViewById(R.id.bookmark);
-	//		viewholder.hideTweet = (ImageView) convertView.findViewById(R.id.hide);
+			//			viewholder.hideTweet = (ImageView) convertView.findViewById(R.id.hide);
 			convertView.setTag(viewholder);
 
 		} 
-		
+
 		ViewHolder holder = (ViewHolder) convertView.getTag();
 		holder.profilePicImage.setOnClickListener(new OnClickListener() 
 		{	
@@ -201,23 +198,15 @@ public class TweetAdapter extends BaseAdapter
 				holder.userName.setText(tweeter.username);
 			}
 			holder.tweetContent.setText(tweet.tweetcontent);	
-			Linkify.addLinks(holder.tweetContent, Linkify.WEB_URLS,null);
-//			Linkify.addLinks(holder.tweetContent, TAG_PATTERN, "http", new ClickableSpan() {
-//				
-//				@Override
-//				public void onClick(View widget) 
-//				{
-//					EditableText text = ((TextView)widget).getEditableText();
-//				}
-//			});
-			
+			Linkify.addLinks(holder.tweetContent, Linkify.WEB_URLS | Linkify.HASH_TAGS | Linkify.USER_HANDLE);
+
 			holder.tweetContent.setMovementMethod(new LinkMovementMethod());
 
 			loadTweetImage(tweet, holder.tweetContentImage);
 
 
 			holder.tweetTime.setText(Utils.getTime(tweet.__createdAt));
-			
+
 			ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = new ViewHolderForBookmarkUpVoteAndHide();
 			viewHolderBookMarkUpvoteAndHide.iterator = tweet.iterator;
 			viewHolderBookMarkUpvoteAndHide.OwenerName = tweet.tweetowner;
@@ -254,17 +243,17 @@ public class TweetAdapter extends BaseAdapter
 			});
 
 
-//			holder.hideTweet.setTag(viewHolderBookMarkUpvoteAndHide);
-//			holder.hideTweet.setOnClickListener(new OnClickListener() 
-//			{	
-//				@Override
-//				public void onClick(View hideTweet) 
-//				{
-//					ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = (ViewHolderForBookmarkUpVoteAndHide) hideTweet.getTag();
-//					hide(hideTweet,TweetCommonData.getUserName(), viewHolderBookMarkUpvoteAndHide.iterator);
-//				}
-//			});
-			
+			//			holder.hideTweet.setTag(viewHolderBookMarkUpvoteAndHide);
+			//			holder.hideTweet.setOnClickListener(new OnClickListener() 
+			//			{	
+			//				@Override
+			//				public void onClick(View hideTweet) 
+			//				{
+			//					ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = (ViewHolderForBookmarkUpVoteAndHide) hideTweet.getTag();
+			//					hide(hideTweet,TweetCommonData.getUserName(), viewHolderBookMarkUpvoteAndHide.iterator);
+			//				}
+			//			});
+
 
 			// Finally load the image asynchronously into the ImageView, this also takes care of
 			// setting a placeholder image while the background thread runs
@@ -337,7 +326,7 @@ public class TweetAdapter extends BaseAdapter
 			imageView.setVisibility(View.VISIBLE);
 			mImageFetcher2.loadImage(tweet.imageurl, imageView);
 			imageView.setOnClickListener(new View.OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) 
 				{
@@ -363,7 +352,7 @@ public class TweetAdapter extends BaseAdapter
 			imageView.setSelected(isCurrentUserUpVoted);
 		}
 	}
-	
+
 	private void setBookMarkFlag(ImageView imageView,Tweet linkedTweet,String userName)
 	{
 		if(linkedTweet != null && imageView!=null)

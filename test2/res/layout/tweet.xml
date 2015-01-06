@@ -46,7 +46,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/profile_pic"
         android:orientation="horizontal"
-        android:paddingBottom="5dp"
+        android:paddingBottom="3dp"
         android:paddingLeft="10dp"
         android:paddingTop="5dp" >
 
@@ -91,8 +91,8 @@
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingTop="5dp"
-        android:textSize="18sp"
+        android:paddingTop="3dp"
+        android:textSize="15sp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <com.tweetco.activities.RecyclingImageView
@@ -116,7 +116,7 @@
         android:layout_below="@id/tweet_content_image"
         android:layout_toRightOf="@+id/profile_pic"
         android:orientation="horizontal"
-        android:paddingBottom="5dp"
+        android:paddingBottom="3dp"
         android:paddingTop="5dp" >
 
         <ImageView

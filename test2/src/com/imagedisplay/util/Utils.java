@@ -276,14 +276,14 @@ public class Utils {
     	}
     	else if(hours > 0)
     	{
-    		return hours+ " hours ago";
+    		return hours+ " hrs ago";
     	}
     	else if(minutes > 0)
     	{
-    		return minutes+ " minutes ago";
+    		return minutes+ " min ago";
     	}
     	else {
-    		return diff+ " seconds ago";
+    		return diff+ " sec ago";
     	}
 
     }

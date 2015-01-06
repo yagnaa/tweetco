@@ -176,21 +176,35 @@ public class AllInOneActivity extends TweetCoBaseActivity
 	protected void onResume() 
 	{
 		super.onResume();
-		ImageView imageView = (ImageView)m_actionbar.getCustomView().findViewById(R.id.imageView1);
-		ImageFetcher imageFetcher = Utils.getImageFetcher(this, 50, 50);
-		imageFetcher.loadImage(TweetCommonData.getAccount().profileimageurl, imageView);
 		
-		imageView.setOnClickListener(new View.OnClickListener() 
-		{	
-			@Override
-			public void onClick(View v) 
-			{
-				Intent intent = new Intent(AllInOneActivity.this , UserProfileActivity.class);
-				intent.putExtra(Constants.USERNAME_STR, TweetCommonData.getUserName());
-				AllInOneActivity.this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
-			}
-		});
+		
+		if(TweetCommonData.getAccount()!=null && TweetCommonData.mClient!=null)
+		{
+			initializePager();
+			
+			ImageView imageView = (ImageView)m_actionbar.getCustomView().findViewById(R.id.imageView1);
+			ImageFetcher imageFetcher = Utils.getImageFetcher(this, 50, 50);
+			
+			imageFetcher.loadImage(TweetCommonData.getAccount().profileimageurl, imageView);
+			
+			imageView.setOnClickListener(new View.OnClickListener() 
+			{	
+				@Override
+				public void onClick(View v) 
+				{
+					Intent intent = new Intent(AllInOneActivity.this , UserProfileActivity.class);
+					intent.putExtra(Constants.USERNAME_STR, TweetCommonData.getUserName());
+					AllInOneActivity.this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
+				}
+			});
 
+		}
+		else
+		{
+			(new InitializeTask()).execute();
+		}
+		
+		
 	}
 
 	@Override
@@ -233,7 +247,6 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		@Override
 		protected void onPostExecute(Account result) 
 		{
-			android.os.Debug.waitForDebugger();
 			Log.e(TAG,"AllInOneActivity post execute");
 			setProgressBarIndeterminateVisibility(false);
 			if(result == null)
@@ -245,6 +258,22 @@ public class AllInOneActivity extends TweetCoBaseActivity
 			else
 			{
 				initializePager();
+				
+				ImageView imageView = (ImageView)m_actionbar.getCustomView().findViewById(R.id.imageView1);
+				ImageFetcher imageFetcher = Utils.getImageFetcher(AllInOneActivity.this, 50, 50);
+				
+				imageFetcher.loadImage(TweetCommonData.getAccount().profileimageurl, imageView);
+				
+				imageView.setOnClickListener(new View.OnClickListener() 
+				{	
+					@Override
+					public void onClick(View v) 
+					{
+						Intent intent = new Intent(AllInOneActivity.this , UserProfileActivity.class);
+						intent.putExtra(Constants.USERNAME_STR, TweetCommonData.getUserName());
+						AllInOneActivity.this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
+					}
+				});
 			}
 		}
 

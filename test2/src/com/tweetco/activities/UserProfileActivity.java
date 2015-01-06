@@ -128,7 +128,7 @@ public class UserProfileActivity extends FragmentActivity
     		}
     		else
     		{
-    			mEditProfileButton.setVisibility(View.INVISIBLE);
+    			mEditProfileButton.setVisibility(View.GONE);
     		}
     		
     		if(mUserName.equals(TweetCommonData.getUserName()))

@@ -22,13 +22,15 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.tweetco.R;
 
 public class ImageUtility 
 {
 	private static final String IMG_EXTN = ".jpg";
+	private static final int MAX_IMAGE_RESOLUTION_WIDTH				= 1920 ;
+	private static final int IMAGE_CAPTURE_QUALITY				= 25 ;
+	
 
 	private static Uri msAttachmentUri = null;
 
@@ -254,6 +256,167 @@ public class ImageUtility
 		return selectedImageUri;
 	}
 	
+	public static int calculateInSampleSize(BitmapFactory.Options options, int maxWidth, int maxHeight)
+	{
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > maxHeight || width > maxWidth)
+		{
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and
+			// keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > maxHeight && (halfWidth / inSampleSize) > maxWidth)
+			{
+				inSampleSize *= 2;
+			}
+			
+			if((height / inSampleSize) > maxHeight && (width / inSampleSize) > maxWidth)
+			{
+				inSampleSize *= 2;
+			}
+				
+		}
+		return inSampleSize;
+	}
+	
+	public static Bitmap decodeSampledBitmapFromResource(Context context, Uri uri, int reqWidth, Config config , boolean isCamera )
+	{ // isCamera only needed when image from camera is rotated and processing to be done to rotate back.
+		Bitmap bmp = null;
+		InputStream is = null;
+		if (uri != null)
+		{
+			try
+			{
+				is = context.getContentResolver().openInputStream(uri);
+				
+				boolean resize = true;
+				// First decode with inJustDecodeBounds=true to check dimensions
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = true;
+				BitmapFactory.decodeStream(is, null, options);
+				Log.d("ImageUtility","Image Original Width:" + options.outWidth + " Height:" + options.outHeight );
+				// close and open the stream again
+				is.close();
+
+				is = context.getContentResolver().openInputStream(uri);
+
+				int reqHeight = -1;
+				if(reqWidth < 1 || options.outWidth <= reqWidth )
+				{
+					//Invalid Input Or image width less than required .. Return bitmap with Original resolution.
+					reqWidth = options.outWidth;
+					reqHeight = options.outHeight;
+					resize = false;
+				}
+				else
+				{
+					reqHeight = options.outHeight * reqWidth / options.outWidth;
+				}
+				
+				if(resize)
+				{
+					// Calculate inSampleSize
+					options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+				}
+
+				// Decode bitmap with inSampleSize set
+				options.inJustDecodeBounds = false;
+				options.inPreferredConfig = config;		
+				bmp = BitmapFactory.decodeStream(is, null, options);
+				Log.d("ImageUtility","Width: "+reqWidth+" Height: "+reqHeight);
+				
+				if(bmp != null)
+				{
+					if(resize)
+					{
+						try
+						{
+							bmp = Bitmap.createScaledBitmap(bmp, reqWidth, reqHeight, true);
+						}
+						catch(OutOfMemoryError e)
+						{
+							Log.d("ImageUtility","OutOfMemoryError in Bitmap.createScaledBitmap , skip createScaledBitmap");
+						}
+					}
+					
+					if(isCamera && bmp != null)
+					{
+						bmp = correctImageRotation(context, bmp, uri);
+					}
+				}
+				else
+				{
+					Log.d("ImageUtility","BitmapFactory.decodeStream returned null bitmap , skip createScaledBitmap");
+				}
+			}
+			catch (FileNotFoundException fnfex)
+			{
+				Log.e("ImageUtility","FileNotFoundException : while decoding inline image bitmap: " + fnfex.getMessage());
+			}
+			catch (IOException ioex)
+			{
+				Log.e("ImageUtility","IOException : while decoding inline image bitmap: " + ioex.getMessage());
+			}
+			catch (OutOfMemoryError e)
+			{
+				Log.e("ImageUtility","OutOfMemoryError : in decodeSampledBitmapFromResource BitmapFactory.decodeStream . Skip loading Resource");
+			}
+			finally
+			{
+				try
+				{
+					if (is != null)
+					{
+						is.close();
+					}
+				}
+				catch (IOException ioex2)
+				{
+					Log.e("ImageUtility","IOException2 : while decoding inline image bitmap: " + ioex2.getMessage());
+				}
+			}
+		}
+		return bmp;
+	}
+	
+	public static boolean writeDownSampledImage(Context context, Uri fileUri, boolean isCamera ) throws FileNotFoundException
+	{
+		boolean result = false ;
+		Bitmap bitmap = decodeSampledBitmapFromResource(context, fileUri, MAX_IMAGE_RESOLUTION_WIDTH , Config.RGB_565 , isCamera);
+		OutputStream os = context.getContentResolver().openOutputStream(fileUri);
+
+		if( bitmap != null )
+		{
+			try 
+			{
+				result = bitmap.compress(CompressFormat.JPEG, IMAGE_CAPTURE_QUALITY , os);
+			} 
+			finally
+			{
+				if(os != null)
+				{
+					try 
+					{
+						os.close();
+					} 
+					catch (IOException e) 
+					{
+						Log.e("ImageUtility","Failed closing file when copying image"+e);
+					}
+				}
+			}
+		}
+
+		return result ;
+	}
+	
 	private static Uri getCorrectedImageUri(Context context, Uri fileUri, boolean isCamera)
 	{
 		Uri uri = fileUri;
@@ -262,22 +425,15 @@ public class ImageUtility
 		{
 			try 
 			{
-				InputStream is = context.getContentResolver().openInputStream(uri);
-				// Decode bitmap with inSampleSize set
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inJustDecodeBounds = false;
-				options.inPreferredConfig = Config.RGB_565;		
-				Bitmap bmp = BitmapFactory.decodeStream(is, null, options);
-				is.close();
+				Bitmap bmp = decodeSampledBitmapFromResource(context, fileUri, MAX_IMAGE_RESOLUTION_WIDTH, Config.RGB_565, isCamera);
 				
-				if(isCamera && bmp != null)
+				if(bmp != null)
 				{
-					bmp = correctImageRotation(context, bmp, uri);
-					
 					OutputStream os = context.getContentResolver().openOutputStream(uri);
+					
 					try 
 					{
-						boolean result = bmp.compress(CompressFormat.JPEG, 25 , os);
+						bmp.compress(CompressFormat.JPEG, IMAGE_CAPTURE_QUALITY , os);
 					} 
 					finally
 					{

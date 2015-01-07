@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
@@ -63,6 +64,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 
 	private MultiAutoCompleteTextView mTweetContent;
 	private TextView mCharCount;
+	private EditText mContentTags;
 	private Button mSendButton;
 	private Button mImageGalleryButton;
 	private Button mImageCameraButton;
@@ -80,6 +82,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		setContentView(R.layout.posttweet);
 
 		mTweetContent = UiUtility.getView(this, R.id.tweetContent);
+		mContentTags = UiUtility.getView(this, R.id.contentTags);
 		mCharCount = UiUtility.getView(this, R.id.charCount);
 		mSendButton = UiUtility.getView(this, R.id.sendTweetButton);
 		mImageGalleryButton = UiUtility.getView(this, R.id.imageGalleryButton);
@@ -214,7 +217,8 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				PostTweetTaskParams params = new PostTweetTaskParams(client, TweetCommonData.getUserName());
 				params.setTweetContent(mTweetContent.getEditableText().toString());
 				params.setTweetImage((BitmapDrawable) mTweetImage.getDrawable());
-
+				params.setContentTags(mContentTags.getEditableText().toString());
+				
 				new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() 
 				{
 

@@ -9,6 +9,7 @@ public class PostTweetTaskParams
 	private String mUsername;
 	private String mTweetContent;
 	private BitmapDrawable mTweetImage;
+	private String mContentTags;
 	
 	private MobileServiceClient mClient;
 	
@@ -42,5 +43,13 @@ public class PostTweetTaskParams
 
 	public void setTweetImage(BitmapDrawable tweetImage) {
 		this.mTweetImage = tweetImage;
+	}
+
+	public String getContentTags() {
+		return mContentTags;
+	}
+
+	public void setContentTags(String mContentTags) {
+		this.mContentTags = mContentTags;
 	}
 }

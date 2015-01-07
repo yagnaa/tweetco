@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -70,8 +71,15 @@ public class PostTweetTask extends AsyncTask<Void, Void, Tweet>
 	{
 		MobileServiceClient client = mParams.getClient();
 			JsonObject element = new JsonObject();
-			element.addProperty(ApiInfo.kTweetOwner, mParams.getUsername());
+			String contentTags = mParams.getContentTags();
+			String username = mParams.getUsername();
+			if(!TextUtils.isEmpty(contentTags))
+			{
+				username = "tweetbot";
+			}
+			element.addProperty(ApiInfo.kTweetOwner, username);
 			element.addProperty(ApiInfo.kTweetContentKey, mParams.getTweetContent());
+			element.addProperty(ApiInfo.kTweetContentTags, mParams.getContentTags());
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();  
 			BitmapDrawable drawable = mParams.getTweetImage();
 			

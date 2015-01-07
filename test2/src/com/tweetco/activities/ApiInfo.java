@@ -15,6 +15,7 @@ public class ApiInfo
 	public static final String kOldTweetRequest = "oldTweetRequest";
 	public static final String kIteratorKey = "iterator";
 	public static final String kTrendingTopicKey = "trendingtopic";
+	public static final String kTweetContentTags = "contenttags";
 	// Table columns while posting a tweet.
 	public static final String kTweetContentKey = "tweetcontent";
 	public static final String kSourceUserKey = "sourceuser";
@@ -30,7 +31,7 @@ public class ApiInfo
 	//Feedback
 	public static final String kUserFeedback="feedback";
 	
-	
+	public static final String GET_USERS = "getusers";
 	public static final String GET_USER_INFO = "getuserinfo";
 	public static final String UPVOTE = "upvote";
 	public static final String BOOKMARK = "bookmark";

@@ -30,7 +30,7 @@ public class ApiInfo
 	//Feedback
 	public static final String kUserFeedback="feedback";
 	
-	
+	public static final String GET_USERS = "getusers";
 	public static final String GET_USER_INFO = "getuserinfo";
 	public static final String UPVOTE = "upvote";
 	public static final String BOOKMARK = "bookmark";

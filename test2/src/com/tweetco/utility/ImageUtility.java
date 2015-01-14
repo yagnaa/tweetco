@@ -419,52 +419,49 @@ public class ImageUtility
 	
 	private static Uri getCorrectedImageUri(Context context, Uri fileUri, boolean isCamera)
 	{
-		Uri uri = fileUri;
-		
-		if(isCamera)
+		Uri uri = isCamera? fileUri: getImageAttachmentUri(context);
+
+		try 
 		{
-			try 
+			Bitmap bmp = decodeSampledBitmapFromResource(context, fileUri, MAX_IMAGE_RESOLUTION_WIDTH, Config.RGB_565, isCamera);
+
+			if(bmp != null)
 			{
-				Bitmap bmp = decodeSampledBitmapFromResource(context, fileUri, MAX_IMAGE_RESOLUTION_WIDTH, Config.RGB_565, isCamera);
-				
-				if(bmp != null)
+				OutputStream os = context.getContentResolver().openOutputStream(uri);
+
+				try 
 				{
-					OutputStream os = context.getContentResolver().openOutputStream(uri);
-					
-					try 
+					bmp.compress(CompressFormat.JPEG, IMAGE_CAPTURE_QUALITY , os);
+				} 
+				finally
+				{
+					if(os != null)
 					{
-						bmp.compress(CompressFormat.JPEG, IMAGE_CAPTURE_QUALITY , os);
-					} 
-					finally
-					{
-						if(os != null)
+						try 
 						{
-							try 
-							{
-								os.close();
-							} 
-							catch (IOException e) 
-							{
-								Log.e("ImageUtility", "Failed closing file when copying image"+e);
-							}
+							os.close();
+						} 
+						catch (IOException e) 
+						{
+							Log.e("ImageUtility", "Failed closing file when copying image"+e);
 						}
 					}
 				}
-				
-				
-				
-				
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+
+
+
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
 		return uri;
 	}
 

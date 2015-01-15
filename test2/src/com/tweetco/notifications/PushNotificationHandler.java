@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.microsoft.windowsazure.mobileservices.Registration;
 import com.microsoft.windowsazure.mobileservices.RegistrationCallback;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.activities.AllInOneActivity;
 import com.tweetco.activities.Constants;
 import com.tweetco.activities.PageLoader;

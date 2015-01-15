@@ -23,7 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.tweets.TweetCommonData;
 
 public class TrendingFragment extends ListFragment

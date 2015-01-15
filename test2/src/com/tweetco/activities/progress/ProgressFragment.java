@@ -12,7 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.tweetco.R;
+import com.onefortybytes.R;
 
 public class ProgressFragment extends DialogFragment
 {

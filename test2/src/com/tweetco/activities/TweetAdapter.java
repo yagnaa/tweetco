@@ -23,7 +23,7 @@ import com.imagedisplay.util.Utils;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.TweetCo;
 import com.tweetco.activities.PageLoader.OnLoadCompletedCallback;
 import com.tweetco.dao.Tweet;

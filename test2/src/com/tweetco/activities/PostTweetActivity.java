@@ -38,7 +38,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.services.urlshortener.Urlshortener;
 import com.google.api.services.urlshortener.model.Url;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.activities.TrendingFragment.TrendingTag;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;

@@ -25,8 +25,6 @@ import java.io.OutputStream;
 import java.lang.ref.SoftReference;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -46,7 +44,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.util.LruCache;
 
-import com.tweetco.BuildConfig;
+import com.onefortybytes.BuildConfig;
 
 /**
  * This class handles disk and memory caching of bitmaps in conjunction with the

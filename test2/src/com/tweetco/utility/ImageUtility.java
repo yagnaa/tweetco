@@ -23,7 +23,7 @@ import android.provider.OpenableColumns;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
-import com.tweetco.R;
+import com.onefortybytes.R;
 
 public class ImageUtility 
 {

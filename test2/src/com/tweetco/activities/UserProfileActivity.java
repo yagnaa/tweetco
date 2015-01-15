@@ -31,12 +31,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.onefortybytes.BuildConfig;
+import com.onefortybytes.R;
 import com.imagedisplay.util.AsyncTask;
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.RecyclingBitmapDrawable;
 import com.imagedisplay.util.Utils;
-import com.tweetco.BuildConfig;
-import com.tweetco.R;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweetlist.UserFeedMode;
 import com.tweetco.tweets.TweetCommonData;

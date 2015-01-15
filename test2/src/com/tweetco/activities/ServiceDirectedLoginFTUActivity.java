@@ -18,7 +18,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.UserAuthenticationCallback;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.TweetCo;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.asynctasks.AddAccountTask;

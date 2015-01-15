@@ -3,7 +3,7 @@ package com.tweetco.activities;
 import android.os.Bundle;
 import android.widget.ListView;
 
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.activities.adapter.LeaderboardAdapter;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.utility.UiUtility;

@@ -30,7 +30,7 @@ import com.imagedisplay.util.Utils;
 import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
 

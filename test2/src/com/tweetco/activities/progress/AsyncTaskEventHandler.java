@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 
 public class AsyncTaskEventHandler implements AsyncTaskEventSinks.UIEventSink 

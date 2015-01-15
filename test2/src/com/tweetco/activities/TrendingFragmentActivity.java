@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.dao.Tweet;
 import com.tweetco.tweetlist.TrendingFeedMode;
 import com.tweetco.utility.UiUtility;

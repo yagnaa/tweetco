@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.activities.adapter.LeaderboardAdapter;
 import com.tweetco.activities.adapter.LeaderboardAdapter.OnProfilePicClick;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;

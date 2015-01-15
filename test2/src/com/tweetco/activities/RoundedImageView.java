@@ -19,7 +19,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.tweetco.R;
+import com.onefortybytes.R;
 
 /**
  * Custom ImageView for circular images in Android while maintaining the

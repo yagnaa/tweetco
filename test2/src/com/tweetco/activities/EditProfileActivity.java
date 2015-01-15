@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.asynctasks.EditProfileTask;
 import com.tweetco.asynctasks.EditProfileTask.EditProfileTaskCompletionCallback;

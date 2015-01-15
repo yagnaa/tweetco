@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.activities.FTUActivity.AddAccountTask.AddAccountTaskCompletionCallback;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;

@@ -40,7 +40,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 
 import com.google.common.base.CharMatcher;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.activities.Constants;
 
 /**

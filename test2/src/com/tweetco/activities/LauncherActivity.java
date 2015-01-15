@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.TweetCo;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;

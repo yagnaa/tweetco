@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
-import com.tweetco.R;
+import com.onefortybytes.R;
 import com.tweetco.dao.LeaderboardUser;
 import com.tweetco.utility.UiUtility;
 

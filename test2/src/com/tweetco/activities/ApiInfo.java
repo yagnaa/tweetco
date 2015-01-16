@@ -46,7 +46,9 @@ public class ApiInfo
 	public static final String GET_TWEETS_FOR_TREND = "gettweetsfortrendingtopic";
 	public static final String GET_BOOKMARKED_TWEETS = "getbookmarkedtweetsforuser";
 	
-	
+	public static final String kEmail = "email";
+	public static final String kDisplayName = "displayname";
+	public static final String kPassword = "password";
 	
 	
 	public static final String EMBED_API_KEY = "17f6d3df6522482081d800746a06987a";

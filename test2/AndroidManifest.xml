@@ -63,6 +63,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
         </activity>
+        
+        <activity
+            android:name="com.tweetco.activities.FTUNewUserActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
+        </activity>
+        
         <activity
             android:name="com.tweetco.activities.ServiceDirectedLoginFTUActivity"
             android:screenOrientation="portrait"

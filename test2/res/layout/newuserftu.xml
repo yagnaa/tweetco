@@ -121,7 +121,6 @@
                         android:singleLine="true"
                         android:textSize="@dimen/text_small">
 
-                        <requestFocus />
                     </EditText>
 
                 </RelativeLayout>
@@ -158,7 +157,6 @@
                         android:singleLine="true"
                         android:textSize="@dimen/text_small">
 
-                        <requestFocus />
                     </EditText>
 
                 </RelativeLayout>

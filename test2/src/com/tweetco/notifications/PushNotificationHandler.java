@@ -85,7 +85,7 @@ public class PushNotificationHandler extends com.microsoft.windowsazure.notifica
 
 			NotificationCompat.Builder mBuilder =
 					new NotificationCompat.Builder(ctx)
-			.setSmallIcon(R.drawable.icon_main)
+			.setSmallIcon(R.drawable.logo)
 			.setContentTitle(tweeterName)
 			.setStyle(new NotificationCompat.BigTextStyle()
 			.bigText(tweetContent))

@@ -21,15 +21,13 @@ public class LauncherActivity extends TweetCoBaseActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.splash_layout);
+		//setContentView(R.layout.splash_layout);
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() 
 			{
-				try 
-				{
-					Thread.sleep(1000);
+					//Thread.sleep(1000);
 					if(!bActvityDestroyed)
 					{
 						Account account = getAccount();
@@ -57,9 +55,6 @@ public class LauncherActivity extends TweetCoBaseActivity
 							}
 						}
 					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 
 			}
 		}).start();

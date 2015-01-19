@@ -99,7 +99,7 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
 		m_actionbar.setCustomView(customView, params);
 		m_actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ~ActionBar.DISPLAY_SHOW_HOME);
-		m_actionbar.setDisplayShowCustomEnabled(true);
+		m_actionbar.setDisplayHomeAsUpEnabled(false);
 		
 	}
 

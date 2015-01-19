@@ -19,7 +19,7 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="19" />
 
     <application
         android:name="com.tweetco.TweetCo"

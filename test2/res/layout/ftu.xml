@@ -8,8 +8,7 @@
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/img_ftubg_portrait" />
+        android:scaleType="centerCrop"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -42,7 +41,6 @@
                         android:layout_centerVertical="true"
                         android:layout_margin="10dp"
                         android:layout_marginBottom="5dp"
-                        android:layout_toLeftOf="@+id/username_cancel"
                         android:background="@color/transparent"
                         android:drawableLeft="@drawable/ico_login_user"
                         android:drawablePadding="10dp"
@@ -56,17 +54,6 @@
 
                         <requestFocus />
                     </EditText>
-
-                    <Button
-                        android:id="@+id/emailaddress_cancel"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:visibility="invisible"
-                        android:background="@drawable/ftu_reset_btn_bg"
-                        />
                 </RelativeLayout>
 
                 <View

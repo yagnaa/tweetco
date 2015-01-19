@@ -35,7 +35,7 @@ public class PushNotificationHandler extends com.microsoft.windowsazure.notifica
 	public void onRegistered(Context context,  final String gcmRegistrationId) {
 		super.onRegistered(context, gcmRegistrationId);
 
-		TweetCommonData.mClient.getPush().register(gcmRegistrationId, null,new RegistrationCallback() {
+		TweetCommonData.mClient.getPush().register(gcmRegistrationId, new String[] {TweetCommonData.getUserName()},new RegistrationCallback() {
 
 			@Override
 			public void onRegister(Registration registration, Exception exception) 

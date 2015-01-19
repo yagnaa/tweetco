@@ -67,7 +67,7 @@ public class LauncherActivity extends TweetCoBaseActivity
 
 	protected void launchFtu() 
 	{
-		Intent intent = new Intent(getApplicationContext(), ServiceDirectedLoginFTUActivity.class);
+		Intent intent = new Intent(getApplicationContext(), FTUActivity.class);
 		startActivity(intent);
 	}
 

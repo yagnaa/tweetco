@@ -13,5 +13,7 @@ public class TweetUser
 	public String bookmarkedtweets;
 	public String displayname;
 	public String interesttags;
+	public String email;
+	public String password;
 
 }

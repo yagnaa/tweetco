@@ -1,137 +1,138 @@
 package com.tweetco.activities;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
 
-import android.app.Fragment;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.onefortybytes.R;
-import com.tweetco.activities.FTUActivity.AddAccountTask.AddAccountTaskCompletionCallback;
+import com.tweetco.TweetCo;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
-import com.tweetco.tweets.UserProfile;
+import com.tweetco.dao.TweetUser;
+import com.tweetco.tweets.TweetCommonData;
+import com.tweetco.utility.AlertDialogUtility;
 import com.tweetco.utility.UiUtility;
 
 public class FTUActivity extends TweetCoBaseActivity 
 {
+	
+	private EditText mEmailAddress = null;
+	private Button mContinue = null;
+	AsyncTaskEventHandler asyncTaskEventHandler = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ftu);
-	}
-	
-	public static class FTUFragment extends Fragment
-	{
-		private EditText mServerAddress = null;
-		private EditText mUsername = null;
-		private EditText mPassword = null;
-		private Button mContinue = null;
 		
-		AsyncTaskEventHandler asyncTaskEventHandler = null;
+		mEmailAddress = UiUtility.getView(this, R.id.FTUEmailAddress);
+		mContinue = UiUtility.getView(this, R.id.FTULoginButton);
+		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Fetching details");
 		
-		@Override
-	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                             Bundle savedInstanceState) {
-	        // Inflate the layout for this fragment
-	        View view = inflater.inflate(R.layout.ftufragmentlayout, container, false);
-	        mServerAddress = UiUtility.getView(view, R.id.FTUAddServerAddress);
-	        mUsername = UiUtility.getView(view, R.id.FTUAddUserName);
-	        mPassword = UiUtility.getView(view, R.id.FTUAddPassword);
-	        asyncTaskEventHandler = new AsyncTaskEventHandler(this.getActivity(), "Fetching info");
-	        mContinue = UiUtility.getView(view, R.id.FTULoginButton);
-	        mContinue.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) 
+		mContinue.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) 
+			{
+				final String emailAddress = mEmailAddress.getText().toString();
+				if(!TextUtils.isEmpty(emailAddress) && emailAddress.endsWith("@citrix.com"))
 				{
-					AddAccountTaskParams params = new AddAccountTaskParams();
-					params.mServerAddress = mServerAddress.getText().toString();
-					params.mUsername = mUsername.getText().toString();
-					params.mPassword = mPassword.getText().toString();
+					try 
+					{
+						final MobileServiceClient mobileServiceClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, FTUActivity.this.getApplicationContext());
+						new FetchUserInfoTask(getApplicationContext(), mobileServiceClient, asyncTaskEventHandler, new FetchUserInfoCompletionCallback() {
+							
+							@Override
+							public void onFetchUserInfoTaskSuccess(TweetUser user) 
+							{
+								Log.d("FetchUserInfo", "User fetched");
+								asyncTaskEventHandler.dismiss();
+								TweetCommonData.mClient = mobileServiceClient;
+								Intent intent = new Intent(FTUActivity.this, FTUNewUserActivity.class);
+								intent.putExtra("email", user.email);
+								intent.putExtra("displayName", user.displayname);
+								intent.putExtra("userName", user.username);
+								intent.putExtra("password", user.password);
+								startActivity(intent);
+								finish();
+								
+							}
+							
+							@Override
+							public void onFetchUserInfoTaskFailure() {
+								Log.d("FetchUserInfo", "User does not exist");
+								asyncTaskEventHandler.dismiss();
+								TweetCommonData.mClient = mobileServiceClient;
+								Intent intent = new Intent(FTUActivity.this, FTUNewUserActivity.class);
+								intent.putExtra("email", emailAddress);
+								startActivity(intent);
+								finish();
+							}
+							
+							@Override
+							public void onFetchUserInfoCancelled() {
+								asyncTaskEventHandler.dismiss();
+								
+							}
+						}).execute();
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
-					new AddAccountTask(getActivity(), params, asyncTaskEventHandler, new AddAccountTaskCompletionCallback() {
-						
-						@Override
-						public void onAddAccountTaskSuccess(List<UserProfile> knowsUsersProfile,
-								List<UserProfile> interactUserProfiles) {
-							// TODO Auto-generated method stub
-							
-						}
-						
-						@Override
-						public void onAddAccountTaskFailure() {
-							// TODO Auto-generated method stub
-							
-						}
-						
-						@Override
-						public void onAccountCreationCancelled() {
-							// TODO Auto-generated method stub
-							
-						}
-					});
 				}
-			});
-	        return view;
-	    }
+				else
+				{
+					getAddAccountFailedDialog("Your organisation hasn't signed up for this service.").show();
+				}
+			}
+		});
+		
 	}
 	
-	public static class AddAccountTaskParams
+	public static interface FetchUserInfoCompletionCallback
 	{
-		public String mServerAddress;
-		public String mUsername;
-		public String mPassword;
+		public void onFetchUserInfoTaskSuccess(TweetUser user);
+		public void onFetchUserInfoTaskFailure ();
+		public void onFetchUserInfoCancelled();
 	}
 	
-	public static class AddAccountTask extends AsyncTask<Void, Void, Void>
+	public class FetchUserInfoTask extends AsyncTask<Void, Void, TweetUser> 
 	{
-
-
-		public static interface AddAccountTaskCompletionCallback
-		{
-			public void onAddAccountTaskSuccess (List<UserProfile> knowsUsersProfile, List<UserProfile> interactUserProfiles);
-			public void onAddAccountTaskFailure ();
-			public void onAccountCreationCancelled();
-		}
-
-		private AddAccountTaskCompletionCallback m_completioncallback;
+		
+		private FetchUserInfoCompletionCallback m_completioncallback;
 		private UIEventSink m_uicallback;
 		private Context mContext;
-		private AddAccountTaskParams mParams;
-		List<String[]> heirarchy = new ArrayList<String[]>();
-		public List<UserProfile> knownUserProfiles = null;
-		public List<UserProfile> interactUserProfiles = null;
-		
-		public AddAccountTask (Context context, AddAccountTaskParams params, UIEventSink uicallback, AddAccountTaskCompletionCallback completioncallback)
+		private MobileServiceClient mMobileClient;
+		private TweetUser mTweetUser = null;
+
+		public FetchUserInfoTask (Context context, MobileServiceClient mobileClient, UIEventSink uicallback, FetchUserInfoCompletionCallback completioncallback)
 		{
 			m_completioncallback = completioncallback;
 			m_uicallback = uicallback; 
 			mContext = context;
-			mParams = params;
-			//For Kirana
-			heirarchy.add(new String[] {"yagnasri.alla@citrix.com", "rohan.kapoor@citrix.com", "udaya.kiran@citrix.com", "teja.singh@citrix.com" });
-			//For Yagnasri
-			heirarchy.add(new String[] {"kiran.kumar@citrix.com", "rohan.kapoor@citrix.com", "udaya.kiran@citrix.com", "teja.singh@citrix.com" });
-			//For Uday
-			heirarchy.add(new String[] {"yagnasri.alla@citrix.com", "rohan.kapoor@citrix.com", "kiran.kumar@citrix.com", "teja.singh@citrix.com" });
-			
+			mMobileClient = mobileClient;
 		}
-
+		
 		@Override
 		protected void onPreExecute()
 		{
@@ -144,7 +145,7 @@ public class FTUActivity extends TweetCoBaseActivity
 					public void onCancelled()
 					{
 						cancel(true);
-						m_completioncallback.onAccountCreationCancelled();
+						m_completioncallback.onFetchUserInfoCancelled();
 					}
 				}, true);
 			}
@@ -152,21 +153,67 @@ public class FTUActivity extends TweetCoBaseActivity
 
 
 		@Override
-		protected Void doInBackground(Void... arg0)
+		protected TweetUser doInBackground(Void... arg0)
 		{
+			final String TAG = "FetchUserInfoTask";
+			final MobileServiceClient client = mMobileClient;
+			JsonObject element = new JsonObject();
+			//TODO Check if the input is email address
+			element.addProperty(ApiInfo.kEmail, mEmailAddress.getText().toString());
+			client.invokeApi("UserExists", element,new ApiJsonOperationCallback() 
+			{
+
+				@Override
+				public void onCompleted(JsonElement user, Exception exception,
+						ServiceFilterResponse arg2) {
+					if(exception != null)
+					{
+						Log.e(TAG, "Get identitiy failed");
+					}
+					else
+					{
+						Log.d(TAG, "Get identitiy success");
+
+						Gson gson = new Gson();
+
+						try
+						{
+							TweetUser[] tweetUsers = gson.fromJson(user, TweetUser[].class);
+							if(tweetUsers.length > 0)
+							{
+								mTweetUser = tweetUsers[0];
+							}
+						}
+						catch(Exception e)
+						{
+							
+						}
+
+					}
+				}
+			}, true);
 			
-			return null;
+			return mTweetUser;
 		}
 
-		public static boolean isTeamUser(String email)
-		{
-			return email.equalsIgnoreCase("kiran.kumar@citrix.com") || email.equalsIgnoreCase("udaya.kiran@citrix.com") || email.equalsIgnoreCase("yagnasri.alla@citrix.com") || email.equalsIgnoreCase("teja.singh@citrix.com") || email.equalsIgnoreCase("rohan.kapoor@citrix.com"); 
-		}
-		
 		@Override
-		protected void onPostExecute(Void result)
+		protected void onPostExecute(TweetUser result)
 		{
-			m_completioncallback.onAddAccountTaskSuccess(knownUserProfiles, interactUserProfiles);
+			if(result != null)
+			{
+				m_completioncallback.onFetchUserInfoTaskSuccess(result);
+			}
+			else
+			{
+				m_completioncallback.onFetchUserInfoTaskFailure();
+			}
 		}
+
+	}
+	
+	private AlertDialog getAddAccountFailedDialog(String errorMessage)
+	{
+		AlertDialog dialog = AlertDialogUtility.getAlertDialogOK(FTUActivity.this, errorMessage, null);
+		return dialog;
 	}
 }

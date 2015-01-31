@@ -24,6 +24,7 @@ import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.onefortybytes.R;
+import com.tweetco.TweetCo;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
@@ -356,6 +357,8 @@ public class FTUNewUserActivity extends ActionBarActivity
 										mAccount.profilebgurl = tweetUser[0].profilebgurl;
 										mAccount.bookmarkedtweets = tweetUser[0].bookmarkedtweets;
 										mAccount.interesttags = tweetUser[0].interesttags;
+										mAccount.setServerAddress(TweetCo.APP_URL);
+										mAccount.setAuthToken(TweetCo.APP_KEY);
 									}
 									catch(JsonSyntaxException exception)
 									{

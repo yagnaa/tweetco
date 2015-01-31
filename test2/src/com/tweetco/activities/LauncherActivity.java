@@ -39,21 +39,8 @@ public class LauncherActivity extends ActionBarActivity
 						}
 						else
 						{
-							try 
-							{
-								MobileServiceClient mobileServiceClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, LauncherActivity.this.getApplicationContext());
-								MobileServiceUser user = new MobileServiceUser(account.getUsername());
-								user.setAuthenticationToken(account.getAuthToken());
-								mobileServiceClient.setCurrentUser(user);
-								TweetCommonData.mClient = mobileServiceClient;
-								TweetCommonData.setAccount(account);
 								startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
 								finish();
-							} 
-							catch (MalformedURLException e) 
-							{
-								e.printStackTrace();
-							}
 						}
 					}
 

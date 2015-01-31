@@ -56,19 +56,19 @@ public class FTUActivity extends ActionBarActivity
 			public void onClick(View v) 
 			{
 				final String emailAddress = mEmailAddress.getText().toString();
-				if(!TextUtils.isEmpty(emailAddress) && emailAddress.endsWith("@citrix.com"))
+				if(!TextUtils.isEmpty(emailAddress))
 				{
 					try 
 					{
-						final MobileServiceClient mobileServiceClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, FTUActivity.this.getApplicationContext());
+						MobileServiceClient mobileServiceClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, FTUActivity.this.getApplicationContext());
 						new FetchUserInfoTask(getApplicationContext(), mobileServiceClient, asyncTaskEventHandler, new FetchUserInfoCompletionCallback() {
 							
 							@Override
-							public void onFetchUserInfoTaskSuccess(TweetUser user) 
+							public void onFetchUserInfoTaskSuccess(TweetUser user, MobileServiceClient mobileClient) 
 							{
 								Log.d("FetchUserInfo", "User fetched");
 								asyncTaskEventHandler.dismiss();
-								TweetCommonData.mClient = mobileServiceClient;
+								TweetCommonData.mClient = mobileClient;
 								Intent intent = new Intent(FTUActivity.this, FTUNewUserActivity.class);
 								intent.putExtra("email", user.email);
 								intent.putExtra("displayName", user.displayname);
@@ -80,14 +80,22 @@ public class FTUActivity extends ActionBarActivity
 							}
 							
 							@Override
-							public void onFetchUserInfoTaskFailure() {
-								Log.d("FetchUserInfo", "User does not exist");
-								asyncTaskEventHandler.dismiss();
-								TweetCommonData.mClient = mobileServiceClient;
-								Intent intent = new Intent(FTUActivity.this, FTUNewUserActivity.class);
-								intent.putExtra("email", emailAddress);
-								startActivity(intent);
-								finish();
+							public void onFetchUserInfoTaskFailure(MobileServiceClient mobileClient, Exception exception) 
+							{
+								if(exception == null)
+								{
+									Log.d("FetchUserInfo", "User does not exist");
+									asyncTaskEventHandler.dismiss();
+									TweetCommonData.mClient = mobileClient;
+									Intent intent = new Intent(FTUActivity.this, FTUNewUserActivity.class);
+									intent.putExtra("email", emailAddress);
+									startActivity(intent);
+									finish();
+								}
+								else
+								{
+									getAddAccountFailedDialog("Failed to add account").show();
+								}
 							}
 							
 							@Override
@@ -104,7 +112,7 @@ public class FTUActivity extends ActionBarActivity
 				}
 				else
 				{
-					getAddAccountFailedDialog("Your organisation hasn't signed up for this service.").show();
+					getAddAccountFailedDialog("Please enter an email address").show();
 				}
 			}
 		});
@@ -113,8 +121,8 @@ public class FTUActivity extends ActionBarActivity
 	
 	public static interface FetchUserInfoCompletionCallback
 	{
-		public void onFetchUserInfoTaskSuccess(TweetUser user);
-		public void onFetchUserInfoTaskFailure ();
+		public void onFetchUserInfoTaskSuccess(TweetUser user, MobileServiceClient client);
+		public void onFetchUserInfoTaskFailure (MobileServiceClient client, Exception mobileServiceException);
 		public void onFetchUserInfoCancelled();
 	}
 	
@@ -126,6 +134,8 @@ public class FTUActivity extends ActionBarActivity
 		private Context mContext;
 		private MobileServiceClient mMobileClient;
 		private TweetUser mTweetUser = null;
+		private boolean mRetryFetchUserInfo = false;
+		private Exception mMobileServiceException = null;
 
 		public FetchUserInfoTask (Context context, MobileServiceClient mobileClient, UIEventSink uicallback, FetchUserInfoCompletionCallback completioncallback)
 		{
@@ -171,6 +181,8 @@ public class FTUActivity extends ActionBarActivity
 					if(exception != null)
 					{
 						Log.e(TAG, "Get identitiy failed");
+						mMobileServiceException = exception;
+						mRetryFetchUserInfo = false;
 					}
 					else
 					{
@@ -180,20 +192,58 @@ public class FTUActivity extends ActionBarActivity
 
 						try
 						{
-							TweetUser[] tweetUsers = gson.fromJson(user, TweetUser[].class);
-							if(tweetUsers.length > 0)
+							if(user.isJsonArray())
 							{
-								mTweetUser = tweetUsers[0];
+								mRetryFetchUserInfo = false;
+								TweetUser[] tweetUsers = gson.fromJson(user, TweetUser[].class);
+								if(tweetUsers.length > 0)
+								{
+									mTweetUser = tweetUsers[0];
+								}
+							}
+							else
+							{
+								//This is auto-discovery for the user
+								JsonObject autoDiscoveryObj = user.getAsJsonObject();
+								JsonElement mobileServiceUrl = autoDiscoveryObj.get("serviceurl");
+								JsonElement mobileServiceKey = autoDiscoveryObj.get("appkey");
+								
+								if(mobileServiceKey == null || mobileServiceUrl == null)
+								{
+									getAddAccountFailedDialog("Your organisation hasn't signed up for this service.").show();
+								}
+								else
+								{
+									TweetCo.APP_URL = mobileServiceUrl.getAsString();
+									TweetCo.APP_KEY = mobileServiceKey.getAsString();
+									mMobileClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, mContext);
+									//Retry with the new AppUrl and AppKey to get user info
+									if(!mRetryFetchUserInfo)
+									{
+										mRetryFetchUserInfo = true;
+									}
+									else
+									{
+										mRetryFetchUserInfo = false;
+									}
+									
+								}
 							}
 						}
 						catch(Exception e)
 						{
-							
+							Log.e(TAG, "Failed to get user information: "+e.getMessage());
+							e.printStackTrace();
 						}
 
 					}
 				}
 			}, true);
+			
+			if(mRetryFetchUserInfo)
+			{
+				mTweetUser = doInBackground();
+			}
 			
 			return mTweetUser;
 		}
@@ -203,11 +253,11 @@ public class FTUActivity extends ActionBarActivity
 		{
 			if(result != null)
 			{
-				m_completioncallback.onFetchUserInfoTaskSuccess(result);
+				m_completioncallback.onFetchUserInfoTaskSuccess(result, mMobileClient);
 			}
 			else
 			{
-				m_completioncallback.onFetchUserInfoTaskFailure();
+				m_completioncallback.onFetchUserInfoTaskFailure(mMobileClient, mMobileServiceException);
 			}
 		}
 

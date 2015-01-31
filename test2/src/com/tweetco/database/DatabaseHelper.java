@@ -2,6 +2,7 @@ package com.tweetco.database;
 
 import com.tweetco.database.dao.Account;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -9,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper 
 {
 	public static final String				DATABASE_NAME				= "tweetco.db";
-	private static final int				DATABASE_CURRENT_VERSION	= 1;
+	private static final int				DATABASE_CURRENT_VERSION	= 2;
 		
 	private static DatabaseHelper mInstance = null;
 	
@@ -59,7 +60,14 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) 
 	{
-
+		if(oldVersion == 1 && newVersion == 2)
+		{
+			ContentValues contentValues = new ContentValues();
+			contentValues.put(Account.COLUMN_SERVER_ADDRESS, "https://tweetcoahwr.azure-mobile.net/");
+			contentValues.put(Account.COLUMN_AUTH_TOKEN, "VUEWlsSVIAIzDgOARiSbWZGKzbAZKP43");
+			
+			db.update(Account.TABLE_NAME, contentValues, null, null);
+		}
 	}
 	
 }

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.imagedisplay.util.AsyncTask;
@@ -77,7 +78,7 @@ public abstract class TweetCoBaseActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(Account result) 
 		{
-			Log.e(TAG,"AllInOneActivity post execute");
+			Log.d(TAG,"AllInOneActivity post execute");
 			setProgressBarIndeterminateVisibility(false);
 			if(result == null)
 			{
@@ -101,9 +102,10 @@ public abstract class TweetCoBaseActivity extends ActionBarActivity
 				MobileServiceClient mobileServiceClient;
 				try 
 				{
+					TweetCo.APP_URL = account.getServerAddress();
+					TweetCo.APP_KEY = account.getAuthToken();
 					mobileServiceClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, TweetCo.mContext);
 					MobileServiceUser user = new MobileServiceUser(account.getUsername());
-					user.setAuthenticationToken(account.getAuthToken());
 					mobileServiceClient.setCurrentUser(user);
 					TweetCommonData.mClient = mobileServiceClient;
 					TweetCommonData.setAccount(account);

@@ -54,7 +54,7 @@ public class EditProfileActivity extends TweetCoBaseActivity
 	private boolean mHeaderPicChanged = false;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editprofile);
@@ -240,5 +240,11 @@ public class EditProfileActivity extends TweetCoBaseActivity
 			ImageUtility.onImageAttachmentCancelled();
 			Log.i("PostTweet","onActivityResult result code: " + resultCode + " for request code: " + requestCode);
 		}
+	}
+	
+	@Override
+	public void onResumeCallback() 
+	{
+		//Do nothing
 	}
 }

@@ -34,7 +34,7 @@ import com.tweetco.tweets.TweetCommonData;
 
 
 
-public class AllInOneActivity extends TweetCoBaseActivity
+public class AllInOneActivity extends TweetCoBaseActivity 
 {
 	private static final int IO_BUFFER_SIZE = 8 * 1024;
 
@@ -78,15 +78,6 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		
 
 		customizeActionBar();
-		
-		if(TweetCommonData.getAccount()!=null && TweetCommonData.mClient!=null)
-		{
-			initializePager();
-		}
-		else
-		{
-			(new InitializeTask()).execute();
-		}
 	}
 
 
@@ -152,41 +143,11 @@ public class AllInOneActivity extends TweetCoBaseActivity
 	protected void onResume() 
 	{
 		super.onResume();
-		
-		
-		if(TweetCommonData.getAccount()!=null && TweetCommonData.mClient!=null)
-		{
-			initializePager();
-			
-			ImageView imageView = (ImageView)m_actionbar.getCustomView().findViewById(R.id.imageView1);
-			ImageFetcher imageFetcher = Utils.getImageFetcher(this, 50, 50);
-			
-			imageFetcher.loadImage(TweetCommonData.getAccount().profileimageurl, imageView);
-			
-			imageView.setOnClickListener(new View.OnClickListener() 
-			{	
-				@Override
-				public void onClick(View v) 
-				{
-					Intent intent = new Intent(AllInOneActivity.this , UserProfileActivity.class);
-					intent.putExtra(Constants.USERNAME_STR, TweetCommonData.getUserName());
-					AllInOneActivity.this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
-				}
-			});
-
-		}
-		else
-		{
-			(new InitializeTask()).execute();
-		}
-		
-		
 	}
 
 	@Override
 	protected void onPause() 
 	{
-
 		super.onPause();
 	}
 
@@ -208,93 +169,6 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		}
 	}
 
-
-	private class InitializeTask extends AsyncTask<Void, Void, Account>
-	{
-
-		
-		@Override
-		protected void onPreExecute()
-		{
-			Log.d("tag","onPreExecute");
-			setProgressBarIndeterminateVisibility(true);
-		}
-
-		@Override
-		protected void onPostExecute(Account result) 
-		{
-			Log.e(TAG,"AllInOneActivity post execute");
-			setProgressBarIndeterminateVisibility(false);
-			if(result == null)
-			{
-				Intent intent = new Intent(TweetCo.mContext,LauncherActivity.class);
-				TweetCo.mContext.startActivity(intent);
-				AllInOneActivity.this.finish();
-			}
-			else
-			{
-				initializePager();
-				
-				ImageView imageView = (ImageView)m_actionbar.getCustomView().findViewById(R.id.imageView1);
-				ImageFetcher imageFetcher = Utils.getImageFetcher(AllInOneActivity.this, 50, 50);
-				
-				imageFetcher.loadImage(TweetCommonData.getAccount().profileimageurl, imageView);
-				
-				imageView.setOnClickListener(new View.OnClickListener() 
-				{	
-					@Override
-					public void onClick(View v) 
-					{
-						Intent intent = new Intent(AllInOneActivity.this , UserProfileActivity.class);
-						intent.putExtra(Constants.USERNAME_STR, TweetCommonData.getUserName());
-						AllInOneActivity.this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
-					}
-				});
-			}
-		}
-
-		@Override
-		protected Account doInBackground(Void... params) 
-		{
-			Account account = getAccount();
-			if(account != null)
-			{
-
-				MobileServiceClient mobileServiceClient;
-				try 
-				{
-					mobileServiceClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, TweetCo.mContext);
-					MobileServiceUser user = new MobileServiceUser(account.getUsername());
-					user.setAuthenticationToken(account.getAuthToken());
-					mobileServiceClient.setCurrentUser(user);
-					TweetCommonData.mClient = mobileServiceClient;
-					TweetCommonData.setAccount(account);
-				} 
-				catch (MalformedURLException e) 
-				{
-					e.printStackTrace();
-				}
-
-			}
-			return account;
-		}
-
-		private Account getAccount()
-		{
-			Account account = null;
-
-			Cursor c = TweetCo.mContext.getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
-			if(c.moveToFirst())
-			{
-				account = new Account();
-				account.restoreFromCursor(c);
-			}
-
-			return account;
-		}
-
-	}
-
 	public Controller getController()
 	{
 		return mController;
@@ -313,6 +187,29 @@ public class AllInOneActivity extends TweetCoBaseActivity
 			TweetListFragment twwetListFragment = (TweetListFragment)mPagerAdapter.getRegisteredFragment(0);
 			twwetListFragment.refreshTop();
 		}
+	}
+
+
+	@Override
+	public void onResumeCallback() 
+	{
+		initializePager();
+		
+		ImageView imageView = (ImageView)m_actionbar.getCustomView().findViewById(R.id.imageView1);
+		ImageFetcher imageFetcher = Utils.getImageFetcher(this, 50, 50);
+		
+		imageFetcher.loadImage(TweetCommonData.getAccount().profileimageurl, imageView);
+		
+		imageView.setOnClickListener(new View.OnClickListener() 
+		{	
+			@Override
+			public void onClick(View v) 
+			{
+				Intent intent = new Intent(AllInOneActivity.this , UserProfileActivity.class);
+				intent.putExtra(Constants.USERNAME_STR, TweetCommonData.getUserName());
+				AllInOneActivity.this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
+			}
+		});
 	}
 
 }

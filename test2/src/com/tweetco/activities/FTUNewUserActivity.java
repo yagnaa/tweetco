@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +37,7 @@ import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.AlertDialogUtility;
 import com.tweetco.utility.UiUtility;
 
-public class FTUNewUserActivity extends TweetCoBaseActivity 
+public class FTUNewUserActivity extends ActionBarActivity 
 {
 	private EditText mEmailAddress;
 	private EditText mDisplayName;

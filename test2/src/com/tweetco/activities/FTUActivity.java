@@ -3,11 +3,13 @@ package com.tweetco.activities;
 
 import java.net.MalformedURLException;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -31,7 +33,7 @@ import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.AlertDialogUtility;
 import com.tweetco.utility.UiUtility;
 
-public class FTUActivity extends TweetCoBaseActivity 
+public class FTUActivity extends ActionBarActivity
 {
 	
 	private EditText mEmailAddress = null;

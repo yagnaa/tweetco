@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
@@ -14,7 +15,7 @@ import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
 
-public class LauncherActivity extends TweetCoBaseActivity 
+public class LauncherActivity extends ActionBarActivity 
 {
 	private boolean bActvityDestroyed = false;
 

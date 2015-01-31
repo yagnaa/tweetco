@@ -148,4 +148,10 @@ public class ServiceDirectedLoginFTUActivity extends TweetCoBaseActivity
 
 		return dialog;
 	}
+
+	@Override
+	public void onResumeCallback() 
+	{
+		
+	}
 }

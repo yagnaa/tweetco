@@ -65,4 +65,9 @@ public class TrendingFragmentActivity extends TweetCoBaseActivity
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
+
+	@Override
+	public void onResumeCallback() {
+		
+	}
 }

@@ -428,4 +428,10 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			}
 		}
 	}
+
+	@Override
+	public void onResumeCallback() 
+	{
+		
+	}
 }

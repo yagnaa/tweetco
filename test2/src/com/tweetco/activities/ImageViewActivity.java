@@ -39,4 +39,9 @@ public class ImageViewActivity extends TweetCoBaseActivity
 		
 		
 	}
+
+	@Override
+	public void onResumeCallback() {
+		
+	}
 }

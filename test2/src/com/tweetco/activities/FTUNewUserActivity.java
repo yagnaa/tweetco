@@ -140,6 +140,8 @@ public class FTUNewUserActivity extends TweetCoBaseActivity
 																TweetCommonData.setAccount(account);
 																
 																startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
+																
+																finish();
 															}
 														}
 													}
@@ -200,6 +202,8 @@ public class FTUNewUserActivity extends TweetCoBaseActivity
 															TweetCommonData.setAccount(account);
 															
 															startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
+															
+															finish();
 														}
 													}
 												}

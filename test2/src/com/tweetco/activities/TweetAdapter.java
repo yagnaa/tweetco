@@ -1,12 +1,9 @@
 package com.tweetco.activities;
 
-import java.util.regex.Pattern;
-
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +27,7 @@ import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweets.TweetCommonData;
+import com.tweetco.utility.UiUtility;
 
 
 
@@ -54,6 +52,11 @@ public class TweetAdapter extends BaseAdapter
 	{
 		void onItemClick(int position);
 	}
+	
+	public interface OnTweetClick
+	{
+		void onItemClick(int position);
+	}
 
 	private final Context mContext;
 	private ImageFetcher mImageFetcher; //Fetches the images
@@ -63,6 +66,7 @@ public class TweetAdapter extends BaseAdapter
 
 
 	private OnProfilePicClick mOnProfilePicClickCallback;
+	private OnTweetClick mOnTweetClickCallback;
 
 	protected InfiniteScrollListPageListener mInfiniteListPageListener; 
 
@@ -104,7 +108,7 @@ public class TweetAdapter extends BaseAdapter
 		String OwenerName;
 	}
 
-	public TweetAdapter(Context context, ImageFetcher imageFetcher, ImageFetcher imageFetcher2, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback) 
+	public TweetAdapter(Context context, ImageFetcher imageFetcher, ImageFetcher imageFetcher2, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback, OnTweetClick onTweetClickCallback) 
 	{
 		super();
 		mContext = context;
@@ -114,6 +118,7 @@ public class TweetAdapter extends BaseAdapter
 		mTweetListMode = mode;
 
 		mOnProfilePicClickCallback = onProfilePicClickCallback;
+		mOnTweetClickCallback = onTweetClickCallback;
 	}
 
 	@Override
@@ -143,6 +148,7 @@ public class TweetAdapter extends BaseAdapter
 		ImageView tweetContentImage;
 		ImageView upvoteView;
 		ImageView bookmarkView;
+		TextView inReplyTo;
 		//		ImageView hideTweet;
 	}
 
@@ -162,6 +168,7 @@ public class TweetAdapter extends BaseAdapter
 			viewholder.userName = (TextView) convertView.findViewById(R.id.username);
 			viewholder.tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);
 			viewholder.tweetTime = (TextView) convertView.findViewById(R.id.time);
+			viewholder.inReplyTo = UiUtility.getView(convertView, R.id.in_reply_to);
 
 			viewholder.tweetContentImage = (ImageView) convertView.findViewById(R.id.tweet_content_image);
 			viewholder.upvoteView = (ImageView) convertView.findViewById(R.id.upvote);
@@ -178,6 +185,15 @@ public class TweetAdapter extends BaseAdapter
 			public void onClick(View v) 
 			{
 				mOnProfilePicClickCallback.onItemClick(position);
+			}
+		});
+		
+		holder.tweetContent.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mOnTweetClickCallback.onItemClick(position);
+				
 			}
 		});
 
@@ -211,6 +227,16 @@ public class TweetAdapter extends BaseAdapter
 			viewHolderBookMarkUpvoteAndHide.iterator = tweet.iterator;
 			viewHolderBookMarkUpvoteAndHide.OwenerName = tweet.tweetowner;
 			viewHolderBookMarkUpvoteAndHide.position = position;
+			
+			if(!TextUtils.isEmpty(tweet.inreplyto))
+			{
+				holder.inReplyTo.setVisibility(View.VISIBLE);
+				holder.inReplyTo.setText("In reply to " + tweet.sourceuser);
+			}
+			else
+			{
+				holder.inReplyTo.setVisibility(View.GONE);
+			}
 
 			//UpVote ImageView
 

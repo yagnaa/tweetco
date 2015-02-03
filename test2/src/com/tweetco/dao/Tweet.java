@@ -18,6 +18,8 @@ public class Tweet implements Parcelable {
     public String contenttags;
     public String bookmarkers;
     public String hiders;
+    public String replies;
+    public String inreplyto;
     public String __createdAt;
     public String __updatedAt;
     
@@ -37,6 +39,8 @@ public class Tweet implements Parcelable {
       contenttags = in.readString();
       bookmarkers = in.readString();
       hiders = in.readString();
+      replies = in.readString();
+      inreplyto = in.readString();
       __createdAt = in.readString();
       __updatedAt = in.readString();
   }
@@ -62,6 +66,8 @@ public class Tweet implements Parcelable {
       dest.writeString(contenttags);
       dest.writeString(bookmarkers);
       dest.writeString(hiders);
+      dest.writeString(replies);
+      dest.writeString(inreplyto);
       dest.writeString(__createdAt);
       dest.writeString(__updatedAt);
   }

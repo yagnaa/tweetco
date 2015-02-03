@@ -61,6 +61,7 @@ import com.tweetco.TweetCo;
 import com.tweetco.activities.PageLoader.OnLoadCompletedCallback;
 import com.tweetco.activities.TweetAdapter.NewPageLoader;
 import com.tweetco.activities.TweetAdapter.OnProfilePicClick;
+import com.tweetco.activities.TweetAdapter.OnTweetClick;
 import com.tweetco.dao.Tweet;
 import com.tweetco.tweetlist.TrendingFeedMode;
 import com.tweetco.tweetlist.TweetListMode;
@@ -157,6 +158,19 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 					}
 				}
 
+			}
+		}, new OnTweetClick() {
+			
+			@Override
+			public void onItemClick(int position) 
+			{
+				Tweet tweet = (Tweet)mAdapter.getItem(position);
+				if(tweet != null)
+				{
+					Intent intent = new Intent(getActivity(), TweetDetailActivity.class);
+					intent.putExtra("Tweet", tweet);
+					getActivity().startActivity(intent);
+				}
 			}
 		});
 

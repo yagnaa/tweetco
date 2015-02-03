@@ -63,80 +63,6 @@ public class EditProfileActivity extends TweetCoBaseActivity
 		mHeaderPic = UiUtility.getView(this, R.id.editProfileBackgroundPic);
 		mSaveButton = UiUtility.getView(this,  R.id.editProfileSaveButton);
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Saving...");
-		
-		String username = TweetCommonData.getUserName();
-		TweetUser user = TweetCommonData.tweetUsers.get(username.toLowerCase());
-		
-		
-		mImageFetcher = Utils.getImageFetcher(this, 80, 80);
-		
-		mImageFetcher.loadImage(user.profileimageurl, mProfilePic);
-		mImageFetcher.loadImage(user.profilebgurl, mHeaderPic);
-		
-		
-		mProfilePic.setOnClickListener(new OnClickListener() 
-		{	
-			@Override
-			public void onClick(View v)
-			{
-				getDialog(EditProfileActivity.this, PROFILE_PIC).show();
-			}
-		});
-		
-		
-		mHeaderPic.setOnClickListener(new OnClickListener() 
-		{	
-			@Override
-			public void onClick(View v) 
-			{
-				getDialog(EditProfileActivity.this, HEADER_PIC).show();
-			}
-		});
-		
-		mSaveButton.setOnClickListener(new OnClickListener() 
-		{
-			
-			@Override
-			public void onClick(View v) 
-			{
-				EditProfileTaskParams params = new EditProfileTaskParams(TweetCommonData.getUserName());
-				if(mProfilePicChanged)
-				{
-					params.setProfileImage((BitmapDrawable)mProfilePic.getDrawable());
-				}
-				
-				if(mHeaderPicChanged)
-				{
-					params.setHeaderImage((BitmapDrawable)mHeaderPic.getDrawable());
-				}
-				
-				new EditProfileTask(getApplicationContext(), params, asyncTaskEventHandler, new EditProfileTaskCompletionCallback() {
-					
-					@Override
-					public void onEditProfileTaskSuccess() 
-					{
-						Log.d("EditProfile", "Success");
-						Intent intent = new Intent();
-						intent.putExtra(Constants.PROFILE_PIC_URI, mProfilePicUri);
-						intent.putExtra(Constants.PROFILE_BG_PIC_URI, mHeaderPicUri);
-						EditProfileActivity.this.setResult(RESULT_OK, intent);
-						finish();
-					}
-					
-					@Override
-					public void onEditProfileTaskFailure() {
-						Log.d("EditProfile", "Failed");
-						finish();
-					}
-					
-					@Override
-					public void onEditProfileTaskCancelled() {
-						
-					}
-				}).execute();
-			}
-		});
-		
 	}
 	
 	public static AlertDialog getDialog(final Activity activity, final int picCode)
@@ -243,8 +169,85 @@ public class EditProfileActivity extends TweetCoBaseActivity
 	}
 	
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+	}
+	
+	@Override
 	public void onResumeCallback() 
 	{
-		//Do nothing
+		String username = TweetCommonData.getUserName();
+		TweetUser user = TweetCommonData.tweetUsers.get(username.toLowerCase());
+		
+		
+		mImageFetcher = Utils.getImageFetcher(this, 80, 80);
+		
+		mImageFetcher.loadImage(user.profileimageurl, mProfilePic);
+		mImageFetcher.loadImage(user.profilebgurl, mHeaderPic);
+		
+		
+		mProfilePic.setOnClickListener(new OnClickListener() 
+		{	
+			@Override
+			public void onClick(View v)
+			{
+				getDialog(EditProfileActivity.this, PROFILE_PIC).show();
+			}
+		});
+		
+		
+		mHeaderPic.setOnClickListener(new OnClickListener() 
+		{	
+			@Override
+			public void onClick(View v) 
+			{
+				getDialog(EditProfileActivity.this, HEADER_PIC).show();
+			}
+		});
+		
+		mSaveButton.setOnClickListener(new OnClickListener() 
+		{
+			
+			@Override
+			public void onClick(View v) 
+			{
+				EditProfileTaskParams params = new EditProfileTaskParams(TweetCommonData.getUserName());
+				if(mProfilePicChanged)
+				{
+					params.setProfileImage((BitmapDrawable)mProfilePic.getDrawable());
+				}
+				
+				if(mHeaderPicChanged)
+				{
+					params.setHeaderImage((BitmapDrawable)mHeaderPic.getDrawable());
+				}
+				
+				new EditProfileTask(getApplicationContext(), params, asyncTaskEventHandler, new EditProfileTaskCompletionCallback() {
+					
+					@Override
+					public void onEditProfileTaskSuccess() 
+					{
+						Log.d("EditProfile", "Success");
+						Intent intent = new Intent();
+						intent.putExtra(Constants.PROFILE_PIC_URI, mProfilePicUri);
+						intent.putExtra(Constants.PROFILE_BG_PIC_URI, mHeaderPicUri);
+						EditProfileActivity.this.setResult(RESULT_OK, intent);
+						finish();
+					}
+					
+					@Override
+					public void onEditProfileTaskFailure() {
+						Log.d("EditProfile", "Failed");
+						finish();
+					}
+					
+					@Override
+					public void onEditProfileTaskCancelled() {
+						
+					}
+				}).execute();
+			}
+		});
 	}
 }

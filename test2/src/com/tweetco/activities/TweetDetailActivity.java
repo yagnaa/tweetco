@@ -8,18 +8,21 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
+import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.onefortybytes.R;
 import com.tweetco.TweetCo;
 import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweetlist.TweetRepliesFeedMode;
-import com.tweetco.tweetlist.UserFeedMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 
@@ -41,7 +44,17 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		ImageView tweetContentImage;
 		TextView upvotesCount;
 		TextView bookmarksCount;
+		ImageView upvoteView;
+		ImageView bookmarkView;
+		TextView inReplyTo;
 		//		ImageView hideTweet;
+	}
+	
+	private static class ViewHolderForBookmarkUpVoteAndHide
+	{
+		Tweet tweet;
+		int iterator;
+		String OwenerName;
 	}
 	
 	@Override
@@ -64,8 +77,11 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		viewholder.userName = UiUtility.getView(this, R.id.username);
 		viewholder.tweetContent = UiUtility.getView(this, R.id.tweetcontent);
 		viewholder.tweetTime = UiUtility.getView(this, R.id.time);
+		viewholder.inReplyTo = UiUtility.getView(this, R.id.in_reply_to);
 
 		viewholder.tweetContentImage = UiUtility.getView(this, R.id.tweet_content_image);
+		viewholder.upvoteView = UiUtility.getView(this, R.id.upvote);
+		viewholder.bookmarkView = UiUtility.getView(this, R.id.bookmark);
 		viewholder.upvotesCount = UiUtility.getView(this, R.id.upvotesCount);
 		viewholder.bookmarksCount = UiUtility.getView(this, R.id.bookmarksCount);
 		
@@ -101,15 +117,86 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 
 			viewholder.tweetContent.setMovementMethod(new LinkMovementMethod());
 
-			viewholder.bookmarksCount.setText(String.valueOf(getCount(tweet.bookmarkers, ";")));
+			viewholder.bookmarksCount.setText(String.valueOf(getCount(tweet.bookmarkers, ";") + " Bookmarks"));
+			viewholder.bookmarksCount.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) 
+				{
+					if(!TextUtils.isEmpty(tweet.bookmarkers))
+					{
+						Intent intent = new Intent(getApplication(), UsersListActivity.class);
+						intent.putExtra("title", "Bookmarked by");
+						intent.putExtra("usersList", tweet.bookmarkers);
+						startActivity(intent);
+					}
+				}
+			});
 			
-			viewholder.upvotesCount.setText(String.valueOf(getCount(tweet.upvoters, ";")));
-			
+			viewholder.upvotesCount.setText(String.valueOf(getCount(tweet.upvoters, ";") + " Upvotes"));
+			viewholder.upvotesCount.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) 
+				{
+					if(!TextUtils.isEmpty(tweet.upvoters))
+					{
+						Intent intent = new Intent(getApplication(), UsersListActivity.class);
+						intent.putExtra("title", "Upvoted by");
+						intent.putExtra("usersList", tweet.upvoters);
+						startActivity(intent);
+					}
+				}
+			});
 			loadTweetImage(tweet, viewholder.tweetContentImage);
 
 
 			viewholder.tweetTime.setText(Utils.getTime(tweet.__createdAt));
 
+			ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = new ViewHolderForBookmarkUpVoteAndHide();
+			viewHolderBookMarkUpvoteAndHide.iterator = tweet.iterator;
+			viewHolderBookMarkUpvoteAndHide.OwenerName = tweet.tweetowner;
+			viewHolderBookMarkUpvoteAndHide.tweet = tweet;
+			
+			if(!TextUtils.isEmpty(tweet.inreplyto))
+			{
+				viewholder.inReplyTo.setVisibility(View.VISIBLE);
+				viewholder.inReplyTo.setText("In reply to " + tweet.sourceuser);
+			}
+			else
+			{
+				viewholder.inReplyTo.setVisibility(View.GONE);
+			}
+
+			//UpVote ImageView
+
+			viewholder.upvoteView.setTag(viewHolderBookMarkUpvoteAndHide);
+			setUpVoteFlag(viewholder.upvoteView,tweet,TweetCommonData.getUserName());
+			viewholder.upvoteView.setOnClickListener(new OnClickListener() 
+			{	
+				@Override
+				public void onClick(View upvoteView) 
+				{
+					upvoteView.setSelected(true);
+					ViewHolderForBookmarkUpVoteAndHide holder = (ViewHolderForBookmarkUpVoteAndHide) upvoteView.getTag();
+					upVote(upvoteView,TweetCommonData.getUserName(), holder.iterator, holder.OwenerName);
+				}
+
+			});
+
+
+			viewholder.bookmarkView.setTag(viewHolderBookMarkUpvoteAndHide);
+			setBookMarkFlag(viewholder.bookmarkView,tweet,TweetCommonData.getUserName());
+			viewholder.bookmarkView.setOnClickListener(new OnClickListener() 
+			{	
+				@Override
+				public void onClick(View bookmarkView) 
+				{
+					bookmarkView.setSelected(true);
+					ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = (ViewHolderForBookmarkUpVoteAndHide) bookmarkView.getTag();
+					bookmark(bookmarkView,TweetCommonData.getUserName(), viewHolderBookMarkUpvoteAndHide.iterator, viewHolderBookMarkUpvoteAndHide.OwenerName);
+				}
+			});
 
 
 
@@ -149,6 +236,105 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 	        tweetListFragment.setArguments(newBundle);
 	        ft.replace(R.id.tweetsReplyListFragmentContainer, tweetListFragment);
 	        ft.commit();
+		}
+	}
+	
+	public void bookmark(final View bookmarkView,final String requestingUser,final int iterator,String tweetOwner)
+	{
+		MobileServiceClient mClient = TweetCommonData.mClient;
+		JsonObject obj = new JsonObject();
+		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
+		obj.addProperty(ApiInfo.kIteratorKey, iterator);
+		obj.addProperty(ApiInfo.kTweetOwner, tweetOwner);
+		mClient.invokeApi(ApiInfo.BOOKMARK, obj, new ApiJsonOperationCallback() 
+		{
+
+			@Override
+			public void onCompleted(JsonElement arg0, Exception arg1,
+					ServiceFilterResponse arg2) 
+			{
+				ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = (ViewHolderForBookmarkUpVoteAndHide) bookmarkView.getTag();
+				if(arg1 == null)
+				{
+					//This will ensure that we are dealing with the same view
+					if(bookmarkView!=null && (viewHolderBookMarkUpvoteAndHide.iterator == iterator))
+					{
+						bookmarkView.setSelected(true);
+						Tweet tweet = viewHolderBookMarkUpvoteAndHide.tweet;
+						TweetCommonData.bookmark(tweet,TweetCommonData.getUserName());
+					}			
+				}
+				else
+				{
+					//This will ensure that we are dealing with the same view
+					if(bookmarkView!=null && (viewHolderBookMarkUpvoteAndHide.iterator == iterator))
+					{
+						bookmarkView.setSelected(false);
+					}
+					Log.e(TAG,"Exception bookmarking a tweet") ;
+					arg1.printStackTrace();
+				}
+
+			}
+		},false);
+	}
+	
+	public void upVote(final View upvoteView,final String requestingUser,final int iterator,String tweetOwner)
+	{
+		MobileServiceClient mClient = TweetCommonData.mClient;
+		JsonObject obj = new JsonObject();
+		obj.addProperty(ApiInfo.kRequestingUserKey, requestingUser);
+		obj.addProperty(ApiInfo.kIteratorKey, iterator);
+		obj.addProperty(ApiInfo.kTweetOwner, tweetOwner);
+		mClient.invokeApi(ApiInfo.UPVOTE, obj, new ApiJsonOperationCallback() {
+
+			@Override
+			public void onCompleted(JsonElement arg0, Exception arg1,
+					ServiceFilterResponse arg2) 
+			{
+				ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = (ViewHolderForBookmarkUpVoteAndHide) upvoteView.getTag();
+				if(arg1 == null)
+				{
+					//This will ensure that we are dealing with the same view
+					if(upvoteView!=null && (viewHolderBookMarkUpvoteAndHide.iterator == iterator))
+					{
+						upvoteView.setSelected(true);
+						//TODO change the adapter underneath
+						Tweet tweet = viewHolderBookMarkUpvoteAndHide.tweet;
+						TweetCommonData.like(tweet,TweetCommonData.getUserName());
+					}
+
+				}
+				else
+				{
+					//This will ensure that we are dealing with the same view
+					if(upvoteView!=null && (viewHolderBookMarkUpvoteAndHide.iterator == iterator))
+					{
+						upvoteView.setSelected(false);
+					}
+					Log.e(TAG,"Exception upVoting a tweet") ;
+					arg1.printStackTrace();
+				}
+
+			}
+		},false);
+	}
+	
+	private void setUpVoteFlag(ImageView imageView,Tweet linkedTweet,String userName)
+	{
+		if(linkedTweet != null && imageView!=null)
+		{
+			boolean isCurrentUserUpVoted  = TweetUtils.isStringPresent(linkedTweet.upvoters, userName);
+			imageView.setSelected(isCurrentUserUpVoted);
+		}
+	}
+
+	private void setBookMarkFlag(ImageView imageView,Tweet linkedTweet,String userName)
+	{
+		if(linkedTweet != null && imageView!=null)
+		{
+			boolean didCurrentUserBookmark  = TweetUtils.isStringPresent(linkedTweet.bookmarkers, userName);
+			imageView.setSelected(didCurrentUserBookmark);
 		}
 	}
 	

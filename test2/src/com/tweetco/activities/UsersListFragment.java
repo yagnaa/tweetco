@@ -60,6 +60,21 @@ public class UsersListFragment extends ListFragment
 		userListAdapter.notifyDataSetChanged();
 	}
 
+	public void addUser(String usersListStr)
+	{
+		if(!TextUtils.isEmpty(usersListStr))
+		{
+			String[] list = usersListStr.split(";");
+			for (String username : list) 
+			{
+				if(!TextUtils.isEmpty(username))
+				{
+					TweetUser user = TweetCommonData.tweetUsers.get(username);
+					usersList.add(user);
+				}
+			}
+		}
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) 

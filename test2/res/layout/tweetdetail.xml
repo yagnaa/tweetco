@@ -11,152 +11,66 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <include
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="3dip"
-            android:paddingLeft="6dip"
-            android:paddingRight="6dip" >
+            layout="@layout/tweet" />
 
-            <com.tweetco.activities.RoundedImageView
-                android:id="@+id/profile_pic"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_centerVertical="true"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="8dp"
-                android:clickable="true"
-                android:scaleType="fitXY"
-                custom:selector="true"
-                custom:selector_color="#44FFBB33"
-                custom:selector_stroke_color="#88FF8800"
-                custom:selector_stroke_width="2dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp" >
 
             <LinearLayout
-                android:id="@+id/tweet_user_info"
-                android:layout_width="match_parent"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/profile_pic"
-                android:orientation="horizontal"
-                android:paddingBottom="3dp"
-                android:paddingLeft="10dp"
-                android:paddingTop="5dp" >
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
 
                 <TextView
-                    android:id="@+id/username"
+                    android:id="@+id/upvotesCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="Small Text"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/display_name_color"
-                    android:textSize="14dp" />
+                    android:hint="0" 
+                    android:textColor="@color/display_name_color"/>
 
-                <TextView
-                    android:id="@+id/handle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="15dp"
-                    android:text="Small Text"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/purple_theme_color"
-                    android:textSize="12dp" />
-
-                <TextView
-                    android:id="@+id/time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="15dp"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/purple_theme_color"
-                    android:textSize="12sp" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tweetcontent"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tweet_user_info"
-                android:layout_toRightOf="@+id/profile_pic"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="3dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="15sp" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
 
-            <com.tweetco.activities.RecyclingImageView
-                android:id="@+id/tweet_content_image"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_below="@+id/tweetcontent"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="8dp"
-                android:layout_toRightOf="@+id/profile_pic"
-                android:clickable="true"
-                android:scaleType="centerCrop" />
-
-            
-        </RelativeLayout>
-        
-        <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="5dp" >
-
-                <LinearLayout
-                    android:layout_width="0dip"
+                <TextView
+                    android:id="@+id/bookmarksCount"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="horizontal" >
+                    android:hint="0" 
+                    android:textColor="@color/display_name_color"/>
 
-                    <TextView
-                        android:id="@+id/upvotesCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="0" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" Upvotes" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="horizontal" >
-
-                    <TextView
-                        android:id="@+id/bookmarksCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="0" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" Bookmarks" />
-                </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
+    
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
     <FrameLayout
         android:id="@+id/tweetsReplyListFragmentContainer"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:layout_weight="1">
+        android:layout_weight="1" >
     </FrameLayout>
 
 </LinearLayout>

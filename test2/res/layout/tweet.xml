@@ -128,7 +128,6 @@
         android:id="@+id/tweet_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_below="@id/tweet_content_image"
         android:layout_toRightOf="@+id/profile_pic"
         android:orientation="horizontal"

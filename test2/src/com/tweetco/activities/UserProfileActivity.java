@@ -80,7 +80,7 @@ public class UserProfileActivity extends FragmentActivity
     		
     }
     
-    public void loadUser(TweetUser user)
+    public void loadUser(final TweetUser user)
     {
     	if(user != null)
     	{
@@ -88,7 +88,7 @@ public class UserProfileActivity extends FragmentActivity
     		mUserProfilePic = UiUtility.getView(this, R.id.userProfilePic);
     		mUserProfileDisplayName = UiUtility.getView(this, R.id.userProfileDisplayName);
     		mUserProfileHandleName = UiUtility.getView(this, R.id.userProfileHandle);
-    		mFolloweeCount = UiUtility.getView(this, R.id.followeesCount);
+    		mFolloweeCount = UiUtility.getView(this, R.id.followingCount);
     		mFollowerCount = UiUtility.getView(this, R.id.followersCount);
     		
     		ImageFetcher imageFectcher = Utils.getImageFetcher(this, 50, 50);
@@ -102,17 +102,44 @@ public class UserProfileActivity extends FragmentActivity
     		int followeesCount = 0;
     		if(!TextUtils.isEmpty(user.followees))
     		{
-    			followeesCount = user.followees.split(";").length - 1;
+    			followeesCount = user.followees.split(";").length;
     		}
-    		mFolloweeCount.setText(String.valueOf(followeesCount));
+    		mFolloweeCount.setText("Following: " + String.valueOf(followeesCount));
+    		mFolloweeCount.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) 
+				{
+					if(!TextUtils.isEmpty(user.followees))
+					{
+						Intent intent = new Intent(getApplication(), UsersListActivity.class);
+						intent.putExtra("title", "Following");
+						intent.putExtra("usersList", user.followees);
+						startActivity(intent);
+					}
+				}
+			});
     		
     		int followersCount = 0;
     		if(!TextUtils.isEmpty(user.followers))
     		{
-    			followersCount = user.followers.split(";").length - 1;
+    			followersCount = user.followers.split(";").length;
     		}
-    		mFollowerCount.setText(String.valueOf(followersCount));
-    		
+    		mFollowerCount.setText("Followers: " + String.valueOf(followersCount));
+    		mFollowerCount.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) 
+				{
+					if(!TextUtils.isEmpty(user.followers))
+					{
+						Intent intent = new Intent(getApplication(), UsersListActivity.class);
+						intent.putExtra("title", "Followers");
+						intent.putExtra("usersList", user.followers);
+						startActivity(intent);
+					}
+				}
+			});
     		mEditProfileButton = UiUtility.getView(this, R.id.editProfileButton);
     		if(mUserName.equals((TweetCommonData.getUserName())))
     		{

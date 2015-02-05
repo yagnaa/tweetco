@@ -23,7 +23,7 @@ public class ImageViewActivity extends TweetCoBaseActivity
 		final ImageView image = new ImageView(this);
 		image.setLayoutParams(new LayoutParams(
 				LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT));
+				LayoutParams.MATCH_PARENT));
 		this.setContentView(image);
 		
 		image.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {

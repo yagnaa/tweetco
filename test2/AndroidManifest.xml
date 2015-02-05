@@ -25,7 +25,7 @@
         android:name="com.tweetco.TweetCo"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:largeHeap="true" 
+        android:largeHeap="true"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.tweetco.activities.LauncherActivity"
@@ -40,10 +40,10 @@
         </activity>
         <activity
             android:name="com.tweetco.activities.AllInOneActivity"
-            android:launchMode="singleTop"
             android:configChanges="keyboardHidden|orientation"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait" >
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="com.tweetco.activities.UserProfileActivity"
@@ -52,8 +52,8 @@
         </activity>
         <activity
             android:name="com.tweetco.activities.LeaderboardActivity"
-            android:launchMode="singleTop"
             android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" >
         </activity>
         <activity
@@ -62,14 +62,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.FTUNewUserActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.ServiceDirectedLoginFTUActivity"
             android:screenOrientation="portrait"
@@ -80,34 +78,44 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.EditProfileActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.TweetDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.UsersListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.TrendingFragmentActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" >ImageViewActivity
+            android:windowSoftInputMode="adjustResize" >
+ImageViewActivity
         </activity>
-        
         <activity
             android:name="com.tweetco.activities.ImageViewActivity"
             android:launchMode="singleTop"

@@ -256,7 +256,7 @@ public class ImageUtility
 		return selectedImageUri;
 	}
 	
-	public static int calculateInSampleSize(BitmapFactory.Options options, int maxWidth, int maxHeight)
+	private static int calculateInSampleSize(BitmapFactory.Options options, int maxWidth, int maxHeight)
 	{
 		// Raw height and width of image
 		final int height = options.outHeight;
@@ -417,7 +417,7 @@ public class ImageUtility
 		return result ;
 	}
 	
-	private static Uri getCorrectedImageUri(Context context, Uri fileUri, boolean isCamera)
+	public static Uri getCorrectedImageUri(Context context, Uri fileUri, boolean isCamera)
 	{
 		Uri uri = isCamera? fileUri: getImageAttachmentUri(context);
 

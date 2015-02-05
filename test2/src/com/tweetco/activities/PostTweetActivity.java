@@ -98,7 +98,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mTweetContent.setAdapter(new ArrayAdapter<String>(PostTweetActivity.this,
 				android.R.layout.simple_dropdown_item_1line, mUsernames));
 		mTweetContent.setThreshold(1);
-
+		
 		//From http://stackoverflow.com/questions/12691679/android-autocomplete-textview-similar-to-the-facebook-app
 		//Create a new Tokenizer which will get text after '@' and terminate on ' '
 		mTweetContent.setTokenizer(new Tokenizer() {
@@ -203,13 +203,6 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			}
 		});
 
-		String existingString= getIntent().getStringExtra(Constants.EXISTING_STRING);
-		if(!TextUtils.isEmpty(existingString))
-		{
-			mTweetContent.setText(existingString);
-			mTweetContent.setSelection(existingString.length());
-		}
-
 		mSendButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
@@ -288,6 +281,51 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				}
 			}
 		});
+		
+		// Get intent, action and MIME type
+	    Intent intent = getIntent();
+	    String action = intent.getAction();
+	    String type = intent.getType();
+	    String inputText = null;
+	    if (Intent.ACTION_SEND.equals(action) && type != null) 
+	    {
+	        if ("text/plain".equals(type)) 
+	        {
+	        	inputText = intent.getStringExtra(Intent.EXTRA_TEXT);
+	        }
+	        else if (type.startsWith("image/")) 
+	        {
+	            handleSendImage(intent); // Handle single image being sent
+	        }
+	    }
+	    else
+	    {
+	    	inputText = intent.getStringExtra(Constants.EXISTING_STRING);
+	    }
+	    
+	    handleInputText(inputText);
+	}
+	
+	void handleSendImage(Intent intent) 
+	{
+	    Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+	    if (imageUri != null) 
+	    {
+	        Uri correctedImageUri = ImageUtility.getCorrectedImageUri(getApplicationContext(), imageUri, false);
+	        if(correctedImageUri != null)
+			{
+				mTweetImage.setImageURI(correctedImageUri);
+			}
+	    }
+	}
+	
+	public void handleInputText(String inputText)
+	{
+		if(!TextUtils.isEmpty(inputText))
+		{
+			mTweetContent.setText(inputText);
+			mTweetContent.setSelection(inputText.length());
+		}
 	}
 
 	@Override

@@ -61,6 +61,7 @@ import com.tweetco.TweetCo;
 import com.tweetco.activities.PageLoader.OnLoadCompletedCallback;
 import com.tweetco.activities.TweetAdapter.NewPageLoader;
 import com.tweetco.activities.TweetAdapter.OnProfilePicClick;
+import com.tweetco.activities.TweetAdapter.OnReplyClick;
 import com.tweetco.activities.TweetAdapter.OnTweetClick;
 import com.tweetco.dao.Tweet;
 import com.tweetco.tweetlist.TrendingFeedMode;
@@ -172,6 +173,17 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 					getActivity().startActivity(intent);
 				}
 			}
+		}, new OnReplyClick() {
+			
+			@Override
+			public void onItemClick(int position) 
+			{
+				Tweet tweet = (Tweet)mAdapter.getItem(position);
+				if(tweet != null)
+				{
+					launchPostTweetActivity("@"+tweet.tweetowner+" ", tweet.iterator, tweet.tweetowner);
+				}
+			}
 		});
 
 		mNewPageLoader = new PageLoader(tweetListMode);
@@ -256,7 +268,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 			public void onClick(View v) 
 			{
 				EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
-				launchPostTweetActivity(typeTweet.getText().toString());
+				launchPostTweetActivity(typeTweet.getText().toString(), -1, null);
 			}
 		});
 
@@ -266,7 +278,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 			public void onClick(View v) 
 			{
 				EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
-				launchPostTweetActivity(typeTweet.getText().toString());
+				launchPostTweetActivity(typeTweet.getText().toString(), -1, null);
 			}
 		});
 	}
@@ -314,10 +326,15 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		});
 	}
 
-	public void launchPostTweetActivity(String existingString)
+	public void launchPostTweetActivity(String existingString, int replySourceTweetIterator, String replySourceTweetUsername)
 	{
 		Intent intent = new Intent(this.getActivity().getApplicationContext(),PostTweetActivity.class);
 		intent.putExtra(Constants.EXISTING_STRING, existingString);
+		if(!TextUtils.isEmpty(replySourceTweetUsername))
+		{
+			intent.putExtra("replySourceTweetUsername", replySourceTweetUsername);
+			intent.putExtra("replySourceTweetIterator", replySourceTweetIterator);
+		}
 		this.getActivity().startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
 	}
 

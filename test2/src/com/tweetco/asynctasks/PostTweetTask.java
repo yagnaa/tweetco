@@ -24,11 +24,11 @@ import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallba
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
 import com.tweetco.dao.Tweet;
 
-public class PostTweetTask extends AsyncTask<Void, Void, Tweet> 
+public class PostTweetTask extends AsyncTask<Void, Void, Exception> 
 {
 	public static interface PostTweetTaskCompletionCallback
 	{
-		public void onPostTweetTaskSuccess(Tweet tweet);
+		public void onPostTweetTaskSuccess();
 		public void onPostTweetTaskFailure ();
 		public void onPostTweetTaskCancelled();
 	}
@@ -38,7 +38,7 @@ public class PostTweetTask extends AsyncTask<Void, Void, Tweet>
 	private UIEventSink m_uicallback;
 	private Context mContext;
 	private PostTweetTaskParams mParams;
-	private Tweet mTweet = null;
+	private Exception mException = null;
 	
 	public PostTweetTask(Context context, PostTweetTaskParams params, UIEventSink uicallback, PostTweetTaskCompletionCallback completioncallback)
 	{
@@ -67,7 +67,7 @@ public class PostTweetTask extends AsyncTask<Void, Void, Tweet>
 	}
 	
 	@Override
-	protected Tweet doInBackground(Void... params) 
+	protected Exception doInBackground(Void... params) 
 	{
 		MobileServiceClient client = mParams.getClient();
 			JsonObject element = new JsonObject();
@@ -80,6 +80,11 @@ public class PostTweetTask extends AsyncTask<Void, Void, Tweet>
 			element.addProperty(ApiInfo.kTweetOwner, username);
 			element.addProperty(ApiInfo.kTweetContentKey, mParams.getTweetContent());
 			element.addProperty(ApiInfo.kTweetContentTags, mParams.getContentTags());
+			if(!TextUtils.isEmpty(mParams.getReplySourceTweetUsername()))
+			{
+				element.addProperty(ApiInfo.kInReplyToValue, String.valueOf(mParams.getReplySourceTweetIterator()));
+				element.addProperty(ApiInfo.kSourceUserKey, mParams.getReplySourceTweetUsername());
+			}
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();  
 			BitmapDrawable drawable = mParams.getTweetImage();
 			
@@ -100,27 +105,25 @@ public class PostTweetTask extends AsyncTask<Void, Void, Tweet>
 					if(exception == null)
 					{
 						Log.d("postTweet", "TweetPosted");
-						Gson gson = new Gson();
-						Type tweetType = new TypeToken<Tweet>(){}.getType();
-						mTweet = gson.fromJson(element, tweetType);
 					}
 					else
 					{
 						Log.e("postTweet", "TweetPost failed");
+						mException = exception;
 					}
 					
 				}
 			}, true);
 		
-		return mTweet;
+		return mException;
 	}
 
 	@Override
-	protected void onPostExecute(Tweet tweet)
+	protected void onPostExecute(Exception exception)
 	{
-		if(tweet != null)
+		if(exception == null)
 		{
-			m_completioncallback.onPostTweetTaskSuccess(tweet);
+			m_completioncallback.onPostTweetTaskSuccess();
 		}
 		else
 		{

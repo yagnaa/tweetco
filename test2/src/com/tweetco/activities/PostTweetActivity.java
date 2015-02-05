@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -46,9 +47,9 @@ import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
 import com.tweetco.asynctasks.PostTweetTask;
 import com.tweetco.asynctasks.PostTweetTask.PostTweetTaskCompletionCallback;
 import com.tweetco.asynctasks.PostTweetTaskParams;
-import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
+import com.tweetco.utility.AlertDialogUtility;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
 
@@ -70,6 +71,9 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	private Button mImageCameraButton;
 	private ImageView mTweetImage;
 	private String[] mUsernames;
+	
+	private int replySourceTweetIterator = -1;
+	private String replySourceTweetUsername = null;
 
 	private int mCharCountInt = TWEET_MAX_CHARS;
 	AsyncTaskEventHandler asyncTaskEventHandler = null;
@@ -94,7 +98,6 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mTweetContent.setAdapter(new ArrayAdapter<String>(PostTweetActivity.this,
 				android.R.layout.simple_dropdown_item_1line, mUsernames));
 		mTweetContent.setThreshold(1);
-
 
 		//From http://stackoverflow.com/questions/12691679/android-autocomplete-textview-similar-to-the-facebook-app
 		//Create a new Tokenizer which will get text after '@' and terminate on ' '
@@ -218,16 +221,17 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				params.setTweetContent(mTweetContent.getEditableText().toString());
 				params.setTweetImage((BitmapDrawable) mTweetImage.getDrawable());
 				params.setContentTags(mContentTags.getEditableText().toString());
+				params.setReplySourceTweetIterator(replySourceTweetIterator);
+				params.setReplySourceTweetUsername(replySourceTweetUsername);
 				
 				new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() 
 				{
 
 					@Override
-					public void onPostTweetTaskSuccess(Tweet tweet) 
+					public void onPostTweetTaskSuccess() 
 					{
 						asyncTaskEventHandler.dismiss();
 						Intent resultIntent = new Intent();
-						resultIntent.putExtra(Constants.POSTED_TWEET, tweet);
 						PostTweetActivity.this.setResult(RESULT_OK, resultIntent);
 						finish();
 					}
@@ -237,6 +241,14 @@ public class PostTweetActivity extends TweetCoBaseActivity
 					{
 						asyncTaskEventHandler.dismiss();
 						Log.e(TAG, "Posting tweet failed");
+						AlertDialogUtility.getAlertDialogOK(PostTweetActivity.this, "Failed to post your 140 bytes", new  DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								// TODO Auto-generated method stub
+								
+							}
+						});
 					}
 
 					@Override
@@ -432,6 +444,8 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	@Override
 	public void onResumeCallback() 
 	{
-		
+		Intent intent = getIntent();
+		replySourceTweetIterator = intent.getIntExtra("replySourceTweetIterator", -1);
+		replySourceTweetUsername = intent.getStringExtra("replySourceTweetUsername");
 	}
 }

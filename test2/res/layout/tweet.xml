@@ -135,6 +135,15 @@
         android:paddingTop="5dp" >
 
         <ImageView
+            android:id="@+id/replyToTweet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="40dp"
+            android:clickable="true"
+            android:src="@drawable/ic_action_reply" />
+        
+        <ImageView
             android:id="@+id/upvote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

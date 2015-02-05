@@ -10,6 +10,8 @@ public class PostTweetTaskParams
 	private String mTweetContent;
 	private BitmapDrawable mTweetImage;
 	private String mContentTags;
+	private int replySourceTweetIterator = -1;
+	private String replySourceTweetUsername = null;
 	
 	private MobileServiceClient mClient;
 	
@@ -51,5 +53,21 @@ public class PostTweetTaskParams
 
 	public void setContentTags(String mContentTags) {
 		this.mContentTags = mContentTags;
+	}
+
+	public int getReplySourceTweetIterator() {
+		return replySourceTweetIterator;
+	}
+
+	public void setReplySourceTweetIterator(int replySourceTweetIterator) {
+		this.replySourceTweetIterator = replySourceTweetIterator;
+	}
+
+	public String getReplySourceTweetUsername() {
+		return replySourceTweetUsername;
+	}
+
+	public void setReplySourceTweetUsername(String replySourceTweetUsername) {
+		this.replySourceTweetUsername = replySourceTweetUsername;
 	}
 }

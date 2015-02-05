@@ -57,6 +57,11 @@ public class TweetAdapter extends BaseAdapter
 	{
 		void onItemClick(int position);
 	}
+	
+	public interface OnReplyClick
+	{
+		void onItemClick(int position);
+	}
 
 	private final Context mContext;
 	private ImageFetcher mImageFetcher; //Fetches the images
@@ -67,6 +72,7 @@ public class TweetAdapter extends BaseAdapter
 
 	private OnProfilePicClick mOnProfilePicClickCallback;
 	private OnTweetClick mOnTweetClickCallback;
+	private OnReplyClick mOnReplyClickCallback;
 
 	protected InfiniteScrollListPageListener mInfiniteListPageListener; 
 
@@ -108,7 +114,7 @@ public class TweetAdapter extends BaseAdapter
 		String OwenerName;
 	}
 
-	public TweetAdapter(Context context, ImageFetcher imageFetcher, ImageFetcher imageFetcher2, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback, OnTweetClick onTweetClickCallback) 
+	public TweetAdapter(Context context, ImageFetcher imageFetcher, ImageFetcher imageFetcher2, TweetListMode mode, OnProfilePicClick onProfilePicClickCallback, OnTweetClick onTweetClickCallback, OnReplyClick onReplyClickCallback) 
 	{
 		super();
 		mContext = context;
@@ -119,6 +125,7 @@ public class TweetAdapter extends BaseAdapter
 
 		mOnProfilePicClickCallback = onProfilePicClickCallback;
 		mOnTweetClickCallback = onTweetClickCallback;
+		mOnReplyClickCallback = onReplyClickCallback;
 	}
 
 	@Override
@@ -149,6 +156,7 @@ public class TweetAdapter extends BaseAdapter
 		ImageView upvoteView;
 		ImageView bookmarkView;
 		TextView inReplyTo;
+		ImageView replyToTweetButton;
 		//		ImageView hideTweet;
 	}
 
@@ -169,6 +177,7 @@ public class TweetAdapter extends BaseAdapter
 			viewholder.tweetContent = (TextView) convertView.findViewById(R.id.tweetcontent);
 			viewholder.tweetTime = (TextView) convertView.findViewById(R.id.time);
 			viewholder.inReplyTo = UiUtility.getView(convertView, R.id.in_reply_to);
+			viewholder.replyToTweetButton = UiUtility.getView(convertView, R.id.replyToTweet);
 
 			viewholder.tweetContentImage = (ImageView) convertView.findViewById(R.id.tweet_content_image);
 			viewholder.upvoteView = (ImageView) convertView.findViewById(R.id.upvote);
@@ -220,6 +229,14 @@ public class TweetAdapter extends BaseAdapter
 
 			loadTweetImage(tweet, holder.tweetContentImage);
 
+			holder.replyToTweetButton.setOnClickListener(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					mOnReplyClickCallback.onItemClick(position);
+				}
+			});
 
 			holder.tweetTime.setText(Utils.getTime(tweet.__createdAt));
 
@@ -297,7 +314,7 @@ public class TweetAdapter extends BaseAdapter
 
 		return convertView;
 	}
-
+	
 	public TweetListMode getTweetListMode()
 	{
 		return mTweetListMode;

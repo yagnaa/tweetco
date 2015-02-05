@@ -27,6 +27,7 @@ public class ApiInfo
 	public static final String kFeedTypeKey ="feedtype";
 	public static final String kHomeFeedTypeValue ="homefeed";
 	public static final String kUserFeedTypeValue ="userfeed";
+	public static final String kInReplyToValue = "inreplyto";
 
 
 	//Feedback

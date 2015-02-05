@@ -47,6 +47,7 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		ImageView upvoteView;
 		ImageView bookmarkView;
 		TextView inReplyTo;
+		ImageView replyToTweetButton;
 		//		ImageView hideTweet;
 	}
 	
@@ -78,6 +79,7 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		viewholder.tweetContent = UiUtility.getView(this, R.id.tweetcontent);
 		viewholder.tweetTime = UiUtility.getView(this, R.id.time);
 		viewholder.inReplyTo = UiUtility.getView(this, R.id.in_reply_to);
+		viewholder.replyToTweetButton = UiUtility.getView(this, R.id.replyToTweet);
 
 		viewholder.tweetContentImage = UiUtility.getView(this, R.id.tweet_content_image);
 		viewholder.upvoteView = UiUtility.getView(this, R.id.upvote);
@@ -148,6 +150,16 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 					}
 				}
 			});
+			
+			viewholder.replyToTweetButton.setOnClickListener(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					launchPostTweetActivity("@"+tweet.tweetowner+" ", tweet.iterator, tweet.tweetowner);
+				}
+			});
+			
 			loadTweetImage(tweet, viewholder.tweetContentImage);
 
 
@@ -237,6 +249,18 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 	        ft.replace(R.id.tweetsReplyListFragmentContainer, tweetListFragment);
 	        ft.commit();
 		}
+	}
+	
+	public void launchPostTweetActivity(String existingString, int replySourceTweetIterator, String replySourceTweetUsername)
+	{
+		Intent intent = new Intent(this,PostTweetActivity.class);
+		intent.putExtra(Constants.EXISTING_STRING, existingString);
+		if(!TextUtils.isEmpty(replySourceTweetUsername))
+		{
+			intent.putExtra("replySourceTweetUsername", replySourceTweetUsername);
+			intent.putExtra("replySourceTweetIterator", replySourceTweetIterator);
+		}
+		this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
 	}
 	
 	public void bookmark(final View bookmarkView,final String requestingUser,final int iterator,String tweetOwner)

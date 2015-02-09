@@ -141,7 +141,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="40dp"
             android:clickable="true"
-            android:src="@drawable/ic_action_reply" />
+            android:src="@drawable/ic_action_reply" android:visibility="gone" />
         
         <ImageView
             android:id="@+id/upvote"

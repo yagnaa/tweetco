@@ -72,7 +72,7 @@
             android:layout_gravity="center_vertical"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/display_name_color"
+            android:textStyle="bold"
             android:textSize="14dp" />
 
         <TextView
@@ -138,27 +138,46 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="40dp"
             android:clickable="true"
             android:src="@drawable/reply" />
         
-        <ImageView
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="right">
+            <ImageView
             android:id="@+id/upvote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="40dp"
             android:clickable="true"
             android:src="@drawable/like_selector" />
+        
+        <TextView android:id="@+id/tweet_upvoteCount" android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:text="0" android:textSize="12sp" 
+            android:textAppearance="?android:attr/textAppearanceMedium"  
+            android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+        
+        
 
-        <ImageView
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="right">
+            <ImageView
             android:id="@+id/bookmark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="60dp"
             android:clickable="true"
             android:src="@drawable/bookmark_selector" />
+        
+        <TextView android:id="@+id/tweet_bookmarksCount" android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:text="0" android:textSize="12sp" 
+            android:textAppearance="?android:attr/textAppearanceMedium"  
+            android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+        
+        
     </LinearLayout>
 
 </RelativeLayout>

@@ -157,6 +157,8 @@ public class TweetAdapter extends BaseAdapter
 		ImageView bookmarkView;
 		TextView inReplyTo;
 		ImageView replyToTweetButton;
+		TextView upvotesCount;
+		TextView bookmarksCount;
 		//		ImageView hideTweet;
 	}
 
@@ -178,6 +180,8 @@ public class TweetAdapter extends BaseAdapter
 			viewholder.tweetTime = (TextView) convertView.findViewById(R.id.time);
 			viewholder.inReplyTo = UiUtility.getView(convertView, R.id.in_reply_to);
 			viewholder.replyToTweetButton = UiUtility.getView(convertView, R.id.replyToTweet);
+			viewholder.upvotesCount = UiUtility.getView(convertView, R.id.tweet_upvoteCount);
+			viewholder.bookmarksCount = UiUtility.getView(convertView, R.id.tweet_bookmarksCount);
 
 			viewholder.tweetContentImage = (ImageView) convertView.findViewById(R.id.tweet_content_image);
 			viewholder.upvoteView = (ImageView) convertView.findViewById(R.id.upvote);
@@ -258,7 +262,7 @@ public class TweetAdapter extends BaseAdapter
 			//UpVote ImageView
 
 			holder.upvoteView.setTag(viewHolderBookMarkUpvoteAndHide);
-			setUpVoteFlag(holder.upvoteView,tweet,TweetCommonData.getUserName());
+			setUpVoteFlag(holder.upvoteView, holder.upvotesCount, tweet,TweetCommonData.getUserName());
 			holder.upvoteView.setOnClickListener(new OnClickListener() 
 			{	
 				@Override
@@ -273,7 +277,7 @@ public class TweetAdapter extends BaseAdapter
 
 
 			holder.bookmarkView.setTag(viewHolderBookMarkUpvoteAndHide);
-			setBookMarkFlag(holder.bookmarkView,tweet,TweetCommonData.getUserName());
+			setBookMarkFlag(holder.bookmarkView, holder.bookmarksCount, tweet,TweetCommonData.getUserName());
 			holder.bookmarkView.setOnClickListener(new OnClickListener() 
 			{	
 				@Override
@@ -314,6 +318,20 @@ public class TweetAdapter extends BaseAdapter
 
 		return convertView;
 	}
+	
+	private void setCount(TextView view, String input)
+	{
+		int count = 0;
+		if(!TextUtils.isEmpty(input))
+		{
+			String[] counts = input.split(";");
+			count = counts.length;
+		}
+		
+		view.setText(String.valueOf(count));
+		
+	}
+	
 	
 	public TweetListMode getTweetListMode()
 	{
@@ -387,21 +405,23 @@ public class TweetAdapter extends BaseAdapter
 		this.notifyDataSetChanged();
 	}
 
-	private void setUpVoteFlag(ImageView imageView,Tweet linkedTweet,String userName)
+	private void setUpVoteFlag(ImageView imageView, TextView count, Tweet linkedTweet,String userName)
 	{
 		if(linkedTweet != null && imageView!=null)
 		{
 			boolean isCurrentUserUpVoted  = TweetUtils.isStringPresent(linkedTweet.upvoters, userName);
 			imageView.setSelected(isCurrentUserUpVoted);
+			setCount(count, linkedTweet.upvoters);
 		}
 	}
 
-	private void setBookMarkFlag(ImageView imageView,Tweet linkedTweet,String userName)
+	private void setBookMarkFlag(ImageView imageView, TextView count, Tweet linkedTweet,String userName)
 	{
 		if(linkedTweet != null && imageView!=null)
 		{
 			boolean didCurrentUserBookmark  = TweetUtils.isStringPresent(linkedTweet.bookmarkers, userName);
 			imageView.setSelected(didCurrentUserBookmark);
+			setCount(count, linkedTweet.bookmarkers);
 		}
 	}
 
@@ -435,7 +455,7 @@ public class TweetAdapter extends BaseAdapter
 
 
 
-	public void upVote(final View upvoteView,final String requestingUser,final int iterator,String tweetOwner)
+	public void upVote(final View upvoteView, final String requestingUser,final int iterator,String tweetOwner)
 	{
 		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
@@ -458,6 +478,7 @@ public class TweetAdapter extends BaseAdapter
 						//TODO change the adapter underneath
 						Tweet tweet = (Tweet)TweetAdapter.this.getItem(viewHolderBookMarkUpvoteAndHide.position);
 						TweetCommonData.like(tweet,TweetCommonData.getUserName());
+						upvoteView.invalidate();
 					}
 
 				}
@@ -467,6 +488,7 @@ public class TweetAdapter extends BaseAdapter
 					if(upvoteView!=null && (viewHolderBookMarkUpvoteAndHide.iterator == iterator))
 					{
 						upvoteView.setSelected(false);
+						upvoteView.invalidate();
 					}
 					Log.e(TAG,"Exception upVoting a tweet") ;
 					arg1.printStackTrace();
@@ -499,6 +521,7 @@ public class TweetAdapter extends BaseAdapter
 						bookmarkView.setSelected(true);
 						Tweet tweet = (Tweet)TweetAdapter.this.getItem(viewHolderBookMarkUpvoteAndHide.position);
 						TweetCommonData.bookmark(tweet,TweetCommonData.getUserName());
+						bookmarkView.invalidate();
 					}			
 				}
 				else
@@ -507,10 +530,12 @@ public class TweetAdapter extends BaseAdapter
 					if(bookmarkView!=null && (viewHolderBookMarkUpvoteAndHide.iterator == iterator))
 					{
 						bookmarkView.setSelected(false);
+						bookmarkView.invalidate();
 					}
 					Log.e(TAG,"Exception bookmarking a tweet") ;
 					arg1.printStackTrace();
 				}
+				
 
 			}
 		},false);

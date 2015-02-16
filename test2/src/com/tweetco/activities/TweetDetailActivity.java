@@ -48,6 +48,8 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		ImageView bookmarkView;
 		TextView inReplyTo;
 		ImageView replyToTweetButton;
+		TextView tweet_upvotesCount;
+		TextView tweet_bookmarksCount;
 		//		ImageView hideTweet;
 	}
 	
@@ -80,6 +82,8 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		viewholder.tweetTime = UiUtility.getView(this, R.id.time);
 		viewholder.inReplyTo = UiUtility.getView(this, R.id.in_reply_to);
 		viewholder.replyToTweetButton = UiUtility.getView(this, R.id.replyToTweet);
+		viewholder.tweet_upvotesCount = UiUtility.getView(this, R.id.tweet_upvoteCount);
+		viewholder.tweet_bookmarksCount = UiUtility.getView(this, R.id.tweet_bookmarksCount);
 
 		viewholder.tweetContentImage = UiUtility.getView(this, R.id.tweet_content_image);
 		viewholder.upvoteView = UiUtility.getView(this, R.id.upvote);
@@ -119,6 +123,8 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 
 			viewholder.tweetContent.setMovementMethod(new LinkMovementMethod());
 
+			setCount(viewholder.tweet_upvotesCount, tweet.upvoters);
+			setCount(viewholder.tweet_bookmarksCount, tweet.bookmarkers);
 			viewholder.bookmarksCount.setText(String.valueOf(getCount(tweet.bookmarkers, ";") + " Bookmarks"));
 			viewholder.bookmarksCount.setOnClickListener(new OnClickListener() {
 				
@@ -249,6 +255,19 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 	        ft.replace(R.id.tweetsReplyListFragmentContainer, tweetListFragment);
 	        ft.commit();
 		}
+	}
+	
+	private void setCount(TextView view, String input)
+	{
+		int count = 0;
+		if(!TextUtils.isEmpty(input))
+		{
+			String[] counts = input.split(";");
+			count = counts.length;
+		}
+		
+		view.setText(String.valueOf(count));
+		
 	}
 	
 	public void launchPostTweetActivity(String existingString, int replySourceTweetIterator, String replySourceTweetUsername)

@@ -215,17 +215,23 @@ public class TweetAdapter extends BaseAdapter
 		//Load TextFields here
 		final Tweet tweet = (Tweet) getItem(position);
 		TweetUser tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner.toLowerCase());
-		if (tweet != null && tweeter!=null) 
+		if (tweet != null) 
 		{
-			holder.handle.setText(Utils.getTweetHandle(tweeter.username));			
-			if(!TextUtils.isEmpty(tweeter.displayname))
+			String username = null;
+			String displayName = null;
+			if(tweeter == null)
 			{
-				holder.userName.setText(tweeter.displayname);
+				username = Utils.getTweetHandle("anonymous");
+				displayName = "Anonymous";
 			}
 			else
 			{
-				holder.userName.setText(tweeter.username);
+				username = Utils.getTweetHandle(tweeter.username);
+				displayName = tweeter.displayname;
 			}
+			
+			holder.handle.setText(username);			
+			holder.userName.setText(displayName);
 			holder.tweetContent.setText(tweet.tweetcontent);	
 			Linkify.addLinks(holder.tweetContent, Linkify.WEB_URLS | Linkify.HASH_TAGS | Linkify.USER_HANDLE);
 
@@ -307,6 +313,10 @@ public class TweetAdapter extends BaseAdapter
 			if(tweeter!=null)
 			{
 				loadProfileImage(tweeter,holder.profilePicImage);
+			}
+			else
+			{
+				mImageFetcher.loadImage("A", holder.profilePicImage);
 			}
 
 		}

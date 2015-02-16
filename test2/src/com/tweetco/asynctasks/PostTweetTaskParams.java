@@ -12,6 +12,7 @@ public class PostTweetTaskParams
 	private String mContentTags;
 	private int replySourceTweetIterator = -1;
 	private String replySourceTweetUsername = null;
+	private boolean bAnonymous = false;
 	
 	private MobileServiceClient mClient;
 	
@@ -69,5 +70,13 @@ public class PostTweetTaskParams
 
 	public void setReplySourceTweetUsername(String replySourceTweetUsername) {
 		this.replySourceTweetUsername = replySourceTweetUsername;
+	}
+
+	public boolean isAnonymous() {
+		return bAnonymous;
+	}
+
+	public void setAnonymous(boolean bAnonymous) {
+		this.bAnonymous = bAnonymous;
 	}
 }

@@ -85,6 +85,10 @@ public class PostTweetTask extends AsyncTask<Void, Void, Exception>
 				element.addProperty(ApiInfo.kInReplyToValue, String.valueOf(mParams.getReplySourceTweetIterator()));
 				element.addProperty(ApiInfo.kSourceUserKey, mParams.getReplySourceTweetUsername());
 			}
+			if(mParams.isAnonymous())
+			{
+				element.addProperty(ApiInfo.kAnonymous, "TRUE");
+			}
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();  
 			BitmapDrawable drawable = mParams.getTweetImage();
 			

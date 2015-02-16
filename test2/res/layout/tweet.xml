@@ -50,7 +50,6 @@
             android:textSize="14dp" 
             android:paddingLeft="10dp"
             android:layout_toRightOf="@+id/profile_pic"
-            android:visibility="gone"
             
             />
 
@@ -141,7 +140,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="40dp"
             android:clickable="true"
-            android:src="@drawable/ic_action_reply" android:visibility="gone" />
+            android:src="@drawable/ic_action_reply" />
         
         <ImageView
             android:id="@+id/upvote"

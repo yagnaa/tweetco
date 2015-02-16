@@ -56,7 +56,7 @@
             android:layout_marginLeft="16dp"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/display_name_color"
+            android:textStyle="bold"
             android:textSize="16dp" />
 
         <TextView

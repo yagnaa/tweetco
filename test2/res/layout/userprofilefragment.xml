@@ -45,7 +45,7 @@
                     android:layout_gravity="center"
                     android:paddingTop="3dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/display_name_color"
+                    android:textStyle="bold"
                     android:textSize="14dp" >
                 </TextView>
 

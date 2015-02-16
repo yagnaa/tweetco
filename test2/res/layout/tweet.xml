@@ -83,7 +83,7 @@
             android:layout_marginLeft="15dp"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/purple_theme_color"
+            android:textColor="@color/green_theme_color"
             android:textSize="12dp" />
 
         <TextView
@@ -93,7 +93,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="15dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/purple_theme_color"
+            android:textColor="@color/text_grey_light"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -140,7 +140,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="40dp"
             android:clickable="true"
-            android:src="@drawable/ic_action_reply" />
+            android:src="@drawable/reply" />
         
         <ImageView
             android:id="@+id/upvote"

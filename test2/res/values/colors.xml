@@ -12,6 +12,8 @@
     <color name="purple_theme_color">#9d53dc</color>
     <color name="purple_onpress_color">#cda8ed</color>
     <color name="semi_white_color">#55ffffff</color>
+    <color name="green_theme_color">#34ba90</color>
+    
 
     <!-- Solid Background Color -->
     <color name="solid_background_color">#ffdbdbdb</color>
@@ -40,12 +42,12 @@
     <color name="selector_red">#c41a08</color>
     <color name="selector_orange">#ff9433</color>
     <color name="selector_yellow">#ffd929</color>
-    <color name="selector_green">#00ff00</color>
     <color name="selector_blue">#82cfec</color>
     <color name="selector_purple">#9d53d5</color>
     <color name="selector_dark_purple">#7523bb</color>
     <color name="selector_brown">#a18464</color>
     <color name="selector_dark_gray">#808080</color>
+    <color name="selector_green">#34ba90</color>
 
     <!-- Edit Note -->
     <color name="tag_selected">#d9d9d9</color>

@@ -31,7 +31,7 @@
         android:layout_gravity="center_vertical"
         android:text="140 Bytes"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/purple_theme_color"
+        android:textColor="@color/green_theme_color"
         android:textSize="18dp"
         android:textStyle="bold" />
 

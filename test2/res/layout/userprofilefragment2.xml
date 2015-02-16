@@ -56,7 +56,7 @@
                     android:layout_gravity="center"
                     android:paddingTop="2dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/purple_theme_color"
+                    android:textColor="@color/green_theme_color"
                     android:textSize="12dp" >
                 </TextView>
             </LinearLayout>

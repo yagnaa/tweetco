@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -274,6 +275,7 @@ public class TweetAdapter extends BaseAdapter
 				@Override
 				public void onClick(View upvoteView) 
 				{
+					upvoteView.startAnimation(AnimationUtils.loadAnimation(TweetCo.mContext, R.anim.animation));
 					upvoteView.setSelected(true);
 					ViewHolderForBookmarkUpVoteAndHide holder = (ViewHolderForBookmarkUpVoteAndHide) upvoteView.getTag();
 					upVote(upvoteView,TweetCommonData.getUserName(), holder.iterator, holder.OwenerName);
@@ -289,6 +291,7 @@ public class TweetAdapter extends BaseAdapter
 				@Override
 				public void onClick(View bookmarkView) 
 				{
+					bookmarkView.startAnimation(AnimationUtils.loadAnimation(TweetCo.mContext, R.anim.animation));
 					bookmarkView.setSelected(true);
 					ViewHolderForBookmarkUpVoteAndHide viewHolderBookMarkUpvoteAndHide = (ViewHolderForBookmarkUpVoteAndHide) bookmarkView.getTag();
 					bookmark(bookmarkView,TweetCommonData.getUserName(), viewHolderBookMarkUpvoteAndHide.iterator, viewHolderBookMarkUpvoteAndHide.OwenerName);

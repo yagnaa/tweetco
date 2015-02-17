@@ -51,12 +51,6 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.tweetco.activities.LeaderboardActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name="com.tweetco.activities.FTUActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -101,6 +95,7 @@
         </activity>
         <activity
             android:name="com.tweetco.activities.TweetDetailActivity"
+            android:parentActivityName="com.tweetco.activities.AllInOneActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
@@ -118,6 +113,13 @@ ImageViewActivity
         </activity>
         <activity
             android:name="com.tweetco.activities.ImageViewActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+        
+        <activity
+            android:name="com.tweetco.activities.AboutActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >

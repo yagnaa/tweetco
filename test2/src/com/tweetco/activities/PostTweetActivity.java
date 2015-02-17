@@ -17,6 +17,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PatternMatcher;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -26,6 +28,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -90,6 +93,14 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.posttweet);
+		
+	    
+		ActionBar actionbar = getSupportActionBar();
+		if(actionbar!=null)
+		{
+			actionbar.setHomeButtonEnabled(true);
+			actionbar.setDisplayHomeAsUpEnabled(true);
+		}
 
 		mTweetContent = UiUtility.getView(this, R.id.tweetContent);
 		mContentTags = UiUtility.getView(this, R.id.contentTags);
@@ -335,6 +346,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	    }
 	    
 	    handleInputText(inputText);
+
 	}
 	
 	void handleSendImage(Intent intent) 
@@ -514,7 +526,18 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	public void onResumeCallback() 
 	{
 		Intent intent = getIntent();
-		replySourceTweetIterator = intent.getIntExtra("replySourceTweetIterator", -1);
-		replySourceTweetUsername = intent.getStringExtra("replySourceTweetUsername");
+		replySourceTweetIterator = intent.getIntExtra(Constants.INTENT_EXTRA_REPLY_SOURCE_TWEET_ITERATOR, -1);
+		replySourceTweetUsername = intent.getStringExtra(Constants.INTENT_EXTRA_REPLY_SOURCE_TWEET_USERNAME);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    // Respond to the action bar's Up/Home button
+	    case android.R.id.home:
+	        finish();
+	        return true;
+	    }
+	    return super.onOptionsItemSelected(item);
 	}
 }

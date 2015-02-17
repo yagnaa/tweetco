@@ -28,5 +28,8 @@ public final class Constants
 	
 	public static final String IMAGE_TO_VIEW = "image_to_view";
 	
+	public static final String INTENT_EXTRA_REPLY_SOURCE_TWEET_USERNAME = "replySourceTweetUsername";
+	public static final String INTENT_EXTRA_REPLY_SOURCE_TWEET_ITERATOR = "replySourceTweetIterator";
+	
 	
 }

@@ -365,8 +365,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		intent.putExtra(Constants.EXISTING_STRING, existingString);
 		if(!TextUtils.isEmpty(replySourceTweetUsername))
 		{
-			intent.putExtra("replySourceTweetUsername", replySourceTweetUsername);
-			intent.putExtra("replySourceTweetIterator", replySourceTweetIterator);
+			intent.putExtra(Constants.INTENT_EXTRA_REPLY_SOURCE_TWEET_USERNAME, replySourceTweetUsername);
+			intent.putExtra(Constants.INTENT_EXTRA_REPLY_SOURCE_TWEET_ITERATOR, replySourceTweetIterator);
 		}
 		this.getActivity().startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
 	}

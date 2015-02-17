@@ -2,6 +2,9 @@ package com.tweetco.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
@@ -37,11 +40,28 @@ public class ImageViewActivity extends TweetCoBaseActivity
 			}
 		});
 		
+		ActionBar actionbar = getSupportActionBar();
+		if(actionbar!=null)
+		{
+			actionbar.setHomeButtonEnabled(true);
+			actionbar.setDisplayHomeAsUpEnabled(true);
+		}
 		
 	}
 
 	@Override
 	public void onResumeCallback() {
 		
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    // Respond to the action bar's Up/Home button
+	    case android.R.id.home:
+	    	finish();
+	        return true;
+	    }
+	    return super.onOptionsItemSelected(item);
 	}
 }

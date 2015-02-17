@@ -10,12 +10,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-import com.tweetco.activities.Constants;
-import com.tweetco.activities.LeaderboardFragment;
-import com.tweetco.activities.TrendingFragment;
-import com.tweetco.activities.UsersListFragment;
 import com.tweetco.tweetlist.BookmarksFeedMode;
-import com.tweetco.tweetlist.HomeFeedMode;
 import com.tweetco.tweetlist.UserFeedMode;
 import com.tweetco.tweets.TweetCommonData;
 

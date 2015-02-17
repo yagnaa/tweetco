@@ -2,23 +2,27 @@ package com.tweetco.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 import com.onefortybytes.R;
-import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.dao.Tweet;
+import com.tweetco.database.dao.Account;
 import com.tweetco.notifications.PushNotificationHandler;
 import com.tweetco.tweets.TweetCommonData;
 
@@ -69,8 +73,7 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
 		m_actionbar.setCustomView(customView, params);
 		m_actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ~ActionBar.DISPLAY_SHOW_HOME);
-		m_actionbar.setDisplayHomeAsUpEnabled(false);
-		
+		m_actionbar.setDisplayHomeAsUpEnabled(false);	
 	}
 
 	private void hideKeyboard() 
@@ -108,6 +111,8 @@ public class AllInOneActivity extends TweetCoBaseActivity
 		});
 
 		mPagerAdapter = new CustomFragmentPagerAdapter(this.getApplicationContext(), getSupportFragmentManager());
+		
+		mViewPager.setPageTransformer(true, new DepthPageTransformer());
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount() - 1);
 		mViewPager.setCurrentItem(0);
@@ -189,6 +194,48 @@ public class AllInOneActivity extends TweetCoBaseActivity
 				AllInOneActivity.this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
 			}
 		});
+		
+		Account account = TweetCommonData.getAccount();
+		if(account!=null)
+		{
+			((TextView)m_actionbar.getCustomView().findViewById(R.id.title)).setText(account.getUsername());
+		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    // Inflate the menu items for use in the action bar
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.launcher, menu);
+	    return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.action_about:
+	        	Intent intent = new Intent(this.getApplicationContext(),AboutActivity.class);
+	    		this.startActivity(intent);
+	            return true;
+	        case R.id.action_feedback:
+	        	launchPostTweetActivity("#feedback", -1, null);
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	
+	public void launchPostTweetActivity(String existingString, int replySourceTweetIterator, String replySourceTweetUsername)
+	{
+		Intent intent = new Intent(this.getApplicationContext(),PostTweetActivity.class);
+		intent.putExtra(Constants.EXISTING_STRING, existingString);
+		if(!TextUtils.isEmpty(replySourceTweetUsername))
+		{
+			intent.putExtra(Constants.INTENT_EXTRA_REPLY_SOURCE_TWEET_USERNAME, replySourceTweetUsername);
+			intent.putExtra(Constants.INTENT_EXTRA_REPLY_SOURCE_TWEET_ITERATOR, replySourceTweetIterator);
+		}
+		this.startActivityForResult(intent, Constants.POSTED_TWEET_REQUEST_CODE);
 	}
 
 }

@@ -37,9 +37,6 @@ public class CustomFragmentPagerAdapter extends FragmentStatePagerAdapter
     		e.printStackTrace();
 		}
 	}
-	
-	
-
 
 	@Override
 	public CharSequence getPageTitle(int position) {

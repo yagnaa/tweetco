@@ -107,17 +107,23 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		});
 		
 		TweetUser tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner.toLowerCase());
-		if (tweet != null && tweeter!=null) 
+		if (tweet != null) 
 		{
-			viewholder.handle.setText(Utils.getTweetHandle(tweeter.username));			
-			if(!TextUtils.isEmpty(tweeter.displayname))
+			String username = null;
+			String displayName = null;
+			if(tweeter == null)
 			{
-				viewholder.userName.setText(tweeter.displayname);
+				username = Utils.getTweetHandle("anonymous");
+				displayName = "Anonymous";
 			}
 			else
 			{
-				viewholder.userName.setText(tweeter.username);
+				username = Utils.getTweetHandle(tweeter.username);
+				displayName = tweeter.displayname;
 			}
+			
+			viewholder.handle.setText(username);			
+			viewholder.userName.setText(displayName);
 			viewholder.tweetContent.setText(tweet.tweetcontent);	
 			Linkify.addLinks(viewholder.tweetContent, Linkify.WEB_URLS | Linkify.HASH_TAGS | Linkify.USER_HANDLE);
 
@@ -235,6 +241,10 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 			if(tweeter!=null)
 			{
 				loadProfileImage(tweeter,viewholder.profilePicImage);
+			}
+			else
+			{
+				mImageFetcher.loadImage("A", viewholder.profilePicImage);
 			}
 
 		}

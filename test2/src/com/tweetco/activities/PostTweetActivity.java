@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -14,6 +16,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PatternMatcher;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -27,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
@@ -62,6 +66,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 
 	private static final int REQUEST_CODE_IMAGE_SELECT = 100;
 	private static final int REQUEST_CODE_IMAGE_CAPTURE = 101;
+	private static final Pattern HASH_TAG_PATTERN = Pattern.compile("(^|\\W)(#[a-z\\d][\\w-]*)", Pattern.CASE_INSENSITIVE);
 
 	private MultiAutoCompleteTextView mTweetContent;
 	private TextView mCharCount;
@@ -70,6 +75,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	private Button mImageGalleryButton;
 	private Button mImageCameraButton;
 	private ImageView mTweetImage;
+	private CheckBox mAnonymousCheckBox = null;
 	private String[] mUsernames;
 	
 	private int replySourceTweetIterator = -1;
@@ -92,6 +98,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mImageGalleryButton = UiUtility.getView(this, R.id.imageGalleryButton);
 		mImageCameraButton = UiUtility.getView(this, R.id.imageCameraButton);
 		mTweetImage = UiUtility.getView(this, R.id.tweetImaage);
+		mAnonymousCheckBox = UiUtility.getView(this, R.id.anonymousCheckBox);
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Posting...");
 		asyncTaskEventHandler2 = new AsyncTaskEventHandler(this, "Shortening Urls...");
 		mUsernames = getUsernamesAndHashtags(TweetCommonData.tweetUsers.values().iterator(), TweetCommonData.trendingTagLists.iterator());
@@ -208,49 +215,73 @@ public class PostTweetActivity extends TweetCoBaseActivity
 			@Override
 			public void onClick(View v) 
 			{
-
-				MobileServiceClient client = TweetCommonData.mClient;
-				PostTweetTaskParams params = new PostTweetTaskParams(client, TweetCommonData.getUserName());
-				params.setTweetContent(mTweetContent.getEditableText().toString());
-				params.setTweetImage((BitmapDrawable) mTweetImage.getDrawable());
-				params.setContentTags(mContentTags.getEditableText().toString());
-				params.setReplySourceTweetIterator(replySourceTweetIterator);
-				params.setReplySourceTweetUsername(replySourceTweetUsername);
-				
-				new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() 
+				String tweetContent = mTweetContent.getEditableText().toString();
+				if(!TextUtils.isEmpty(tweetContent))
 				{
-
-					@Override
-					public void onPostTweetTaskSuccess() 
+					boolean bAnonymous = mAnonymousCheckBox.isChecked();
+					boolean bPostTweet = true;
+					if(bAnonymous)
 					{
-						asyncTaskEventHandler.dismiss();
-						Intent resultIntent = new Intent();
-						PostTweetActivity.this.setResult(RESULT_OK, resultIntent);
-						finish();
+						Matcher matcher = HASH_TAG_PATTERN.matcher(tweetContent);
+						if(!matcher.find())
+						{
+							bPostTweet = false;
+							AlertDialogUtility.getAlertDialogOK(PostTweetActivity.this, "Your anonymous post should have #hashtag for it to be searchable by others. Please add a suitable #hashtag to your post.", null).show();
+						}
 					}
-
-					@Override
-					public void onPostTweetTaskFailure() 
+					
+					if(bPostTweet)
 					{
-						asyncTaskEventHandler.dismiss();
-						Log.e(TAG, "Posting tweet failed");
-						AlertDialogUtility.getAlertDialogOK(PostTweetActivity.this, "Failed to post your 140 bytes", new  DialogInterface.OnClickListener() {
-							
+						MobileServiceClient client = TweetCommonData.mClient;
+						PostTweetTaskParams params = new PostTweetTaskParams(client, TweetCommonData.getUserName());
+						params.setTweetContent(mTweetContent.getEditableText().toString());
+						params.setTweetImage((BitmapDrawable) mTweetImage.getDrawable());
+						params.setContentTags(mContentTags.getEditableText().toString());
+						params.setReplySourceTweetIterator(replySourceTweetIterator);
+						params.setReplySourceTweetUsername(replySourceTweetUsername);
+						params.setAnonymous(bAnonymous);
+						
+						new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() 
+						{
+
 							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								
+							public void onPostTweetTaskSuccess() 
+							{
+								asyncTaskEventHandler.dismiss();
+								Intent resultIntent = new Intent();
+								PostTweetActivity.this.setResult(RESULT_OK, resultIntent);
+								finish();
 							}
-						});
-					}
 
-					@Override
-					public void onPostTweetTaskCancelled() 
-					{
-						asyncTaskEventHandler.dismiss();
+							@Override
+							public void onPostTweetTaskFailure() 
+							{
+								asyncTaskEventHandler.dismiss();
+								Log.e(TAG, "Posting tweet failed");
+								AlertDialogUtility.getAlertDialogOK(PostTweetActivity.this, "Failed to post your 140 bytes", new  DialogInterface.OnClickListener() {
+									
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										// TODO Auto-generated method stub
+										
+									}
+								});
+							}
 
+							@Override
+							public void onPostTweetTaskCancelled() 
+							{
+								asyncTaskEventHandler.dismiss();
+
+							}
+						}).execute();
 					}
-				}).execute();
+				}
+				else
+				{
+					AlertDialogUtility.getAlertDialogOK(PostTweetActivity.this, "Post cannot be empty", null).show();
+				}
+				
 
 			}
 		});

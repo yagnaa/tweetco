@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" android:descendantFocusability="beforeDescendants"
-android:focusableInTouchMode="true"  >
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true" >
 
-    <!-- com.tweetco.activities.QuickReturnListView  -->
+    <!-- com.tweetco.activities.QuickReturnListView -->
+
     <com.tweetco.activities.QuickReturnListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:verticalSpacing="1dp" />
 
+    <com.example.floatingactionbuttonexample.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_add_white_24dp"
+        fab:fab_colorNormal="@color/accent"
+        fab:fab_colorPressed="@color/accent_pressed"
+        fab:fab_colorRipple="@color/ripple" />
+
+    <!--
     <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
@@ -52,5 +66,6 @@ android:focusableInTouchMode="true"  >
             android:src="@drawable/camera" />
         
     </LinearLayout>
+    -->
 
-</RelativeLayout>
+</FrameLayout>

@@ -49,11 +49,11 @@ import android.view.ViewTreeObserver;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
+import com.example.floatingactionbuttonexample.FloatingActionButton;
+import com.example.floatingactionbuttonexample.ScrollDirectionListener;
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
 import com.onefortybytes.R;
@@ -100,7 +100,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 	//Scrolling from bottom
 	private QuickReturnListView mListView;
-	private LinearLayout mQuickReturnView;
+//	private LinearLayout mQuickReturnView;
+	private FloatingActionButton mFAB;
 	private int mQuickReturnHeight;
 	private static final int STATE_ONSCREEN = 0;
 	private static final int STATE_OFFSCREEN = 1;
@@ -261,26 +262,58 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		popupWindow.setOutsideTouchable(true);
 
 		Log.v(TAG, "onActivityCreated savedInstanceState=" + (savedInstanceState!=null?"true":"false"));
-		EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
-		typeTweet.setOnClickListener(new View.OnClickListener() 
-		{
+		
+		mFAB.setOnClickListener(new View.OnClickListener() {
+			
 			@Override
-			public void onClick(View v) 
-			{
-				EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
-				launchPostTweetActivity(typeTweet.getText().toString(), -1, null);
+			public void onClick(View v) {
+				launchPostTweetActivity(getArguments().getString(Constants.FOOTER_TAG),-1,null);
+				
 			}
 		});
+		
+		mFAB.attachToListView((ListView)activityViewRoot, new ScrollDirectionListener() {
+            @Override
+            public void onScrollDown() {
+                Log.d("ListViewFragment", "onScrollDown()");
+            }
 
-		mQuickReturnView.setOnClickListener(new View.OnClickListener() 
-		{
-			@Override
-			public void onClick(View v) 
-			{
-				EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
-				launchPostTweetActivity(typeTweet.getText().toString(), -1, null);
-			}
-		});
+            @Override
+            public void onScrollUp() {
+                Log.d("ListViewFragment", "onScrollUp()");
+            }
+        }, new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                Log.d("ListViewFragment", "onScrollStateChanged()");
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                Log.d("ListViewFragment", "onScroll()");
+            }
+        });
+
+//		EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
+//		typeTweet.setOnClickListener(new View.OnClickListener() 
+//		{
+//			@Override
+//			public void onClick(View v) 
+//			{
+//				EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
+//				launchPostTweetActivity(typeTweet.getText().toString(), -1, null);
+//			}
+//		});
+//
+//		mQuickReturnView.setOnClickListener(new View.OnClickListener() 
+//		{
+//			@Override
+//			public void onClick(View v) 
+//			{
+//				EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
+//				launchPostTweetActivity(typeTweet.getText().toString(), -1, null);
+//			}
+//		});
 	}
 
 	/**
@@ -346,16 +379,18 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		final View v = inflater.inflate(R.layout.tweetlist, container, false);
 
 
-		mQuickReturnView = (LinearLayout) v.findViewById(R.id.footer);
+//		mQuickReturnView = (LinearLayout) v.findViewById(R.id.footer);
+		mFAB = (com.example.floatingactionbuttonexample.FloatingActionButton) v.findViewById(R.id.fab);
 		if(getArguments().getBoolean(Constants.HIDE_FOOTER, false))
 		{
-			mQuickReturnView.setVisibility(View.GONE);
+			mFAB.setVisibility(View.GONE);
+		//	mQuickReturnView.setVisibility(View.GONE);
 
 		}
-		else if(getArguments().getString(Constants.FOOTER_TAG)!=null)
-		{
-			((TextView)mQuickReturnView.findViewById(R.id.typeTweet)).setText(getArguments().getString(Constants.FOOTER_TAG));
-		}
+//		else if(getArguments().getString(Constants.FOOTER_TAG)!=null)
+//		{
+//			((TextView)mQuickReturnView.findViewById(R.id.typeTweet)).setText(getArguments().getString(Constants.FOOTER_TAG));
+//		}
 
 		mListView = (QuickReturnListView) v.findViewById(R.id.listView);
 		mListView.setAdapter(mAdapter);
@@ -474,7 +509,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 						Log.v(TAG, "onGlobalLayout layout Done");
 						int visibleChildCount = (mListView.getLastVisiblePosition() - mListView.getFirstVisiblePosition()) + 1;
 						loadDataOnScroll(mListView, mListView.getFirstVisiblePosition(), visibleChildCount, mListView.getAdapter().getCount());
-						mQuickReturnHeight = mQuickReturnView.getHeight();
+					//	mQuickReturnHeight = mQuickReturnView.getHeight();
 					}
 				});
 

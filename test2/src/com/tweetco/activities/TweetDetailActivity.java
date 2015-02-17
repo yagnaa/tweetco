@@ -113,7 +113,7 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 			String displayName = null;
 			if(tweeter == null)
 			{
-				username = Utils.getTweetHandle("anonymous");
+				username = " ";
 				displayName = "Anonymous";
 			}
 			else

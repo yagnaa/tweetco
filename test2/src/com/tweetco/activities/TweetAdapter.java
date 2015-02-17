@@ -221,7 +221,7 @@ public class TweetAdapter extends BaseAdapter
 			String displayName = null;
 			if(tweeter == null)
 			{
-				username = Utils.getTweetHandle("anonymous");
+				username = " ";
 				displayName = "Anonymous";
 			}
 			else

@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="fill_horizontal"
-    android:background="@color/white" >
+    android:background="@color/green_theme_color" >
 
     <com.tweetco.activities.RoundedImageView
         android:id="@+id/imageView1"
@@ -31,7 +31,7 @@
         android:layout_gravity="center_vertical"
         android:text="140 Bytes"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/green_theme_color"
+        android:textColor="@color/white"
         android:textSize="18dp"
         android:textStyle="bold" />
 

@@ -16,6 +16,8 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_pressed</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="toolbarStyle">@style/AppThemeToolbar</item>
+        <item name="android:toolbarStyle">@style/AppThemeToolbar</item>
     </style>
 
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
@@ -38,6 +40,18 @@
         <item name="android:background">#FCCC</item>
     </style>
 
+    <style name="NoteTitleAppearance" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">21sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <!--
+    <style name="NotesActionBar" parent="android:style/Widget.Holo.Light.ActionBar">
+    	<item name="android:background">@color/white</item>
+    	<item name="android:backgroundSplit">@color/white</item>
+	</style>
+    -->
     <style name="NoActionBar" parent="@android:style/Theme.Holo.Light">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
@@ -62,6 +76,14 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="FontNormal">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="FontLight">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
     <style name="refresh_header">
         <item name="android:layout_height">44dp</item>
         <item name="android:layout_width">match_parent</item>
@@ -80,6 +102,11 @@
     <style name="ThemeWithCorners" parent="android:Theme.Dialog">
         <item name="android:background">@android:color/white</item>
         <item name="android:windowBackground">@drawable/rounded_corners</item>
+    </style>
+
+    <style name="AppThemeToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="contentInsetStart">0dp</item>
+        <item name="android:contentInsetStart">0dp</item>
     </style>
 
 </resources>

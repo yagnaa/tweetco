@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
+        <!-- http://www.google.com/design/spec/style/color.html#color-ui-color-palette -->
+    <color name="material_blue_500">#5677fc</color>
+    <color name="material_blue_600">#4e6cef</color>
+    
+      <color name="primary">#34ba90</color>
+    <color name="primary_pressed">#278A6B</color>
+    <color name="ripple">#72A897</color>
+    <color name="accent">#34ba90</color>
+    <color name="accent_pressed">#278A6B</color>
+    
 
     <color name="white">#FFFFFF</color>
     <color name="darker_gray">#aaa</color>

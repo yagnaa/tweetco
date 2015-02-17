@@ -1,42 +1,31 @@
 package com.tweetco.activities;
-import java.net.MalformedURLException;
-
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
-import com.imagedisplay.util.AsyncTask;
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
-import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 import com.onefortybytes.R;
-import com.tweetco.TweetCo;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.dao.Tweet;
-import com.tweetco.database.dao.Account;
 import com.tweetco.notifications.PushNotificationHandler;
-import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
 
 
 
 public class AllInOneActivity extends TweetCoBaseActivity 
 {
-	private static final int IO_BUFFER_SIZE = 8 * 1024;
 
 	@Override
 	protected void onNewIntent(Intent intent) 
@@ -48,28 +37,18 @@ public class AllInOneActivity extends TweetCoBaseActivity
 
 	public static final String SENDER_ID = "721884328218";
 
-
-	private static final int SEVER_SIDE_BATCH_SIZE = 10; //Number of tweets fetched from server at one time
-	private static final String IMAGE_CACHE_DIR = "thumbs"; //Name of directory where images are saved
-
-
-	private Handler handler;
-
 	private ActionBar m_actionbar;
 
 	private static final String TAG = "AllInOneActivity";
 
 	private ViewPager mViewPager;
 	private static CustomFragmentPagerAdapter mPagerAdapter = null;
-	private AsyncTaskEventHandler asyncTaskEventHandler = null;
 	private Controller mController = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-
-		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Loading...");
 		mController = new Controller();
 
 		setContentView(R.layout.all_in_one_activity_layout);

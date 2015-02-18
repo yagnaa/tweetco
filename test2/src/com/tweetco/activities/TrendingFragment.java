@@ -45,10 +45,20 @@ public class TrendingFragment extends ListFragment
 	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-
-		loadTrendingTags();
-		
-		
+	}
+	
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if(TweetCommonData.mClient != null)
+		{
+			loadTrendingTags();
+		}
+		else
+		{
+			Log.e("TrendingFragment", "MobileServiceClient is null");
+		}
 	}
 	
 	@Override

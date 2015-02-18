@@ -82,15 +82,20 @@ public class FTUActivity extends ActionBarActivity
 							@Override
 							public void onFetchUserInfoTaskFailure(MobileServiceClient mobileClient, Exception exception) 
 							{
+								asyncTaskEventHandler.dismiss();
 								if(exception == null)
 								{
 									Log.d("FetchUserInfo", "User does not exist");
-									asyncTaskEventHandler.dismiss();
 									TweetCommonData.mClient = mobileClient;
 									Intent intent = new Intent(FTUActivity.this, FTUNewUserActivity.class);
 									intent.putExtra("email", emailAddress);
 									startActivity(intent);
 									finish();
+								}
+								else if(exception instanceof OrgNotSignedUpException)
+								{
+									getAddAccountFailedDialog("Your organisation hasn't signed up for this service.").show();
+									
 								}
 								else
 								{
@@ -124,6 +129,11 @@ public class FTUActivity extends ActionBarActivity
 		public void onFetchUserInfoTaskSuccess(TweetUser user, MobileServiceClient client);
 		public void onFetchUserInfoTaskFailure (MobileServiceClient client, Exception mobileServiceException);
 		public void onFetchUserInfoCancelled();
+	}
+	
+	public class OrgNotSignedUpException extends Exception
+	{
+		
 	}
 	
 	public class FetchUserInfoTask extends AsyncTask<Void, Void, TweetUser> 
@@ -210,7 +220,9 @@ public class FTUActivity extends ActionBarActivity
 								
 								if(mobileServiceKey == null || mobileServiceUrl == null)
 								{
-									getAddAccountFailedDialog("Your organisation hasn't signed up for this service.").show();
+									mTweetUser = null;
+									mMobileServiceException = new OrgNotSignedUpException();
+									
 								}
 								else
 								{
@@ -234,6 +246,8 @@ public class FTUActivity extends ActionBarActivity
 						{
 							Log.e(TAG, "Failed to get user information: "+e.getMessage());
 							e.printStackTrace();
+							mTweetUser = null;
+							mMobileServiceException = new Exception("Failed to get userinfo");
 						}
 
 					}

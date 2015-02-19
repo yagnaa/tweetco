@@ -31,7 +31,6 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public JsonObject getNextTweetRequest() 
 	{
-		// TODO Auto-generated method stub
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kRequestingUserKey, TweetCommonData.getUserName());
 		return obj;
@@ -40,7 +39,6 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public JsonObject getPreviousTweetRequest() 
 	{
-		// TODO Auto-generated method stub
 		JsonObject obj = new JsonObject();
 		obj.addProperty(ApiInfo.kRequestingUserKey, TweetCommonData.getUserName());
 		return obj;

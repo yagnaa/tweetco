@@ -3,7 +3,6 @@ package com.tweetco.activities.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,7 +24,6 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderboardUser>
 		void onItemClick(int position);
 	}
 
-	private static final String TAG = "LeaderboardAdapter";
 	private Context mContext = null;
 	private OnProfilePicClick mOnProfilePicClickCallback = null;
 	private ImageFetcher mImageFetcher; //Fetches the images

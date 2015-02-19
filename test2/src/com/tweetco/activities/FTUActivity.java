@@ -3,7 +3,6 @@ package com.tweetco.activities;
 
 import java.net.MalformedURLException;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -110,10 +109,8 @@ public class FTUActivity extends ActionBarActivity
 							}
 						}).execute();
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-					
+					}			
 				}
 				else
 				{

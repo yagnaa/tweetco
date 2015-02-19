@@ -19,7 +19,6 @@ public class AboutActivity extends TweetCoBaseActivity
 
 	@Override
 	public void onResumeCallback() {
-		// TODO Auto-generated method stub
 		
 	}
 		

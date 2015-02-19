@@ -51,7 +51,6 @@ public class AllInOneActivity extends TweetCoBaseActivity
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		mController = new Controller();
 

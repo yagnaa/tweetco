@@ -236,18 +236,6 @@ public class UserProfileActivity extends FragmentActivity
 		mViewPager.setCurrentItem(0);
 	}
     
-    
-    private static class ImageDownloadAsycnTask extends AsyncTask<Void, Void, BitmapDrawable>
-    {
-
-		@Override
-		protected BitmapDrawable doInBackground(Void... params) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-    	
-    }
-    
     private class BitmapWorkerTask extends AsyncTask<Void, Void, BitmapDrawable> 
     {
         private String mUrl;

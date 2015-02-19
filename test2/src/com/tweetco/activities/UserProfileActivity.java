@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 
@@ -74,7 +75,7 @@ public class UserProfileActivity extends FragmentActivity
         setContentView(R.layout.userprofilefragment);
        
         mUserName = getIntent().getExtras().getString(Constants.USERNAME_STR);
-        TweetUser user = TweetCommonData.tweetUsers.get(mUserName.toLowerCase());
+        TweetUser user = TweetCommonData.tweetUsers.get(mUserName.toLowerCase(Locale.US));
         
         loadUser(user);
     		
@@ -353,7 +354,7 @@ public class UserProfileActivity extends FragmentActivity
 		{
 			if (requestCode == EDIT_PROFILE_REQUEST || resultCode == RESULT_OK)
 			{
-				TweetUser user = TweetCommonData.tweetUsers.get(mUserName.toLowerCase());
+				TweetUser user = TweetCommonData.tweetUsers.get(mUserName.toLowerCase(Locale.US));
 		        
 		        reloadUser(user);
 

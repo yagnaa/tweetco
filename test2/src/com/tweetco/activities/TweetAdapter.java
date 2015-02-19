@@ -1,5 +1,7 @@
 package com.tweetco.activities;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -215,7 +217,7 @@ public class TweetAdapter extends BaseAdapter
 
 		//Load TextFields here
 		final Tweet tweet = (Tweet) getItem(position);
-		TweetUser tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner.toLowerCase());
+		TweetUser tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner.toLowerCase(Locale.US));
 		if (tweet != null) 
 		{
 			String username = null;

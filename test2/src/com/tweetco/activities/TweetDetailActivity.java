@@ -1,5 +1,7 @@
 package com.tweetco.activities;
 
+import java.util.Locale;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -109,7 +111,7 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 			}
 		});
 		
-		TweetUser tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner.toLowerCase());
+		TweetUser tweeter = (TweetUser) TweetCommonData.tweetUsers.get(tweet.tweetowner.toLowerCase(Locale.US));
 		if (tweet != null) 
 		{
 			String username = null;

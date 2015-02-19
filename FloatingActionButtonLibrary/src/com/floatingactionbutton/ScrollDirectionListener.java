@@ -1,4 +1,4 @@
-package com.example.floatingactionbuttonexample;
+package com.floatingactionbutton;
 
 public interface ScrollDirectionListener {
     void onScrollDown();

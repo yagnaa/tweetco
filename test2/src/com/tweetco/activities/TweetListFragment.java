@@ -52,8 +52,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 
-import com.example.floatingactionbuttonexample.FloatingActionButton;
-import com.example.floatingactionbuttonexample.ScrollDirectionListener;
+import com.floatingactionbutton.FloatingActionButton;
+import com.floatingactionbutton.ScrollDirectionListener;
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
 import com.onefortybytes.R;
@@ -380,7 +380,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 
 //		mQuickReturnView = (LinearLayout) v.findViewById(R.id.footer);
-		mFAB = (com.example.floatingactionbuttonexample.FloatingActionButton) v.findViewById(R.id.fab);
+		mFAB = (FloatingActionButton) v.findViewById(R.id.fab);
 		if(getArguments().getBoolean(Constants.HIDE_FOOTER, false))
 		{
 			mFAB.setVisibility(View.GONE);

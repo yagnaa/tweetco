@@ -1,4 +1,4 @@
-package com.example.floatingactionbuttonexample;
+package com.floatingactionbutton;
 
 import android.support.annotation.NonNull;
 import android.view.View;

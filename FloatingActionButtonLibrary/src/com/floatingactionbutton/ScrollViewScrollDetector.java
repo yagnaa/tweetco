@@ -1,4 +1,4 @@
-package com.example.floatingactionbuttonexample;
+package com.floatingactionbutton;
 
 import android.widget.ScrollView;
 

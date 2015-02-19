@@ -2,6 +2,7 @@ package com.tweetco.activities;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import android.text.TextUtils;
@@ -105,7 +106,7 @@ public  class TweetUserLoader
 							if(tweetUser.length > 0)
 							{
 								// Clear all the data points
-								TweetCommonData.tweetUsers.put(mUserForWhomDataIsBeingLoaded.toLowerCase(), tweetUser[0]);
+								TweetCommonData.tweetUsers.put(mUserForWhomDataIsBeingLoaded.toLowerCase(Locale.US), tweetUser[0]);
 							}
 						}
 						catch(JsonSyntaxException exception)

@@ -1,6 +1,7 @@
 package com.tweetco.tweetlist;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.collections4.map.LinkedMap;
 
@@ -83,7 +84,7 @@ public class TweetRepliesFeedMode extends TweetListMode implements Parcelable
 				{
 					if(!TextUtils.isEmpty(user.username))
 					{
-						TweetCommonData.tweetUsers.put(user.username.toLowerCase(), user);
+						TweetCommonData.tweetUsers.put(user.username.toLowerCase(Locale.US), user);
 					}
 				}
 

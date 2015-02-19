@@ -1,6 +1,7 @@
 package com.tweetco.tweetlist;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.collections4.map.LinkedMap;
@@ -71,10 +72,9 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 		{
 			if(!TextUtils.isEmpty(user.username))
 			{
-				TweetCommonData.tweetUsers.put(user.username.toLowerCase(), user);
+				TweetCommonData.tweetUsers.put(user.username.toLowerCase(Locale.US), user);
 			}
 		}
-
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class BookmarksFeedMode extends TweetListMode implements Parcelable
 	public void addUser(String user,TweetUser userInfo) 
 	{
 		// Clear all the data points
-		TweetCommonData.tweetUsers.put(user.toLowerCase(), userInfo);
+		TweetCommonData.tweetUsers.put(user.toLowerCase(Locale.US), userInfo);
 	}
 	
 	@Override

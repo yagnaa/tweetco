@@ -3,33 +3,78 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <ScrollView android:layout_width="fill_parent" android:layout_height="0dip" android:layout_weight="1">
-    <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
-    <EditText android:id="@+id/contentTags" android:layout_width="fill_parent" android:layout_height="wrap_content" android:hint="Content Tags" android:visibility="gone"/>
-    
-        <LinearLayout 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal" >
-    <MultiAutoCompleteTextView android:id="@+id/tweetContent"  android:layout_height="150dp" android:layout_width="0dip" android:layout_weight="1" android:hint="What's on your mind?"/>
-    <TextView android:id="@+id/charCount" android:layout_height="wrap_content" android:layout_width="wrap_content" android:hint="140"/>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/contentTags"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="Content Tags"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <MultiAutoCompleteTextView
+                    android:id="@+id/tweetContent"
+                    android:layout_width="0dip"
+                    android:layout_height="150dp"
+                    android:layout_weight="1"
+                    android:hint="What&apos;s on your mind?" />
+
+                <TextView
+                    android:id="@+id/charCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="140" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/tweetImaage"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
-        <ImageView android:id="@+id/tweetImaage" android:layout_height="wrap_content" android:layout_width="fill_parent"/>    
-  
-        
-    </LinearLayout>
-          
     </ScrollView>
-    
-    <CheckBox android:id="@+id/anonymousCheckBox" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Post anonymously"/>
-        
-    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-    <Button android:id="@+id/sendTweetButton" android:text="Send" android:layout_height="wrap_content" android:layout_width="wrap_content"/>
-    <Button android:id="@+id/imageGalleryButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gallery"/>   
-    <Button android:id="@+id/imageCameraButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Camera"/>   
-    
+
+    <CheckBox
+        android:id="@+id/anonymousCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Post anonymously" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/sendTweetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send" />
+
+        <Button
+            android:id="@+id/imageGalleryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gallery" />
+
+        <Button
+            android:id="@+id/imageCameraButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Camera" />
     </LinearLayout>
-        
-    
+
 </LinearLayout>

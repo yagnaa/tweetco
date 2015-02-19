@@ -1,6 +1,7 @@
 package com.tweetco.asynctasks;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -142,7 +143,7 @@ public class EditProfileTask extends AsyncTask<Void, Void, Void>
 							{
 								// Clear all the data points
 								Log.d("EditProfileTask", "Fetched new UserData after posting new images") ;
-								TweetCommonData.tweetUsers.put(mParams.getUsername().toLowerCase(), tweetUser[0]);
+								TweetCommonData.tweetUsers.put(mParams.getUsername().toLowerCase(Locale.US), tweetUser[0]);
 							}
 							//Also Update the Account Table.
 							Account account  = TweetCommonData.getAccount();

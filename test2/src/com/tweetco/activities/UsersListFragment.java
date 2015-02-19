@@ -3,6 +3,7 @@ package com.tweetco.activities;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
@@ -129,7 +130,7 @@ public class UsersListFragment extends ListFragment
 							userListAdapter.clear();
 							for (TweetUser tweetUser : users) 
 							{
-								TweetCommonData.tweetUsers.put(tweetUser.username.toLowerCase(), tweetUser);
+								TweetCommonData.tweetUsers.put(tweetUser.username.toLowerCase(Locale.US), tweetUser);
 								if(!mUserName.equals(tweetUser.username))
 								{
 									//Don't add the same user

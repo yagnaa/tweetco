@@ -8,16 +8,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections4.map.LinkedMap;
 
-import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.tweetco.TweetCo;
 import com.tweetco.activities.TrendingFragment;
+import com.tweetco.activities.TweetUtils;
 import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.database.dao.Account;
-import com.tweetco.provider.TweetCoProviderConstants;
 
 public class TweetCommonData 
 {
@@ -54,12 +52,14 @@ public class TweetCommonData
 		mAccount = account;
 	}
 	
-	
 	public static void bookmark(Tweet tweet, String userName)
 	{
 		if(tweet!=null && !TextUtils.isEmpty(userName))
 		{
-			tweet.bookmarkers = tweet.bookmarkers +  userName + ";";
+			if(!TweetUtils.isStringPresent(tweet.bookmarkers, userName))
+			{
+				tweet.bookmarkers = tweet.bookmarkers +  userName + ";";
+			}
 		}
 	}
 	
@@ -67,7 +67,10 @@ public class TweetCommonData
 	{
 		if(tweet!=null && !TextUtils.isEmpty(userName))
 		{
-			tweet.upvoters = tweet.upvoters +  userName + ";" ;
+			if(!TweetUtils.isStringPresent(tweet.upvoters, userName))
+			{
+				tweet.upvoters = tweet.upvoters +  userName + ";" ;
+			}
 		}
 	}
 }

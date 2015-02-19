@@ -266,7 +266,7 @@ public class TweetAdapter extends BaseAdapter
 				holder.inReplyTo.setVisibility(View.GONE);
 			}
 
-			//UpVote ImageView
+			//UpVote ImageView	
 
 			holder.upvoteView.setTag(viewHolderBookMarkUpvoteAndHide);
 			setUpVoteFlag(holder.upvoteView, holder.upvotesCount, tweet,TweetCommonData.getUserName());

@@ -3,5 +3,6 @@ test2/gen/
 .project
 appcompat/bin/
 recyclerview/bin
-FloatingActionButtonLibrary/bin
-NineOldDroidLibrary/bin
+FloatingActionButtonLibrary/bin/
+NineOldDroidLibrary/bin/
+google-play-services_lib/bin/

@@ -65,12 +65,40 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider" />
-
+    
+    <LinearLayout android:id="@+id/repliesText" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone" >
+    <TextView  android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Replies" android:gravity="center" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+    </LinearLayout>
+    
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+    
     <FrameLayout
         android:id="@+id/tweetsReplyListFragmentContainer"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:layout_weight="1" >
+        android:layout_weight="1" android:visibility="gone">
+    </FrameLayout>
+    
+    <LinearLayout android:id="@+id/inReplyToText" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone" >
+    <TextView android:id="@+id/inReplyToText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="In Reply To" android:gravity="center"/>
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+    </LinearLayout>
+    
+    <FrameLayout
+        android:id="@+id/sourcetweetInReplyToFragmentContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" android:visibility="gone">
     </FrameLayout>
 
 </LinearLayout>

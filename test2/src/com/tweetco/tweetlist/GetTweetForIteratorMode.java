@@ -15,12 +15,13 @@ import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
 
-public class TweetRepliesFeedMode extends TweetListMode implements Parcelable
+public class GetTweetForIteratorMode extends TweetListMode implements Parcelable
 {
+
 	private String mTweetSourceIterator;
-	private LinkedMap<Integer,Tweet> replyTweetList = new LinkedMap<Integer, Tweet>();
+	private LinkedMap<Integer,Tweet> sourceTweetList = new LinkedMap<Integer, Tweet>();
 	
-	public TweetRepliesFeedMode(String tweetSourceIterator)
+	public GetTweetForIteratorMode(String tweetSourceIterator)
 	{
 		mTweetSourceIterator = tweetSourceIterator;
 	}
@@ -40,7 +41,7 @@ public class TweetRepliesFeedMode extends TweetListMode implements Parcelable
 	public JsonObject getPreviousTweetRequest() 
 	{
 		JsonObject obj = new JsonObject();
-		obj.addProperty(ApiInfo.kSourceIteratorKey, mTweetSourceIterator);
+		obj.addProperty(ApiInfo.kIteratorKey, mTweetSourceIterator);
 		return obj;
 	}
 
@@ -48,7 +49,7 @@ public class TweetRepliesFeedMode extends TweetListMode implements Parcelable
 	public JsonObject getNextTweetRequest() 
 	{
 		JsonObject obj = new JsonObject();
-		obj.addProperty(ApiInfo.kSourceIteratorKey, mTweetSourceIterator);
+		obj.addProperty(ApiInfo.kIteratorKey, mTweetSourceIterator);
 		return obj;
 	}
 
@@ -93,14 +94,14 @@ public class TweetRepliesFeedMode extends TweetListMode implements Parcelable
 	{		
 		if(!entries.isEmpty())
 		{
-			LinkedMap<Integer,Tweet> tweetList = replyTweetList.clone();//(tweet.iterator, tweet);
-			replyTweetList.clear();
+			LinkedMap<Integer,Tweet> tweetList = sourceTweetList.clone();//(tweet.iterator, tweet);
+			sourceTweetList.clear();
 			// Add entries to the bottom of the list
 			for(Tweet tweet:entries)
 			{		
-				replyTweetList.put(tweet.iterator, tweet);
+				sourceTweetList.put(tweet.iterator, tweet);
 			}
-			replyTweetList.putAll(tweetList);
+			sourceTweetList.putAll(tweetList);
 		}
 	}
 
@@ -109,26 +110,26 @@ public class TweetRepliesFeedMode extends TweetListMode implements Parcelable
 		// Add entries to the bottom of the list
 		for(Tweet tweet:entries)
 		{
-			replyTweetList.put(tweet.iterator, tweet);
+			sourceTweetList.put(tweet.iterator, tweet);
 		}
 	}
 
 	@Override
 	public int getCount() 
 	{
-		return replyTweetList.size();
+		return sourceTweetList.size();
 	}
 
 	@Override
 	public Object removeItem(int position)
 	{
-		return replyTweetList.remove(position);
+		return sourceTweetList.remove(position);
 	}
 
 	@Override
 	public Object getItem(int position) 
 	{
-		return replyTweetList.get(replyTweetList.get(position));
+		return sourceTweetList.get(sourceTweetList.get(position));
 	}
 
 	@Override
@@ -141,25 +142,25 @@ public class TweetRepliesFeedMode extends TweetListMode implements Parcelable
 	@Override
 	public String getApi() 
 	{
-		return ApiInfo.GET_REPLY_TWEETS_FOR_TWEET;
+		return ApiInfo.GET_TWEET_FOR_ITERATOR;
 	}
 	
-	protected TweetRepliesFeedMode(Parcel in) 
+	protected GetTweetForIteratorMode(Parcel in) 
 	{
 		mTweetSourceIterator = in.readString();
 	}
 	
 
 	@SuppressWarnings("unused")
-	public static final Parcelable.Creator<TweetRepliesFeedMode> CREATOR = new Parcelable.Creator<TweetRepliesFeedMode>() {
+	public static final Parcelable.Creator<GetTweetForIteratorMode> CREATOR = new Parcelable.Creator<GetTweetForIteratorMode>() {
 		@Override
-		public TweetRepliesFeedMode createFromParcel(Parcel in) {
-			return new TweetRepliesFeedMode(in);
+		public GetTweetForIteratorMode createFromParcel(Parcel in) {
+			return new GetTweetForIteratorMode(in);
 		}
 
 		@Override
-		public TweetRepliesFeedMode[] newArray(int size) {
-			return new TweetRepliesFeedMode[size];
+		public GetTweetForIteratorMode[] newArray(int size) {
+			return new GetTweetForIteratorMode[size];
 		}
 	};
 

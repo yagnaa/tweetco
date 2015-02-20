@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonElement;
@@ -25,6 +27,8 @@ import com.onefortybytes.R;
 import com.tweetco.TweetCo;
 import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
+import com.tweetco.tweetlist.GetTweetForIteratorMode;
+import com.tweetco.tweetlist.TweetListMode;
 import com.tweetco.tweetlist.TweetRepliesFeedMode;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
@@ -53,6 +57,10 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		ImageView replyToTweetButton;
 		TextView tweet_upvotesCount;
 		TextView tweet_bookmarksCount;
+		LinearLayout repliesText;
+		LinearLayout inReplyToText;
+		FrameLayout repliesFragment;
+		FrameLayout inReplyToFragment;
 		//		ImageView hideTweet;
 	}
 	
@@ -87,6 +95,10 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		viewholder.replyToTweetButton = UiUtility.getView(this, R.id.replyToTweet);
 		viewholder.tweet_upvotesCount = UiUtility.getView(this, R.id.tweet_upvoteCount);
 		viewholder.tweet_bookmarksCount = UiUtility.getView(this, R.id.tweet_bookmarksCount);
+		viewholder.repliesText = UiUtility.getView(this,  R.id.repliesText);
+		viewholder.inReplyToText = UiUtility.getView(this, R.id.inReplyToText);
+		viewholder.repliesFragment = UiUtility.getView(this, R.id.tweetsReplyListFragmentContainer);
+		viewholder.inReplyToFragment = UiUtility.getView(this, R.id.sourcetweetInReplyToFragmentContainer);
 
 		viewholder.tweetContentImage = UiUtility.getView(this, R.id.tweet_content_image);
 		viewholder.upvoteView = UiUtility.getView(this, R.id.upvote);
@@ -258,6 +270,7 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 		
 		if(!TextUtils.isEmpty(tweet.replies))
 		{
+			SetViewForReplies(viewholder, true);
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 	        TweetListFragment tweetListFragment = new TweetListFragment();
 	        Bundle newBundle = new Bundle();
@@ -268,6 +281,20 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 	        ft.replace(R.id.tweetsReplyListFragmentContainer, tweetListFragment);
 	        ft.commit();
 		}
+		else if(!TextUtils.isEmpty(tweet.inreplyto))
+		{
+			SetViewForReplies(viewholder, false);
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+	        TweetListFragment tweetListFragment = new TweetListFragment();
+	        Bundle newBundle = new Bundle();
+	        GetTweetForIteratorMode mode = new GetTweetForIteratorMode(tweet.inreplyto);
+	        newBundle.putParcelable(Constants.TWEET_LIST_MODE, mode);
+	        newBundle.putBoolean("hideFooter", true);
+	        tweetListFragment.setArguments(newBundle);
+	        ft.replace(R.id.sourcetweetInReplyToFragmentContainer, tweetListFragment);
+	        ft.commit();
+		}
+			
 		
 		ActionBar actionbar = getSupportActionBar();
 		if(actionbar!=null)
@@ -275,6 +302,26 @@ public class TweetDetailActivity extends TweetCoBaseActivity
 			actionbar.setHomeButtonEnabled(true);
 			actionbar.setDisplayHomeAsUpEnabled(true);
 		}
+	}
+	
+	private void SetViewForReplies(ViewHolder viewholder, boolean sourceTweet)
+	{
+		if(sourceTweet)
+		{
+			viewholder.repliesText.setVisibility(View.VISIBLE);
+			viewholder.repliesFragment.setVisibility(View.VISIBLE);
+			viewholder.inReplyToText.setVisibility(View.GONE);
+			viewholder.inReplyToFragment.setVisibility(View.GONE);
+		}
+		else
+		{
+			viewholder.repliesText.setVisibility(View.GONE);
+			viewholder.repliesFragment.setVisibility(View.GONE);
+			viewholder.inReplyToText.setVisibility(View.VISIBLE);
+			viewholder.inReplyToFragment.setVisibility(View.VISIBLE);
+		}
+		
+		
 	}
 	
 	private void setCount(TextView view, String input)

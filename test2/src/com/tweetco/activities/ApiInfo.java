@@ -49,6 +49,8 @@ public class ApiInfo
 	public static final String GET_TWEETS_FOR_TREND = "gettweetsfortrendingtopic";
 	public static final String GET_BOOKMARKED_TWEETS = "getbookmarkedtweetsforuser";
 	public static final String GET_REPLY_TWEETS_FOR_TWEET = "getreplytweetsfortweet";
+	public static final String GET_TWEET_FOR_ITERATOR = "getTweetForIterator";
+	
 	
 	public static final String kEmail = "email";
 	public static final String kDisplayName = "displayname";

@@ -1,6 +1,7 @@
 package com.tweetco.asynctasks;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.tweetco.twitter.TwitterApp;
 
 import android.graphics.drawable.BitmapDrawable;
 
@@ -13,6 +14,8 @@ public class PostTweetTaskParams
 	private int replySourceTweetIterator = -1;
 	private String replySourceTweetUsername = null;
 	private boolean bAnonymous = false;
+	private boolean mPostToTwitter = false;
+	private TwitterApp mTwitterApp = null;
 	
 	private MobileServiceClient mClient;
 	
@@ -78,5 +81,21 @@ public class PostTweetTaskParams
 
 	public void setAnonymous(boolean bAnonymous) {
 		this.bAnonymous = bAnonymous;
+	}
+
+	public boolean isPostToTwitter() {
+		return mPostToTwitter;
+	}
+
+	public void setPostToTwitter(boolean mPostToTwitter) {
+		this.mPostToTwitter = mPostToTwitter;
+	}
+
+	public TwitterApp getTwitterApp() {
+		return mTwitterApp;
+	}
+
+	public void setTwitterApp(TwitterApp mTwitterApp) {
+		this.mTwitterApp = mTwitterApp;
 	}
 }

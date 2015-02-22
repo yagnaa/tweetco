@@ -118,6 +118,17 @@ public class PostTweetTask extends AsyncTask<Void, Void, Exception>
 					
 				}
 			}, true);
+			
+			if(mParams.isPostToTwitter() && mParams.getTwitterApp().hasAccessToken())
+			{
+				try {
+					mParams.getTwitterApp().updateStatus(mParams.getTweetContent());
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+					mException = e;
+				}
+			}
 		
 		return mException;
 	}

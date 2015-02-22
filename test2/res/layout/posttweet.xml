@@ -23,6 +23,7 @@
     </ScrollView>
     
     <CheckBox android:id="@+id/anonymousCheckBox" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Post anonymously"/>
+    <CheckBox android:id="@+id/postToTwitterCheckBox" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Post to Twitter (Not connected)"/>
         
     <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
     <Button android:id="@+id/sendTweetButton" android:text="Send" android:layout_height="wrap_content" android:layout_width="wrap_content"/>

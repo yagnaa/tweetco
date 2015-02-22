@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,8 +17,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PatternMatcher;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.Spannable;
@@ -56,6 +55,8 @@ import com.tweetco.asynctasks.PostTweetTask.PostTweetTaskCompletionCallback;
 import com.tweetco.asynctasks.PostTweetTaskParams;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
+import com.tweetco.twitter.TwitterApp;
+import com.tweetco.twitter.TwitterApp.TwDialogListener;
 import com.tweetco.utility.AlertDialogUtility;
 import com.tweetco.utility.ImageUtility;
 import com.tweetco.utility.UiUtility;
@@ -79,6 +80,7 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	private Button mImageCameraButton;
 	private ImageView mTweetImage;
 	private CheckBox mAnonymousCheckBox = null;
+	private CheckBox mPostToTwitterCheckBox = null;
 	private String[] mUsernames;
 	
 	private int replySourceTweetIterator = -1;
@@ -87,6 +89,10 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	private int mCharCountInt = TWEET_MAX_CHARS;
 	AsyncTaskEventHandler asyncTaskEventHandler = null;
 	AsyncTaskEventHandler asyncTaskEventHandler2 = null;
+	private TwitterApp mTwitter;
+	
+	private static final String twitter_consumer_key = "JSgcDo14poYM2wvd6ClgYLM1m";
+	private static final String twitter_secret_key = "RGYzdbOxkji3kL6YD42HykB1aqO9MBZwqmP0frNTTx1wPaMXZZ";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -110,12 +116,33 @@ public class PostTweetActivity extends TweetCoBaseActivity
 		mImageCameraButton = UiUtility.getView(this, R.id.imageCameraButton);
 		mTweetImage = UiUtility.getView(this, R.id.tweetImaage);
 		mAnonymousCheckBox = UiUtility.getView(this, R.id.anonymousCheckBox);
+		mPostToTwitterCheckBox = UiUtility.getView(this, R.id.postToTwitterCheckBox);
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Posting...");
 		asyncTaskEventHandler2 = new AsyncTaskEventHandler(this, "Shortening Urls...");
 		mUsernames = getUsernamesAndHashtags(TweetCommonData.tweetUsers.values().iterator(), TweetCommonData.trendingTagLists.iterator());
 		mTweetContent.setAdapter(new ArrayAdapter<String>(PostTweetActivity.this,
 				android.R.layout.simple_dropdown_item_1line, mUsernames));
 		mTweetContent.setThreshold(1);
+		
+		mPostToTwitterCheckBox.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onTwitterClick();
+			}
+		});
+		
+		mTwitter 	= new TwitterApp(this, twitter_consumer_key,twitter_secret_key);
+		
+		mTwitter.setListener(mTwLoginDialogListener);
+		
+		if (mTwitter.hasAccessToken()) {
+			mPostToTwitterCheckBox.setChecked(true);
+			
+			String username = mTwitter.getUsername();
+			username		= (username.equals("")) ? "Unknown" : username;
+			
+			mPostToTwitterCheckBox.setText("Post to Twitter (" + username + ")");
+		}
 		
 		//From http://stackoverflow.com/questions/12691679/android-autocomplete-textview-similar-to-the-facebook-app
 		//Create a new Tokenizer which will get text after '@' and terminate on ' '
@@ -251,6 +278,8 @@ public class PostTweetActivity extends TweetCoBaseActivity
 						params.setReplySourceTweetIterator(replySourceTweetIterator);
 						params.setReplySourceTweetUsername(replySourceTweetUsername);
 						params.setAnonymous(bAnonymous);
+						params.setPostToTwitter(mPostToTwitterCheckBox.isChecked());
+						params.setTwitterApp(mTwitter);
 						
 						new PostTweetTask(getApplicationContext(), params, asyncTaskEventHandler, new PostTweetTaskCompletionCallback() 
 						{
@@ -360,6 +389,37 @@ public class PostTweetActivity extends TweetCoBaseActivity
 				mTweetImage.setImageURI(correctedImageUri);
 			}
 	    }
+	}
+	
+	private void onTwitterClick() {
+		if (mTwitter.hasAccessToken()) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			
+			builder.setMessage("Delete current Twitter connection?")
+			       .setCancelable(false)
+			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			        	   mTwitter.resetAccessToken();
+			        	   
+			        	   mPostToTwitterCheckBox.setChecked(false);
+			        	   mPostToTwitterCheckBox.setText(" Post to Twitter (Not connected)");
+			           }
+			       })
+			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                dialog.cancel();
+			                
+			                mPostToTwitterCheckBox.setChecked(true);
+			           }
+			       });
+			final AlertDialog alert = builder.create();
+			
+			alert.show();
+		} else {
+			mPostToTwitterCheckBox.setChecked(false);
+			
+			mTwitter.authorize();
+		}
 	}
 	
 	public void handleInputText(String inputText)
@@ -540,4 +600,24 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	    }
 	    return super.onOptionsItemSelected(item);
 	}
+	
+	private final TwDialogListener mTwLoginDialogListener = new TwDialogListener() {
+		@Override
+		public void onComplete(String value) {
+			String username = mTwitter.getUsername();
+			username		= (username.equals("")) ? "No Name" : username;
+		
+			mPostToTwitterCheckBox.setText(" Post to Twitter  (" + username + ")");
+			mPostToTwitterCheckBox.setChecked(true);
+			
+			Toast.makeText(PostTweetActivity.this, "Connected to Twitter as " + username, Toast.LENGTH_LONG).show();
+		}
+		
+		@Override
+		public void onError(String value) {
+			mPostToTwitterCheckBox.setChecked(false);
+			
+			Toast.makeText(PostTweetActivity.this, "Twitter connection failed", Toast.LENGTH_LONG).show();
+		}
+	};
 }

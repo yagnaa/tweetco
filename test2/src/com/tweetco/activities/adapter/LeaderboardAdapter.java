@@ -71,6 +71,33 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderboardUser>
 			TextView leaderHandle = UiUtility.getView(convertView, R.id.handle);
 			TextView likesCount = UiUtility.getView(convertView, R.id.leaderLikesCount);
 			TextView bookmarkedCount = UiUtility.getView(convertView, R.id.leaderBookmarkedCount);
+			ImageView rankImage = UiUtility.getView(convertView, R.id.rankImage);
+			TextView rank = UiUtility.getView(convertView,  R.id.rank);
+			if(position >= 0 && position < 3)
+			{
+				rankImage.setVisibility(View.VISIBLE);
+				rank.setVisibility(View.GONE);
+				
+				if(position == 0)
+				{
+					rankImage.setImageResource(R.drawable.gold);
+				}
+				else if(position == 1)
+				{
+					rankImage.setImageResource(R.drawable.silver);
+				}
+				else if(position == 2)
+				{
+					rankImage.setImageResource(R.drawable.bronze);
+				}
+			}
+			else
+			{
+				rankImage.setVisibility(View.GONE);
+				rank.setVisibility(View.VISIBLE);
+				
+				rank.setText(String.valueOf(position+1));
+			}
 
 			leaderDisplayName.setText((!TextUtils.isEmpty(user.displayname)?user.displayname: user.username));
 			leaderHandle.setText(Utils.getTweetHandle(user.username));

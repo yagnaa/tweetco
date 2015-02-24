@@ -24,6 +24,9 @@
     android:paddingLeft="6dip"
     android:paddingRight="6dip"
     android:paddingTop="5dip" >
+    
+    <TextView android:id="@+id/rank" android:layout_width="wrap_content" android:layout_height="match_parent" android:gravity="center" android:text="1" android:paddingLeft="10dp" android:paddingRight="10dp"/>
+    <ImageView android:id="@+id/rankImage" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_gravity="center" android:visibility="gone"/>
 
     <com.tweetco.activities.RoundedImageView
         android:id="@+id/leaderProfilePic"

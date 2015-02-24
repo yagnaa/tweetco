@@ -392,32 +392,8 @@ public class PostTweetActivity extends TweetCoBaseActivity
 	}
 	
 	private void onTwitterClick() {
-		if (mTwitter.hasAccessToken()) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			
-			builder.setMessage("Delete current Twitter connection?")
-			       .setCancelable(false)
-			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			        	   mTwitter.resetAccessToken();
-			        	   
-			        	   mPostToTwitterCheckBox.setChecked(false);
-			        	   mPostToTwitterCheckBox.setText(" Post to Twitter (Not connected)");
-			           }
-			       })
-			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			                dialog.cancel();
-			                
-			                mPostToTwitterCheckBox.setChecked(true);
-			           }
-			       });
-			final AlertDialog alert = builder.create();
-			
-			alert.show();
-		} else {
-			mPostToTwitterCheckBox.setChecked(false);
-			
+		if (!mTwitter.hasAccessToken() && mPostToTwitterCheckBox.isChecked()) 
+		{
 			mTwitter.authorize();
 		}
 	}

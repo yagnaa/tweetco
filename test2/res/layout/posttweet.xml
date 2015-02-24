@@ -12,8 +12,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
-    <MultiAutoCompleteTextView android:id="@+id/tweetContent"  android:layout_height="150dp" android:layout_width="0dip" android:layout_weight="1" android:hint="What's on your mind?"/>
-    <TextView android:id="@+id/charCount" android:layout_height="wrap_content" android:layout_width="wrap_content" android:hint="140"/>
+
+            <MultiAutoCompleteTextView
+                android:id="@+id/tweetContent"
+                android:layout_width="0dip"
+                android:layout_height="135dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="What&apos;s on your mind?" >
+
+                <requestFocus />
+            </MultiAutoCompleteTextView>
+
+    <TextView android:id="@+id/charCount" android:layout_height="wrap_content" android:layout_width="wrap_content" android:hint="140" android:paddingRight="5dp"/>
         </LinearLayout>
         <ImageView android:id="@+id/tweetImaage" android:layout_height="wrap_content" android:layout_width="fill_parent"/>    
   

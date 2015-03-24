@@ -4,6 +4,7 @@ test2/gen/
 appcompat/bin/
 recyclerview/bin
 cardview/bin/
+cardview/gen/
 FloatingActionButtonLibrary/bin/
 FloatingActionButtonLibrary/gen/
 FloatingActionButtonLibrary/bin/*

@@ -3,8 +3,17 @@ test2/gen/
 .project
 appcompat/bin/
 recyclerview/bin
+cardview/bin/
 FloatingActionButtonLibrary/bin/
+FloatingActionButtonLibrary/gen/
 FloatingActionButtonLibrary/bin/*
 NineOldDroidLibrary/bin/
+NineOldDroidLibrary/gen/
 NineOldDroidLibrary/bin/*
 google-play-services_lib/bin/
+FloatingActionButtonLibrary/.classpath
+NineOldDroidLibrary/.classpath
+appcompat/.classpath
+cardview/.classpath
+recyclerview/.classpath
+test2/.classpath

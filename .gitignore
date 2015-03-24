@@ -4,5 +4,7 @@ test2/gen/
 appcompat/bin/
 recyclerview/bin
 FloatingActionButtonLibrary/bin/
+FloatingActionButtonLibrary/bin/*
 NineOldDroidLibrary/bin/
+NineOldDroidLibrary/bin/*
 google-play-services_lib/bin/

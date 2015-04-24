@@ -1,167 +1,165 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:fillViewport="true" >
 
-    <ImageView 
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:scaleType="centerCrop"/>
+        android:background="@android:color/transparent" >
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ftu_username_top_spacing"
+            android:background="@color/semi_white_color"
             android:orientation="vertical" >
 
-            <LinearLayout
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="44dp" >
+
+                <EditText
+                    android:id="@+id/FTUEmailAddress"
+                    style="@style/FontLight"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/transparent"
+                    android:drawableLeft="@drawable/ico_login_user"
+                    android:drawablePadding="10dp"
+                    android:ems="10"
+                    android:hint="Email Address"
+                    android:imeOptions="actionNext"
+                    android:inputType="textEmailAddress"
+                    android:nextFocusDown="@+id/FTUUserName"
+                    android:singleLine="true"
+                    android:textSize="@dimen/text_small" >
+
+                    <requestFocus />
+                </EditText>
+            </RelativeLayout>
+
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ftu_username_top_spacing"
-                android:background="@color/semi_white_color"
-                android:orientation="vertical" >
-                
-                <RelativeLayout
+                android:layout_height="1dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@color/text_grey_light" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="44dp" >
+
+                <EditText
+                    android:id="@+id/FTUDisplayName"
+                    style="@style/FontLight"
                     android:layout_width="fill_parent"
-                    android:layout_height="44dp" >
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/transparent"
+                    android:drawableLeft="@drawable/ico_login_user"
+                    android:drawablePadding="10dp"
+                    android:ems="10"
+                    android:hint="Display Name"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapWords"
+                    android:nextFocusDown="@+id/FTUAddPassword"
+                    android:singleLine="true"
+                    android:textSize="@dimen/text_small" >
 
-                    <EditText
-                        android:id="@+id/FTUEmailAddress"
-                        style="@style/FontLight"
-                        android:layout_width="fill_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@color/transparent"
-                        android:drawableLeft="@drawable/ico_login_user"
-                        android:drawablePadding="10dp"
-                        android:ems="10"
-                        android:hint="Email Address"
-                        android:imeOptions="actionNext"
-                        android:inputType="textEmailAddress"
-                        android:nextFocusDown="@+id/FTUUserName"
-                        android:singleLine="true"
-                        android:textSize="@dimen/text_small">
+                    <requestFocus />
+                </EditText>
+            </RelativeLayout>
 
-                        <requestFocus />
-                    </EditText>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@color/text_grey_light" />
 
-                </RelativeLayout>
-                
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:background="@color/text_grey_light" />
-                
-                <RelativeLayout
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="44dp" >
+
+                <EditText
+                    android:id="@+id/FTUUserName"
+                    style="@style/FontLight"
                     android:layout_width="fill_parent"
-                    android:layout_height="44dp" >
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/transparent"
+                    android:drawableLeft="@drawable/ico_login_user"
+                    android:drawablePadding="10dp"
+                    android:ems="10"
+                    android:hint="Username"
+                    android:imeOptions="actionNext"
+                    android:nextFocusDown="@+id/FTUDisplayName"
+                    android:singleLine="true"
+                    android:textSize="@dimen/text_small" >
+                </EditText>
+            </RelativeLayout>
 
-                    <EditText
-                        android:id="@+id/FTUDisplayName"
-                        style="@style/FontLight"
-                        android:layout_width="fill_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@color/transparent"
-                        android:drawableLeft="@drawable/ico_login_user"
-                        android:drawablePadding="10dp"
-                        android:ems="10"
-                        android:hint="Display Name"
-                        android:imeOptions="actionNext"
-                        android:inputType="textCapWords"
-                        android:nextFocusDown="@+id/FTUAddPassword"
-                        android:singleLine="true"
-                        android:textSize="@dimen/text_small">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@color/text_grey_light" />
 
-                        <requestFocus />
-                    </EditText>
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="44dp" >
 
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:background="@color/text_grey_light" />
-
-                <RelativeLayout
+                <EditText
+                    android:id="@+id/FTUPassword"
+                    style="@style/FontLight"
                     android:layout_width="fill_parent"
-                    android:layout_height="44dp" >
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/transparent"
+                    android:drawableLeft="@drawable/ico_login_password"
+                    android:drawablePadding="10dp"
+                    android:ems="10"
+                    android:hint="Password"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPassword"
+                    android:nextFocusDown="@+id/FTULoginButton"
+                    android:singleLine="true"
+                    android:textSize="@dimen/text_small" >
+                </EditText>
+            </RelativeLayout>
 
-                    <EditText
-                        android:id="@+id/FTUUserName"
-                        style="@style/FontLight"
-                        android:layout_width="fill_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@color/transparent"
-                        android:drawableLeft="@drawable/ico_login_user"
-                        android:drawablePadding="10dp"
-                        android:ems="10"
-                        android:hint="Username"
-                        android:imeOptions="actionNext"
-                        android:nextFocusDown="@+id/FTUDisplayName"
-                        android:singleLine="true"
-                        android:textSize="@dimen/text_small">
-
-                    </EditText>
-
-                </RelativeLayout>
-                
-                
-                
-                 <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:background="@color/text_grey_light" />
-                
-                <RelativeLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="44dp" >
-
-                    <EditText
-                        android:id="@+id/FTUPassword"
-                        style="@style/FontLight"
-                        android:layout_width="fill_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@color/transparent"
-                        android:drawableLeft="@drawable/ico_login_password"
-                        android:drawablePadding="10dp"
-                        android:ems="10"
-                        android:hint="Password"
-                        android:imeOptions="actionNext"
-                        android:inputType="textPassword"
-                        android:nextFocusDown="@+id/FTULoginButton"
-                        android:singleLine="true"
-                        android:textSize="@dimen/text_small">
-
-                    </EditText>
-
-                </RelativeLayout>
-
-            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@color/text_grey_light" />
 
             <Button
                 android:id="@+id/FTULoginButton"
@@ -172,17 +170,13 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="80dp"
                 android:background="@drawable/holo_button_disable_bg"
+                android:onClick="onClick"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:text="Continue"
                 android:textColor="@color/text_grey"
-                android:textSize="@dimen/text_moderate2" 
-                android:onClick="onClick"/>
+                android:textSize="@dimen/text_moderate2" />
         </LinearLayout>
-    </ScrollView>
+    </FrameLayout>
 
-</RelativeLayout>
-    
-    
-    
-    
+</ScrollView>

@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -47,6 +50,8 @@ public class FTUNewUserActivity extends ActionBarActivity
 
 	private String mPasswordFromServer;
 	private boolean bActvityDestroyed = false;
+	private VideoView myVideoView;
+	private int videoPosition =0;
 
 	private Button mContinue = null;
 	AsyncTaskEventHandler asyncTaskEventHandler = null;
@@ -87,6 +92,43 @@ public class FTUNewUserActivity extends ActionBarActivity
 		mPasswordFromServer = intent.getStringExtra("password");
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Adding account");
 		mContinue = UiUtility.getView(this, R.id.FTULoginButton);
+		
+		myVideoView = (VideoView) findViewById(R.id.videoView);
+		
+		//set the media controller buttons
+		
+		try {
+			//set the media controller in the VideoView
+			//myVideoView.setMediaController(mediaControls);
+
+			//set the uri of the video to be played
+
+			myVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.dolphins_1600k));
+
+		} catch (Exception e) {
+			Log.e("Error", e.getMessage());
+			e.printStackTrace();
+		}
+
+		myVideoView.requestFocus();
+		//we also set an setOnPreparedListener in order to know when the video file is ready for playback
+		myVideoView.setOnPreparedListener(new OnPreparedListener() {
+		
+			public void onPrepared(MediaPlayer mediaPlayer) {
+				// close the progress bar and play the video
+				asyncTaskEventHandler.dismiss();
+				mediaPlayer.setLooping(true);
+				//if we have a position on savedInstanceState, the video playback should start from here
+				myVideoView.seekTo(videoPosition);
+				if (videoPosition == 0) {
+					myVideoView.start();
+				} else {
+					//if we come from a resumed activity, video playback will be paused
+					myVideoView.pause();
+				}
+			}
+		});
+		
 		
 		mContinue.setOnClickListener(new OnClickListener() 
 		{
@@ -396,5 +438,22 @@ public class FTUNewUserActivity extends ActionBarActivity
 			}
 		}
 
+	}
+	
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		//we use onSaveInstanceState in order to store the video playback position for orientation change
+		savedInstanceState.putInt("Position", myVideoView.getCurrentPosition());
+		myVideoView.pause();
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		//we use onRestoreInstanceState in order to play the video playback from the stored position 
+		videoPosition = savedInstanceState.getInt("Position");
+		myVideoView.seekTo(videoPosition);
 	}
 }

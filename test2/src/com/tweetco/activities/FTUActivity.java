@@ -3,10 +3,12 @@ package com.tweetco.activities;
 
 import java.net.MalformedURLException;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.MediaController;
+import android.widget.VideoView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -37,7 +41,10 @@ public class FTUActivity extends ActionBarActivity
 {
 	
 	private EditText mEmailAddress = null;
-	private Button mContinue = null;
+	private Button mContinueButton = null;
+	private VideoView myVideoView;
+	private int videoPosition =0;
+
 	AsyncTaskEventHandler asyncTaskEventHandler = null;
 	
 	@Override
@@ -46,11 +53,48 @@ public class FTUActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ftu);
 		
-		mEmailAddress = UiUtility.getView(this, R.id.FTUEmailAddress);
-		mContinue = UiUtility.getView(this, R.id.FTULoginButton);
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Fetching details");
+		mEmailAddress = UiUtility.getView(this, R.id.FTUEmailAddress);
+		mContinueButton = UiUtility.getView(this, R.id.FTULoginButton);
+		myVideoView = (VideoView) findViewById(R.id.videoView);
 		
-		mContinue.setOnClickListener(new OnClickListener() {
+		//set the media controller buttons
+		
+		try {
+			//set the media controller in the VideoView
+			//myVideoView.setMediaController(mediaControls);
+
+			//set the uri of the video to be played
+
+			myVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.dolphins_1600k));
+
+		} catch (Exception e) {
+			Log.e("Error", e.getMessage());
+			e.printStackTrace();
+		}
+
+		myVideoView.requestFocus();
+		//we also set an setOnPreparedListener in order to know when the video file is ready for playback
+		myVideoView.setOnPreparedListener(new OnPreparedListener() {
+		
+			public void onPrepared(MediaPlayer mediaPlayer) {
+				// close the progress bar and play the video
+				asyncTaskEventHandler.dismiss();
+				mediaPlayer.setLooping(true);
+				//if we have a position on savedInstanceState, the video playback should start from here
+				myVideoView.seekTo(videoPosition);
+				if (videoPosition == 0) {
+					myVideoView.start();
+				} else {
+					//if we come from a resumed activity, video playback will be paused
+					myVideoView.pause();
+				}
+			}
+		});
+
+		
+		
+		mContinueButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) 
@@ -281,5 +325,21 @@ public class FTUActivity extends ActionBarActivity
 	{
 		AlertDialog dialog = AlertDialogUtility.getAlertDialogOK(FTUActivity.this, errorMessage, null);
 		return dialog;
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		//we use onSaveInstanceState in order to store the video playback position for orientation change
+		savedInstanceState.putInt("Position", myVideoView.getCurrentPosition());
+		myVideoView.pause();
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		//we use onRestoreInstanceState in order to play the video playback from the stored position 
+		videoPosition = savedInstanceState.getInt("Position");
+		myVideoView.seekTo(videoPosition);
 	}
 }

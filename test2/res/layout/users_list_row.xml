@@ -85,8 +85,7 @@
         android:layout_gravity="end|center_vertical"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:text="Follow"
-        android:textColor="#FFFFFF"
+        android:textAllCaps="false"
          />
 
 </LinearLayout>

@@ -265,13 +265,15 @@ public class UsersListFragment extends ListFragment
 	{
 		if(isCurrentUserAFollower)
 		{
-			followButton.setText("Unfollow");
+			followButton.setText("Following");
 			followButton.setSelected(false);
+			followButton.setTextColor(getResources().getColor(R.color.white));
 		}
 		else
 		{
 			followButton.setText("Follow");
 			followButton.setSelected(true);
+			followButton.setTextColor(getResources().getColor(R.color.selector_green));
 		}
 	}
 	

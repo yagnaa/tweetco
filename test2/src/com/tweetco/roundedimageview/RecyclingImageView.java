@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tweetco.activities;
+package com.tweetco.roundedimageview;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

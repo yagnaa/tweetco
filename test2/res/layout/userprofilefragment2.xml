@@ -14,7 +14,7 @@
         android:background="@color/selector_blue"
         android:orientation="vertical" >
 
-        <com.tweetco.activities.RoundedImageView
+        <com.tweetco.roundedimageview.RoundedImageView
             android:id="@+id/userProfilePic"
             android:layout_width="50dp"
             android:layout_height="50dp"

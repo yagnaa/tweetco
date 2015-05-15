@@ -23,7 +23,7 @@
     android:paddingLeft="6dip"
     android:paddingRight="6dip" >
 
-    <com.tweetco.activities.RoundedImageView
+    <com.tweetco.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_pic"
         android:layout_width="70dp"
         android:layout_height="70dp"
@@ -32,12 +32,12 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="8dp"
-        android:clickable="true"
+        android:gravity="center_vertical"
         android:scaleType="fitXY"
-        custom:selector="true"
-        custom:selector_color="#44FFBB33"
-        custom:selector_stroke_color="#88FF8800"
-        custom:selector_stroke_width="2dp" />
+        android:src="@drawable/ico_profile_default"
+        app:riv_mutate_background="true"
+        app:riv_tile_mode="clamp"
+        app:riv_oval="true"/>
 
     <TextView
         android:id="@+id/in_reply_to"
@@ -97,7 +97,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="15sp" />
 
-    <com.tweetco.activities.RecyclingImageView
+    <com.tweetco.roundedimageview.RecyclingImageView
         android:id="@+id/tweet_content_image"
         android:layout_width="120dp"
         android:layout_height="120dp"

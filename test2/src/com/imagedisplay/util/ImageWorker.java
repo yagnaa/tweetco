@@ -378,7 +378,7 @@ public abstract class ImageWorker {
      * required, and makes sure that only the last started worker process can bind its result,
      * independently of the finish order.
      */
-    private static class AsyncDrawable extends BitmapDrawable {
+    public static class AsyncDrawable extends BitmapDrawable {
         private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
 
         public AsyncDrawable(Resources res, Bitmap bitmap, BitmapWorkerTask bitmapWorkerTask) {

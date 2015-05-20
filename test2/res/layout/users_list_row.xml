@@ -26,21 +26,19 @@
     android:paddingTop="5dip" >
     
     
-    <com.tweetco.roundedimageview.RoundedImageView
+    <com.tweetco.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_pic"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:clickable="true"
-        android:gravity="center_vertical"
-        android:scaleType="fitXY"
-        custom:selector="true"
-        custom:selector_color="#44FFBB33"
-        custom:selector_stroke_color="#88FF8800"
-        custom:selector_stroke_width="2dp"
+	        android:gravity="center_vertical"
+	        android:scaleType="fitXY"
+	        app:riv_mutate_background="true"
+	        app:riv_tile_mode="clamp"
+	        app:riv_oval="true"
         android:src="@drawable/ico_profile_default"  />
 
     <LinearLayout

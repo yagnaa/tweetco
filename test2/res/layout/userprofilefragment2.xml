@@ -14,18 +14,18 @@
         android:background="@color/selector_blue"
         android:orientation="vertical" >
 
-        <com.tweetco.roundedimageview.RoundedImageView
+        <com.tweetco.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/userProfilePic"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:background="@drawable/ico_profile_default"
             android:clickable="true"
-            android:scaleType="fitXY"
-            custom:selector="true"
-            custom:selector_color="#44FFBB33"
-            custom:selector_stroke_color="#88FF8800"
-            custom:selector_stroke_width="2dp" />
+	        android:gravity="center_vertical"
+	        android:scaleType="fitXY"
+	        app:riv_mutate_background="true"
+	        app:riv_tile_mode="clamp"
+	        app:riv_oval="true" />
 
         <FrameLayout
             android:layout_width="fill_parent"

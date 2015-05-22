@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.games.multiplayer.Invitations.LoadInvitationsResult;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,6 +28,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.onefortybytes.R;
 import com.tweetco.tweets.TweetCommonData;
+import com.tweetco.utility.UiUtility;
 
 public class TrendingFragment extends ListFragment
 {
@@ -38,6 +42,8 @@ public class TrendingFragment extends ListFragment
 	private String mUserName = null;
 	
 	private TrendingAdapter mAdapter = null;
+	
+	private SwipeRefreshLayout mSwipeRefreshLayout;
 
 	public TrendingFragment() {}
 
@@ -48,17 +54,34 @@ public class TrendingFragment extends ListFragment
 	}
 	
 	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+ 
+        // Create the list fragment's content view by calling the super method
+        final View listFragmentView = super.onCreateView(inflater, container, savedInstanceState);
+ 
+        // Now create a SwipeRefreshLayout to wrap the fragment's content view
+        mSwipeRefreshLayout = new SwipeRefreshLayout(container.getContext());
+ 
+        // Add the list fragment's content view to the SwipeRefreshLayout, making sure that it fills
+        // the SwipeRefreshLayout
+        mSwipeRefreshLayout.addView(listFragmentView,
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+ 
+        // Make sure that the SwipeRefreshLayout will fill the fragment
+        mSwipeRefreshLayout.setLayoutParams(
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+ 
+        // Now return the SwipeRefreshLayout as this fragment's content view
+        return mSwipeRefreshLayout;
+    }
+	
+	@Override
 	public void onResume()
 	{
 		super.onResume();
-		if(TweetCommonData.mClient != null)
-		{
-			loadTrendingTags();
-		}
-		else
-		{
-			Log.e("TrendingFragment", "MobileServiceClient is null");
-		}
 	}
 	
 	@Override
@@ -78,13 +101,26 @@ public class TrendingFragment extends ListFragment
 	
 	private void loadTrendingTags()
 	{
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override public void run() {
+			     mSwipeRefreshLayout.setRefreshing(true);
+			}
+			});
+		
 		MobileServiceClient mClient = TweetCommonData.mClient;
 		JsonObject obj = new JsonObject();
 		mClient.invokeApi(ApiInfo.TRENDING, obj, new ApiJsonOperationCallback() {
 			
 			@Override
 			public void onCompleted(JsonElement arg0, Exception arg1,
-					ServiceFilterResponse arg2) {
+					ServiceFilterResponse arg2) 
+			{
+				mSwipeRefreshLayout.post(new Runnable() {
+					@Override public void run() {
+					     mSwipeRefreshLayout.setRefreshing(false);
+					}
+					});
+				
 				if(arg1 == null)
 				{
 					Gson gson = new Gson();
@@ -106,6 +142,8 @@ public class TrendingFragment extends ListFragment
 					arg1.printStackTrace();
 				}
 				
+				
+				
 			}
 		},false);
 	
@@ -118,7 +156,31 @@ public class TrendingFragment extends ListFragment
 		
 		this.setListAdapter(mAdapter);
 		
+		mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				
+				if(TweetCommonData.mClient != null)
+				{
+					loadTrendingTags();
+				}
+				else
+				{
+					Log.e("TrendingFragment", "MobileServiceClient is null");
+					mSwipeRefreshLayout.setRefreshing(false);
+				}
+			}
+		});
 		
+		if(TweetCommonData.mClient != null)
+		{
+			loadTrendingTags();
+		}
+		else
+		{
+			Log.e("TrendingFragment", "MobileServiceClient is null");
+		}
 	}
 	
  

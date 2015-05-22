@@ -33,6 +33,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -66,6 +68,7 @@ import com.tweetco.activities.TweetAdapter.OnTweetClick;
 import com.tweetco.dao.Tweet;
 import com.tweetco.tweetlist.TrendingFeedMode;
 import com.tweetco.tweetlist.TweetListMode;
+import com.tweetco.utility.UiUtility;
 
 /**
  * The main fragment that powers the ImageGridActivity screen. Fairly straight forward GridView
@@ -100,6 +103,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 	//Scrolling from bottom
 	private QuickReturnListView mListView;
+	private SwipeRefreshLayout mSwipeRefreshLayout;
 //	private LinearLayout mQuickReturnView;
 	private FloatingActionButton mFAB;
 	private int mQuickReturnHeight;
@@ -135,7 +139,6 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		tweetListMode = (TweetListMode)getArguments().getParcelable(Constants.TWEET_LIST_MODE);
 
 		mDetector = new GestureDetectorCompat(this.getActivity().getApplicationContext(), new MyGestureListener());
-		
 		
 		responseReceiver = new ResponseReceiver();
 
@@ -241,6 +244,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		Log.v(TAG, "onViewCreated savedInstanceState=" + (savedInstanceState!=null?"true":"false"));
+		
 	}
 
 	@Override
@@ -260,7 +264,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		popupWindow = new PopupWindow(popupView,android.view.ViewGroup.LayoutParams.WRAP_CONTENT,android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 		popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));
 		popupWindow.setOutsideTouchable(true);
-
+		
 		Log.v(TAG, "onActivityCreated savedInstanceState=" + (savedInstanceState!=null?"true":"false"));
 		
 		mFAB.setOnClickListener(new View.OnClickListener() {
@@ -293,7 +297,13 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
                 Log.d("ListViewFragment", "onScroll()");
             }
         });
-
+		
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override public void run() {
+			     mSwipeRefreshLayout.setRefreshing(true);
+			}
+			});
+		
 //		EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
 //		typeTweet.setOnClickListener(new View.OnClickListener() 
 //		{
@@ -322,13 +332,24 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	public void refreshTop()
 	{
 
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override public void run() {
+			     mSwipeRefreshLayout.setRefreshing(true);
+			}
+			});
+		
 		//TODO Build the request for the load
 		mNewPageLoader.loadTop(new OnLoadCompletedCallback() {
 
 			@Override
 			public void onLoadCompleted(int numOfTweetsLoaded, boolean endOfList) {
 
-
+				mSwipeRefreshLayout.post(new Runnable() {
+					@Override public void run() {
+					     mSwipeRefreshLayout.setRefreshing(false);
+					}
+					});
+				
 				int index = mListView.getFirstVisiblePosition();
 				View v = mListView.getChildAt(0);
 				int top = (v == null) ? 0 : v.getTop();
@@ -354,6 +375,8 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				{
 					mAdapter.notifyHasMore();
 				}
+				
+				
 
 			}
 		});
@@ -396,6 +419,16 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		mListView.setAdapter(mAdapter);
 
 		mListView.setOnItemClickListener(this);
+		mSwipeRefreshLayout = UiUtility.getView(v, R.id.tweetList_swipe_refresh_layout);
+		mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				
+				refreshTop();
+			}
+		});
+		
 		mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
 			@Override
 			public void onScrollStateChanged(AbsListView absListView, int scrollState) {
@@ -536,7 +569,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		boolean launchedFromNotification = this.getActivity().getIntent().getBooleanExtra(Constants.LAUNCHED_FROM_NOTIFICATIONS, false);
 		if(launchedFromNotification)
 		{
-			refreshTop();
+			mSwipeRefreshLayout.post(new Runnable() {
+				@Override public void run() {
+				     mSwipeRefreshLayout.setRefreshing(true);
+				}
+				});
 		}
 
 		trendingTimerTask();
@@ -577,6 +614,12 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 	public void onScrollNext() 
 	{
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override public void run() {
+			     mSwipeRefreshLayout.setRefreshing(true);
+			}
+			});
+		
 		if (mNewPageLoader != null) 
 		{
 			//TODO Build the request for the load
@@ -585,6 +628,12 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 				@Override
 				public void onLoadCompleted(int numOfTweetsLoaded, boolean endOfList) 
 				{
+					mSwipeRefreshLayout.post(new Runnable() {
+						@Override public void run() {
+						     mSwipeRefreshLayout.setRefreshing(false);
+						}
+						});
+					
 					// save index and top position
 					int index = mListView.getFirstVisiblePosition();
 					View v = mListView.getChildAt(0);

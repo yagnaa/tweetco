@@ -8,11 +8,16 @@
 
     <!-- com.tweetco.activities.QuickReturnListView -->
 
+<android.support.v4.widget.SwipeRefreshLayout 
+        android:id="@+id/tweetList_swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <com.tweetco.activities.QuickReturnListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:verticalSpacing="1dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <com.example.floatingactionbuttonexample.FloatingActionButton
         android:id="@+id/fab"

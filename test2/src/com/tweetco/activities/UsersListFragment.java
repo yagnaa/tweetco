@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -43,6 +45,8 @@ public class UsersListFragment extends ListFragment
 	private String mUserName = null;
 	
 	ImageFetcher imageFetcher = null;
+	
+	private SwipeRefreshLayout mSwipeRefreshLayout;
 
 	public UsersListFragment() {}
 
@@ -52,6 +56,31 @@ public class UsersListFragment extends ListFragment
 		super.onCreate(savedInstanceState);
 
 	}
+	
+	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+ 
+        // Create the list fragment's content view by calling the super method
+        final View listFragmentView = super.onCreateView(inflater, container, savedInstanceState);
+ 
+        // Now create a SwipeRefreshLayout to wrap the fragment's content view
+        mSwipeRefreshLayout = new SwipeRefreshLayout(container.getContext());
+ 
+        // Add the list fragment's content view to the SwipeRefreshLayout, making sure that it fills
+        // the SwipeRefreshLayout
+        mSwipeRefreshLayout.addView(listFragmentView,
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+ 
+        // Make sure that the SwipeRefreshLayout will fill the fragment
+        mSwipeRefreshLayout.setLayoutParams(
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+ 
+        // Now return the SwipeRefreshLayout as this fragment's content view
+        return mSwipeRefreshLayout;
+    }
 
 	@Override
 	public void onResume() 
@@ -87,6 +116,32 @@ public class UsersListFragment extends ListFragment
 
 		this.setListAdapter(userListAdapter);
 		userListAdapter.notifyDataSetChanged();
+		
+		mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				if(TweetCommonData.mClient != null)
+				{
+					mUserName = TweetCommonData.getUserName();
+					
+					if(usersList == null || usersList.isEmpty())
+					{
+						loadUsers();
+					}
+					else
+					{
+						mSwipeRefreshLayout.setRefreshing(false);
+					}
+				}
+				else
+				{
+					Log.e("UsersListFragment", "MobileServiceClient is null");
+				}
+				
+			}
+		});
+		
 		if(TweetCommonData.mClient != null)
 		{
 			mUserName = TweetCommonData.getUserName();
@@ -100,10 +155,17 @@ public class UsersListFragment extends ListFragment
 		{
 			Log.e("UsersListFragment", "MobileServiceClient is null");
 		}
+		
 	}
 
 	public void loadUsers()
 	{
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override public void run() {
+			     mSwipeRefreshLayout.setRefreshing(true);
+			}
+			});
+		
 		// Get the items that weren't marked as completed and add them in the adapter
 		new AsyncTask<Void, Void, List<TweetUser>>() {
 			@Override
@@ -117,6 +179,11 @@ public class UsersListFragment extends ListFragment
 					@Override
 					public void onCompleted(JsonElement arg0, Exception arg1,
 							ServiceFilterResponse arg2) {
+						mSwipeRefreshLayout.post(new Runnable() {
+							@Override public void run() {
+							     mSwipeRefreshLayout.setRefreshing(false);
+							}
+							});
 						
 						if(arg1 == null)
 						{
@@ -143,6 +210,7 @@ public class UsersListFragment extends ListFragment
 							Log.e("Item clicked","Exception while loading users list") ;
 							arg1.printStackTrace();
 						}
+						
 						
 					}
 				}, false);

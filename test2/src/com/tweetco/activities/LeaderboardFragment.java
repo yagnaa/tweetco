@@ -5,8 +5,13 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
@@ -17,12 +22,14 @@ import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.asynctasks.GetLeaderboardTask;
 import com.tweetco.asynctasks.GetLeaderboardTask.GetLeaderboardTaskCompletionCallback;
 import com.tweetco.dao.LeaderboardUser;
+import com.tweetco.tweets.TweetCommonData;
 
 public class LeaderboardFragment extends ListFragment 
 {
 	private AsyncTaskEventHandler asyncTaskEventHandler = null;
 	private LeaderboardAdapter mAdapter = null;
 	ImageFetcher imageFetcher = null;
+	private SwipeRefreshLayout mSwipeRefreshLayout;
 	
 	public LeaderboardFragment()
 	{
@@ -37,6 +44,31 @@ public class LeaderboardFragment extends ListFragment
 		mAdapter = new LeaderboardAdapter(LeaderboardFragment.this.getActivity(), R.layout.leaderview, imageFetcher,onProfileClick);
     }
 	
+	
+	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+ 
+        // Create the list fragment's content view by calling the super method
+        final View listFragmentView = super.onCreateView(inflater, container, savedInstanceState);
+ 
+        // Now create a SwipeRefreshLayout to wrap the fragment's content view
+        mSwipeRefreshLayout = new SwipeRefreshLayout(container.getContext());
+ 
+        // Add the list fragment's content view to the SwipeRefreshLayout, making sure that it fills
+        // the SwipeRefreshLayout
+        mSwipeRefreshLayout.addView(listFragmentView,
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+ 
+        // Make sure that the SwipeRefreshLayout will fill the fragment
+        mSwipeRefreshLayout.setLayoutParams(
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+ 
+        // Now return the SwipeRefreshLayout as this fragment's content view
+        return mSwipeRefreshLayout;
+    }
 	
 	OnProfilePicClick onProfileClick =new OnProfilePicClick() {
 		
@@ -78,13 +110,28 @@ public class LeaderboardFragment extends ListFragment
     {
         super.onActivityCreated(savedInstanceState);
 		
-        loadLeaderBoard();
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this.getActivity(), "Getting Leaderboard");
 		this.setListAdapter(mAdapter);
+		
+		mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				loadLeaderBoard();				
+			}
+		});
+		
+		loadLeaderBoard();
 	}
     
     public void loadLeaderBoard()
     {		
+    	mSwipeRefreshLayout.post(new Runnable() {
+			@Override public void run() {
+			     mSwipeRefreshLayout.setRefreshing(true);
+			}
+			});
+    	
 		new GetLeaderboardTask(this.getActivity(), null, new GetLeaderboardTaskCompletionCallback() 
 		{	
 			@Override
@@ -96,18 +143,33 @@ public class LeaderboardFragment extends ListFragment
 					mAdapter.addAll(users);
 					mAdapter.notifyDataSetChanged();
 				}
+				
+				mSwipeRefreshLayout.post(new Runnable() {
+					@Override public void run() {
+					     mSwipeRefreshLayout.setRefreshing(false);
+					}
+					});
 			}
 			
 			@Override
 			public void onGetLeaderboardTaskFailure() 
 			{
 				Log.e("LeaderboardTask", "Failed");
+				mSwipeRefreshLayout.post(new Runnable() {
+					@Override public void run() {
+					     mSwipeRefreshLayout.setRefreshing(false);
+					}
+					});
 			}
 			
 			@Override
 			public void onGetLeaderboardTaskCancelled() 
 			{
-				
+				mSwipeRefreshLayout.post(new Runnable() {
+					@Override public void run() {
+					     mSwipeRefreshLayout.setRefreshing(false);
+					}
+					});
 			}
 		}).execute();
     }

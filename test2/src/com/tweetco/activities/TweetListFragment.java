@@ -68,6 +68,7 @@ import com.tweetco.activities.TweetAdapter.OnTweetClick;
 import com.tweetco.dao.Tweet;
 import com.tweetco.tweetlist.TrendingFeedMode;
 import com.tweetco.tweetlist.TweetListMode;
+import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 
 /**
@@ -298,11 +299,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
             }
         });
 		
-		mSwipeRefreshLayout.post(new Runnable() {
+		/*mSwipeRefreshLayout.post(new Runnable() {
 			@Override public void run() {
 			     mSwipeRefreshLayout.setRefreshing(true);
 			}
-			});
+			});*/
 		
 //		EditText typeTweet = (EditText) mQuickReturnView.findViewById(R.id.typeTweet);
 //		typeTweet.setOnClickListener(new View.OnClickListener() 
@@ -332,11 +333,11 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 	public void refreshTop()
 	{
 
-		mSwipeRefreshLayout.post(new Runnable() {
+		/*mSwipeRefreshLayout.post(new Runnable() {
 			@Override public void run() {
 			     mSwipeRefreshLayout.setRefreshing(true);
 			}
-			});
+			});*/
 		
 		//TODO Build the request for the load
 		mNewPageLoader.loadTop(new OnLoadCompletedCallback() {
@@ -362,7 +363,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 				mListView.setSelectionFromTop(positionOfList, top);
 
-				if(index!=positionOfList)
+				if(index != 0 && index!=positionOfList)
 				{
 					showNewTweetPopup();
 				}
@@ -569,11 +570,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		boolean launchedFromNotification = this.getActivity().getIntent().getBooleanExtra(Constants.LAUNCHED_FROM_NOTIFICATIONS, false);
 		if(launchedFromNotification)
 		{
-			mSwipeRefreshLayout.post(new Runnable() {
-				@Override public void run() {
-				     mSwipeRefreshLayout.setRefreshing(true);
-				}
-				});
+			refreshTop();
 		}
 
 		trendingTimerTask();
@@ -605,7 +602,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 		// of items in the adapter it reaches the bottom
 		int bufferItemsToShow = mAdapter.getCount() -(firstVisibleItem + visibleItemCount);
 		Log.d(TAG, "There are getCount()="+ mAdapter.getCount()+" firstVisibleItem="+firstVisibleItem+ " visibleItemCount="+visibleItemCount);
-		if((bufferItemsToShow < PageLoader.TWEET_LOAD_BUFFER  && mAdapter.canScroll()))
+		if((bufferItemsToShow < PageLoader.TWEET_LOAD_BUFFER  && mAdapter.canScroll() && TweetCommonData.getAccount() != null))
 		{
 			onScrollNext();
 		}
@@ -614,14 +611,16 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 	public void onScrollNext() 
 	{
-		mSwipeRefreshLayout.post(new Runnable() {
-			@Override public void run() {
-			     mSwipeRefreshLayout.setRefreshing(true);
-			}
-			});
+		
 		
 		if (mNewPageLoader != null) 
 		{
+			mSwipeRefreshLayout.post(new Runnable() {
+				@Override public void run() {
+				     mSwipeRefreshLayout.setRefreshing(true);
+				}
+				});
+			
 			//TODO Build the request for the load
 			mNewPageLoader.loadNext(new OnLoadCompletedCallback() {
 
@@ -647,7 +646,7 @@ public class TweetListFragment extends Fragment implements AdapterView.OnItemCli
 
 					mListView.setSelectionFromTop(positionOfList, top);
 
-					if(index!=positionOfList)
+					if(index != 0 && index!=positionOfList)
 					{
 						showNewTweetPopup();
 					}

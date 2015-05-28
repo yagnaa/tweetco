@@ -24,13 +24,11 @@ import com.tweetco.asynctasks.GetLeaderboardTask.GetLeaderboardTaskCompletionCal
 import com.tweetco.dao.LeaderboardUser;
 import com.tweetco.tweets.TweetCommonData;
 
-public class LeaderboardFragment extends ListFragment 
+public class LeaderboardFragment extends ListFragmentWithSwipeRefreshLayout 
 {
 	private AsyncTaskEventHandler asyncTaskEventHandler = null;
 	private LeaderboardAdapter mAdapter = null;
 	ImageFetcher imageFetcher = null;
-	private SwipeRefreshLayout mSwipeRefreshLayout;
-	
 	public LeaderboardFragment()
 	{
 		
@@ -44,31 +42,6 @@ public class LeaderboardFragment extends ListFragment
 		mAdapter = new LeaderboardAdapter(LeaderboardFragment.this.getActivity(), R.layout.leaderview, imageFetcher,onProfileClick);
     }
 	
-	
-	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
- 
-        // Create the list fragment's content view by calling the super method
-        final View listFragmentView = super.onCreateView(inflater, container, savedInstanceState);
- 
-        // Now create a SwipeRefreshLayout to wrap the fragment's content view
-        mSwipeRefreshLayout = new SwipeRefreshLayout(container.getContext());
- 
-        // Add the list fragment's content view to the SwipeRefreshLayout, making sure that it fills
-        // the SwipeRefreshLayout
-        mSwipeRefreshLayout.addView(listFragmentView,
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
- 
-        // Make sure that the SwipeRefreshLayout will fill the fragment
-        mSwipeRefreshLayout.setLayoutParams(
-                new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
- 
-        // Now return the SwipeRefreshLayout as this fragment's content view
-        return mSwipeRefreshLayout;
-    }
 	
 	OnProfilePicClick onProfileClick =new OnProfilePicClick() {
 		
@@ -113,7 +86,7 @@ public class LeaderboardFragment extends ListFragment
 		asyncTaskEventHandler = new AsyncTaskEventHandler(this.getActivity(), "Getting Leaderboard");
 		this.setListAdapter(mAdapter);
 		
-		mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+		setOnRefreshListener(new OnRefreshListener() {
 			
 			@Override
 			public void onRefresh() {

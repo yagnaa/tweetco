@@ -30,7 +30,7 @@ import com.onefortybytes.R;
 import com.tweetco.tweets.TweetCommonData;
 import com.tweetco.utility.UiUtility;
 
-public class TrendingFragment extends ListFragment
+public class TrendingFragment extends ListFragmentWithSwipeRefreshLayout
 {
 	
 	public static class TrendingTag
@@ -43,8 +43,6 @@ public class TrendingFragment extends ListFragment
 	
 	private TrendingAdapter mAdapter = null;
 	
-	private SwipeRefreshLayout mSwipeRefreshLayout;
-
 	public TrendingFragment() {}
 
 	@Override
@@ -52,31 +50,6 @@ public class TrendingFragment extends ListFragment
 	{
 		super.onCreate(savedInstanceState);
 	}
-	
-	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
- 
-        // Create the list fragment's content view by calling the super method
-        final View listFragmentView = super.onCreateView(inflater, container, savedInstanceState);
- 
-        // Now create a SwipeRefreshLayout to wrap the fragment's content view
-        mSwipeRefreshLayout = new SwipeRefreshLayout(container.getContext());
- 
-        // Add the list fragment's content view to the SwipeRefreshLayout, making sure that it fills
-        // the SwipeRefreshLayout
-        mSwipeRefreshLayout.addView(listFragmentView,
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
- 
-        // Make sure that the SwipeRefreshLayout will fill the fragment
-        mSwipeRefreshLayout.setLayoutParams(
-                new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
- 
-        // Now return the SwipeRefreshLayout as this fragment's content view
-        return mSwipeRefreshLayout;
-    }
 	
 	@Override
 	public void onResume()
@@ -156,7 +129,7 @@ public class TrendingFragment extends ListFragment
 		
 		this.setListAdapter(mAdapter);
 		
-		mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+		setOnRefreshListener(new OnRefreshListener() {
 			
 			@Override
 			public void onRefresh() {
@@ -168,7 +141,7 @@ public class TrendingFragment extends ListFragment
 				else
 				{
 					Log.e("TrendingFragment", "MobileServiceClient is null");
-					mSwipeRefreshLayout.setRefreshing(false);
+					setRefreshing(false);
 				}
 			}
 		});

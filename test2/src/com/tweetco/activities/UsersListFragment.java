@@ -7,8 +7,6 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,7 +34,7 @@ import com.onefortybytes.R;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.tweets.TweetCommonData;
 
-public class UsersListFragment extends ListFragment
+public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout
 {
 	List<TweetUser> usersList = new ArrayList<TweetUser>();
 
@@ -46,8 +44,6 @@ public class UsersListFragment extends ListFragment
 	
 	ImageFetcher imageFetcher = null;
 	
-	private SwipeRefreshLayout mSwipeRefreshLayout;
-
 	public UsersListFragment() {}
 
 	@Override
@@ -57,31 +53,7 @@ public class UsersListFragment extends ListFragment
 
 	}
 	
-	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
- 
-        // Create the list fragment's content view by calling the super method
-        final View listFragmentView = super.onCreateView(inflater, container, savedInstanceState);
- 
-        // Now create a SwipeRefreshLayout to wrap the fragment's content view
-        mSwipeRefreshLayout = new SwipeRefreshLayout(container.getContext());
- 
-        // Add the list fragment's content view to the SwipeRefreshLayout, making sure that it fills
-        // the SwipeRefreshLayout
-        mSwipeRefreshLayout.addView(listFragmentView,
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
- 
-        // Make sure that the SwipeRefreshLayout will fill the fragment
-        mSwipeRefreshLayout.setLayoutParams(
-                new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
- 
-        // Now return the SwipeRefreshLayout as this fragment's content view
-        return mSwipeRefreshLayout;
-    }
-
+	
 	@Override
 	public void onResume() 
 	{
@@ -117,7 +89,7 @@ public class UsersListFragment extends ListFragment
 		this.setListAdapter(userListAdapter);
 		userListAdapter.notifyDataSetChanged();
 		
-		mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+		setOnRefreshListener(new OnRefreshListener() {
 			
 			@Override
 			public void onRefresh() {
@@ -131,7 +103,7 @@ public class UsersListFragment extends ListFragment
 					}
 					else
 					{
-						mSwipeRefreshLayout.setRefreshing(false);
+						setRefreshing(false);
 					}
 				}
 				else
@@ -179,6 +151,7 @@ public class UsersListFragment extends ListFragment
 					@Override
 					public void onCompleted(JsonElement arg0, Exception arg1,
 							ServiceFilterResponse arg2) {
+						 
 						mSwipeRefreshLayout.post(new Runnable() {
 							@Override public void run() {
 							     mSwipeRefreshLayout.setRefreshing(false);

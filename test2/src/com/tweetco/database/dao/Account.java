@@ -7,20 +7,25 @@ public class Account extends DBContent
 {
 	public static final String TABLE_NAME = "Account";
 	
-	public static final String COLUMN_USERNAME           	= "username";
-	public static final String COLUMN_PASSWORD           	= "password";
-	public static final String COLUMN_SERVER_ADDRESS        = "serverAddress";
-	public static final String COLUMN_AUTH_TOKEN	        = "authToken";
-	public static final String COLUMN_USERID           		= "userid";
-	public static final String COLUMN_DISPLAY_NAME          = "displayname";
-	public static final String COLUMN_FOLLOWERS                   = "followers";
-	public static final String COLUMN_FOLLOWEES                    = "followees";
-	public static final String COLUMN_PROFILE_IMAGE_URL            = "profile_image_url";
-	public static final String COLUMN_PROFILE_BG_URL               = "profile_bg_url";
-	public static final String COLUMN_BOOKMARKED_TWEETS            = "bookmarked_tweets";
-	public static final String COLUMN_INTEREST_TAGS                = "interest_tags";
-	
-	
+	public static final String COLUMN_USERNAME           		= "username";
+	public static final String COLUMN_PASSWORD           		= "password";
+	public static final String COLUMN_SERVER_ADDRESS        	= "serverAddress";
+	public static final String COLUMN_AUTH_TOKEN	        	= "authToken";
+	public static final String COLUMN_USERID           			= "userid";
+	public static final String COLUMN_DISPLAY_NAME          	= "displayname";
+	public static final String COLUMN_FOLLOWERS                 = "followers";
+	public static final String COLUMN_FOLLOWEES                 = "followees";
+	public static final String COLUMN_PROFILE_IMAGE_URL         = "profile_image_url";
+	public static final String COLUMN_PROFILE_BG_URL            = "profile_bg_url";
+	public static final String COLUMN_BOOKMARKED_TWEETS         = "bookmarked_tweets";
+	public static final String COLUMN_INTEREST_TAGS             = "interest_tags";
+	public static final String COLUMN_SKILLS_TAGS               = "skills_tags";
+	public static final String COLUMN_PERSONAL_INTEREST_TAGS    = "personal_interest_tags";
+	public static final String COLUMN_WORK_DETAILS              = "work_details";
+	public static final String COLUMN_CONTACT_INFO				= "contact_info";
+
+
+
 	public static final int COLUMN_ID_INDEX                 	= 0;
 	public static final int COLUMN_USERNAME_INDEX           	= 1;
 	public static final int COLUMN_PASSWORD_INDEX           	= 2;
@@ -28,15 +33,17 @@ public class Account extends DBContent
 	public static final int COLUMN_AUTH_TOKEN_INDEX           	= 4;
 	public static final int COLUMN_USERID_INDEX           		= 5;
 	public static final int COLUMN_DISPLAY_NAME_INDEX           = 6;
-	public static final int COLUMN_FOLLOWERS_INDEX                    = 7;
-	public static final int COLUMN_FOLLOWEES_INDEX                    = 8;
-	public static final int COLUMN_PROFILE_IMAGE_URL_INDEX            = 9;
-	public static final int COLUMN_PROFILE_BG_URL_INDEX               = 10;
-	public static final int COLUMN_BOOKMARKED_TWEETS_INDEX            = 11;
-	public static final int COLUMN_INTEREST_TAGS_INDEX                = 12;
-	
-	
-	
+	public static final int COLUMN_FOLLOWERS_INDEX              = 7;
+	public static final int COLUMN_FOLLOWEES_INDEX              = 8;
+	public static final int COLUMN_PROFILE_IMAGE_URL_INDEX      = 9;
+	public static final int COLUMN_PROFILE_BG_URL_INDEX         = 10;
+	public static final int COLUMN_BOOKMARKED_TWEETS_INDEX      = 11;
+	public static final int COLUMN_INTEREST_TAGS_INDEX          = 12;
+	public static final int COLUMN_SKILLS_TAGS_INDEX           	= 13;
+	public static final int COLUMN_PERSONAL_INTEREST_TAGS_INDEX = 14;
+	public static final int COLUMN_WORK_DETAILS_INDEX           = 15;
+	public static final int COLUMN_CONTACT_INFO_INDEX           = 16;
+
 	private String	mUsername;
 	private String mPassword;		//TODO Password is in plain bytes
 	private String mServerAddress;
@@ -50,9 +57,14 @@ public class Account extends DBContent
 	public String profilebgurl;
 	public String bookmarkedtweets;
 	public String interesttags;
-	
-	
-	public String getUsername() {
+    public String skillstags;
+	public String personalInterestTags;
+	public String workDetails;
+	public String contactInfo;
+
+
+
+    public String getUsername() {
 		return mUsername;
 	}
 	public void setUsername(String m_username) {
@@ -84,8 +96,13 @@ public class Account extends DBContent
 			profilebgurl = c.getString(COLUMN_PROFILE_BG_URL_INDEX);
 			bookmarkedtweets = c.getString(COLUMN_BOOKMARKED_TWEETS_INDEX);
 			interesttags = c.getString(COLUMN_INTEREST_TAGS_INDEX);
-			
-		}
+            skillstags = c.getString(COLUMN_SKILLS_TAGS_INDEX);
+			personalInterestTags = c.getString(COLUMN_PERSONAL_INTEREST_TAGS_INDEX);
+			workDetails = c.getString(COLUMN_WORK_DETAILS_INDEX);
+			contactInfo = c.getString(COLUMN_CONTACT_INFO_INDEX);
+
+
+        }
 	}
 	
 	public ContentValues toContentValues()
@@ -106,9 +123,14 @@ public class Account extends DBContent
 		cv.put(COLUMN_PROFILE_BG_URL, profilebgurl);
 		cv.put(COLUMN_BOOKMARKED_TWEETS, bookmarkedtweets);
 		cv.put(COLUMN_INTEREST_TAGS, interesttags);
-		
-		
-		return cv;
+        cv.put(COLUMN_SKILLS_TAGS, skillstags);
+		cv.put(COLUMN_PERSONAL_INTEREST_TAGS, personalInterestTags);
+		cv.put(COLUMN_WORK_DETAILS, workDetails);
+		cv.put(COLUMN_CONTACT_INFO, contactInfo);
+
+
+
+        return cv;
 	}
 	public String getServerAddress() {
 		return mServerAddress;

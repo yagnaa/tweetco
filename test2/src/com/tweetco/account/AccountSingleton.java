@@ -33,11 +33,11 @@ public enum AccountSingleton {
         return account;
     }
 
-    public boolean isInitialised() {
+    private boolean isInitialised() {
         return isInitialised;
     }
 
-    public void setIsInitialised(boolean isInitialised) {
+    private void setIsInitialised(boolean isInitialised) {
         this.isInitialised = isInitialised;
     }
 

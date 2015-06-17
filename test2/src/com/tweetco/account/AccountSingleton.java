@@ -4,6 +4,7 @@ import android.database.Cursor;
 
 import com.tweetco.TweetCo;
 import com.tweetco.database.dao.Account;
+import com.tweetco.models.AccountModel;
 import com.tweetco.provider.TweetCoProviderConstants;
 
 /**
@@ -12,11 +13,11 @@ import com.tweetco.provider.TweetCoProviderConstants;
 public enum AccountSingleton {
     INSTANCE;
 
-    private Account account;
+    private AccountModel accountModel;
     private boolean isInitialised = false;
     private Object lock = new Object();
 
-    public Account getAccount() {
+    public AccountModel getAccountModel() {
 
         if(!isInitialised())
         {
@@ -24,13 +25,13 @@ public enum AccountSingleton {
             {
                 if(!isInitialised())
                 {
-                    account = getAccountInternal();
+                    accountModel = new AccountModel();
                     setIsInitialised(true);
                 }
             }
         }
 
-        return account;
+        return accountModel;
     }
 
     private boolean isInitialised() {
@@ -41,15 +42,5 @@ public enum AccountSingleton {
         this.isInitialised = isInitialised;
     }
 
-    private static Account getAccountInternal()  {
-        Account account = null;
 
-        Cursor c = TweetCo.mContext.getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
-        if(c.moveToFirst())  {
-            account = new Account();
-            account.restoreFromCursor(c);
-        }
-
-        return account;
-    }
 }

@@ -156,4 +156,30 @@ public class Account extends DBContent
 	public void setDisplayName(String mDisplayName) {
 		this.mDisplayName = mDisplayName;
 	}
+
+    public Account getCopy()
+    {
+        Account account = new Account();
+
+        account.setId(getId());
+        account.setUsername(mUsername);
+        account.setPassword(mPassword);
+        account.setServerAddress(mServerAddress);
+        account.setAuthToken(mAuthToken);
+        account.setUserId(mUserId);
+        account.setDisplayName(mDisplayName);
+
+        account.followers = followers;
+        account.followees = followees;
+        account.profileimageurl = profileimageurl;
+        account.profilebgurl = profilebgurl;
+        account.bookmarkedtweets = bookmarkedtweets;
+        account.interesttags = interesttags;
+        account.skillstags = skillstags;
+        account.personalInterestTags = personalInterestTags;
+        account.workDetails = workDetails;
+        account.contactInfo = contactInfo;
+
+        return account;
+    }
 }

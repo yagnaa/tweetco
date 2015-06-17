@@ -1,59 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_profile_swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="10dp">
+        <com.tweetco.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/editProfileUserPic"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ico_profile_default"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:scaleType="fitXY"
+            app:riv_mutate_background="true"
+            app:riv_tile_mode="clamp"
+            app:riv_oval="true" />
+
+        <TextView
+            android:id="@+id/profile_pic_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:padding="20dp"
+            android:text="Photo" />
+
+
+        </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/editProfileBackgroundPic"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/empty_background"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/background_pic_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:padding="20dp"
+            android:text="Background" />
+
+
+
+    </LinearLayout>
+
     <TextView
-        android:id="@+id/profile_pic_text"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="40dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:padding="20dp"
-        android:text="Photo" />
+        android:text="Work"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        style="?android:attr/listSeparatorTextViewStyle" />
 
-    <com.tweetco.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/editProfileUserPic"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_below="@id/profile_pic_text"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/ico_profile_default"
-        android:padding="10dp" 
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:scaleType="fitXY"
-        app:riv_mutate_background="true"
-        app:riv_tile_mode="clamp"
-        app:riv_oval="true" />
+    <EditText
+        android:id="@+id/workText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <requestFocus />
+    </EditText>
 
     <TextView
-        android:id="@+id/background_pic_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editProfileUserPic"
-        android:layout_centerHorizontal="true"
-        android:padding="20dp"
-        android:text="Background" />
+        android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Skills"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            style="?android:attr/listSeparatorTextViewStyle" />
 
-    <ImageView
-        android:id="@+id/editProfileBackgroundPic"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/background_pic_text"
-        android:background="@drawable/empty_background"
-        android:padding="10dp" />
+    <MultiAutoCompleteTextView
+            android:id="@+id/skillsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/editProfileSaveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_below="@id/editProfileBackgroundPic"
-        android:layout_centerHorizontal="true"
-        android:text="Save" />
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Interests"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            style="?android:attr/listSeparatorTextViewStyle" />
 
-</RelativeLayout>
+    <MultiAutoCompleteTextView
+            android:id="@+id/interestsText"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"/>
+
+    </LinearLayout>
+
+</ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>

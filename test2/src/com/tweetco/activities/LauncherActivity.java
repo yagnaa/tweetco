@@ -11,6 +11,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.onefortybytes.R;
 import com.tweetco.TweetCo;
+import com.tweetco.account.AccountSingleton;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
@@ -22,27 +23,27 @@ public class LauncherActivity extends ActionBarActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.splash_layout);
+
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() 
 			{
-					//Thread.sleep(1000);
-					if(!bActvityDestroyed)
-					{
-						Account account = getAccount();
-						if(account == null)
-						{
-							launchFtu();
-							finish();
-						}
-						else
-						{
-								startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
-								finish();
-						}
+				Account account = AccountSingleton.INSTANCE.getAccountModel().getAccountCopy();
+				if(account == null)
+				{
+					if(!bActvityDestroyed) {
+						launchFtu();
+						finish();
 					}
+				}
+				else
+				{
+					if(!bActvityDestroyed) {
+						startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
+						finish();
+					}
+				}
 
 			}
 		}).start();
@@ -59,19 +60,5 @@ public class LauncherActivity extends ActionBarActivity
 	{
 		bActvityDestroyed = true;
 		super.onDestroy();
-	}
-
-	private Account getAccount()
-	{
-		Account account = null;
-
-		Cursor c = getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
-		if(c.moveToFirst())
-		{
-			account = new Account();
-			account.restoreFromCursor(c);
-		}
-
-		return account;
 	}
 }

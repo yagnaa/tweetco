@@ -14,6 +14,7 @@ import com.imagedisplay.util.AsyncTask;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.tweetco.TweetCo;
+import com.tweetco.account.AccountSingleton;
 import com.tweetco.database.dao.Account;
 import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
@@ -94,20 +95,20 @@ public abstract class TweetCoBaseActivity extends ActionBarActivity
 		@Override
 		protected Account doInBackground(Void... params) 
 		{
-			Account account = getAccount();
+			Account account = AccountSingleton.INSTANCE.getAccountModel().getAccountCopy();
 			if(account != null)
 			{
 
 				MobileServiceClient mobileServiceClient;
 				try 
 				{
-					TweetCo.APP_URL = account.getServerAddress();
-					TweetCo.APP_KEY = account.getAuthToken();
-					mobileServiceClient = new MobileServiceClient(TweetCo.APP_URL, TweetCo.APP_KEY, TweetCo.mContext);
-					MobileServiceUser user = new MobileServiceUser(account.getUsername());
-					mobileServiceClient.setCurrentUser(user);
-					TweetCommonData.mClient = mobileServiceClient;
-					TweetCommonData.setAccount(account);
+					if(TweetCommonData.mClient == null) {
+						mobileServiceClient = new MobileServiceClient(account.getServerAddress(), account.getAuthToken(), TweetCo.mContext);
+						MobileServiceUser user = new MobileServiceUser(account.getUsername());
+						mobileServiceClient.setCurrentUser(user);
+						TweetCommonData.mClient = mobileServiceClient;
+					}
+
 				} 
 				catch (MalformedURLException e) 
 				{
@@ -115,20 +116,6 @@ public abstract class TweetCoBaseActivity extends ActionBarActivity
 				}
 
 			}
-			return account;
-		}
-
-		private Account getAccount()
-		{
-			Account account = null;
-
-			Cursor c = TweetCo.mContext.getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
-			if(c.moveToFirst())
-			{
-				account = new Account();
-				account.restoreFromCursor(c);
-			}
-
 			return account;
 		}
 

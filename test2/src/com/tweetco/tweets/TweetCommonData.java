@@ -11,6 +11,7 @@ import org.apache.commons.collections4.map.LinkedMap;
 import android.text.TextUtils;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.tweetco.account.AccountSingleton;
 import com.tweetco.activities.TrendingFragment;
 import com.tweetco.activities.TweetUtils;
 import com.tweetco.dao.Tweet;
@@ -31,27 +32,16 @@ public class TweetCommonData
     
     public static List<TrendingFragment.TrendingTag> trendingTagLists = Collections.synchronizedList(new ArrayList<TrendingFragment.TrendingTag>());
     
-	private static Account mAccount;
-
-	public static Account getAccount() 
+	public static Account getAccount()
 	{
-		return mAccount;
-	}
-	
-	public static String getUserName() 
-	{
-		if(mAccount == null || mAccount.getUsername() == null || TextUtils.isEmpty(mAccount.getUsername()))
-		{
-			throw new IllegalArgumentException("Account was not initialized");
-		}
-		return mAccount.getUsername();
+		return AccountSingleton.INSTANCE.getAccountModel().getAccountCopy();
 	}
 
-	public static void setAccount(Account account) 
+	public static String getUserName()
 	{
-		mAccount = account;
+		return getAccount().getUsername();
 	}
-	
+
 	public static void bookmark(Tweet tweet, String userName)
 	{
 		if(tweet!=null && !TextUtils.isEmpty(userName))

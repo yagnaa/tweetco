@@ -25,6 +25,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.onefortybytes.R;
 import com.tweetco.TweetCo;
+import com.tweetco.account.AccountSingleton;
 import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.AsyncTaskCancelCallback;
 import com.tweetco.activities.progress.AsyncTaskEventSinks.UIEventSink;
@@ -46,10 +47,10 @@ public class FTUNewUserActivity extends ActionBarActivity
 	private EditText mPassword;
 
 	private String mPasswordFromServer;
-	private boolean bActvityDestroyed = false;
+	private String mServerAddress;
+	private String mAuthToken;
 
 	private Button mContinue = null;
-	AsyncTaskEventHandler asyncTaskEventHandler = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -61,34 +62,38 @@ public class FTUNewUserActivity extends ActionBarActivity
 		mDisplayName = UiUtility.getView(this, R.id.FTUDisplayName);
 		mUsername = UiUtility.getView(this, R.id.FTUUserName);
 		mPassword = UiUtility.getView(this, R.id.FTUPassword);
+		mContinue = UiUtility.getView(this, R.id.FTULoginButton);
 
 		Intent intent = getIntent();
-		String emailAddress = intent.getStringExtra("email");
-		if(!TextUtils.isEmpty(emailAddress))
+		if(intent != null)
 		{
-			mEmailAddress.setText(emailAddress);
-			mEmailAddress.setEnabled(false);
+			String emailAddress = intent.getStringExtra("email");
+			if(!TextUtils.isEmpty(emailAddress))
+			{
+				mEmailAddress.setText(emailAddress);
+				mEmailAddress.setEnabled(false);
+			}
+
+			String displayName = intent.getStringExtra("displayName");
+			if(!TextUtils.isEmpty(displayName))
+			{
+				mDisplayName.setText(displayName);
+				mDisplayName.setEnabled(false);
+			}
+
+			String username = intent.getStringExtra("userName");
+			if(!TextUtils.isEmpty(username))
+			{
+				mUsername.setText(username);
+				mUsername.setEnabled(false);
+			}
+
+			mPasswordFromServer = intent.getStringExtra("password");
+			mServerAddress = intent.getStringExtra("serverAddress");
+			mAuthToken = intent.getStringExtra("authToken");
 		}
 
-		String displayName = intent.getStringExtra("displayName");
-		if(!TextUtils.isEmpty(displayName))
-		{
-			mDisplayName.setText(displayName);
-			mDisplayName.setEnabled(false);
-		}
-
-		String username = intent.getStringExtra("userName");
-		if(!TextUtils.isEmpty(username))
-		{
-			mUsername.setText(username);
-			mUsername.setEnabled(false);
-		}
-
-		mPasswordFromServer = intent.getStringExtra("password");
-		asyncTaskEventHandler = new AsyncTaskEventHandler(this, "Adding account");
-		mContinue = UiUtility.getView(this, R.id.FTULoginButton);
-		
-		mContinue.setOnClickListener(new OnClickListener() 
+		mContinue.setOnClickListener(new OnClickListener()
 		{
 			@Override
 			public void onClick(View v) 
@@ -109,60 +114,7 @@ public class FTUNewUserActivity extends ActionBarActivity
 								{
 									if(mPasswordFromServer.equals(password))
 									{
-										TweetUser tweetUser = new TweetUser();
-										tweetUser.email = emailAddress;
-										tweetUser.username = username;
-										tweetUser.displayname = displayName;
-										tweetUser.password = password;
-										
-										new AddNewUserTask(getApplicationContext(), TweetCommonData.mClient, tweetUser, asyncTaskEventHandler, new AddNewUserTaskCompletionCallback() {
-											
-											@Override
-											public void onAddNewUserTaskSuccess(Uri uri) 
-											{
-												asyncTaskEventHandler.dismiss();
-
-												new Thread(new Runnable() {
-
-													@Override
-													public void run() 
-													{
-														if(!FTUNewUserActivity.this.bActvityDestroyed)
-														{
-															Account account = null;
-															Cursor c = getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
-															if(c.moveToFirst())
-															{
-																account = new Account();
-																account.restoreFromCursor(c);
-															}
-
-															if(account != null)
-															{
-																TweetCommonData.setAccount(account);
-																
-																startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
-																
-																finish();
-															}
-														}
-													}
-												}).start();
-											}
-											
-											@Override
-											public void onAddNewUserTaskFailure() 
-											{
-												asyncTaskEventHandler.dismiss();
-												getAddAccountFailedDialog("Adding new user failed").show();
-											}
-											
-											@Override
-											public void onAddNewUserTaskCancelled() {
-												asyncTaskEventHandler.dismiss();
-												
-											}
-										}).execute();
+										addNewUser();
 									}
 									else
 									{
@@ -171,60 +123,7 @@ public class FTUNewUserActivity extends ActionBarActivity
 								}
 								else
 								{
-									TweetUser tweetUser = new TweetUser();
-									tweetUser.email = emailAddress;
-									tweetUser.username = username;
-									tweetUser.displayname = displayName;
-									tweetUser.password = password;
-									
-									new AddNewUserTask(getApplicationContext(), TweetCommonData.mClient, tweetUser, asyncTaskEventHandler, new AddNewUserTaskCompletionCallback() {
-										
-										@Override
-										public void onAddNewUserTaskSuccess(Uri uri) 
-										{
-											asyncTaskEventHandler.dismiss();
-
-											new Thread(new Runnable() {
-
-												@Override
-												public void run() 
-												{
-													if(!FTUNewUserActivity.this.bActvityDestroyed)
-													{
-														Account account = null;
-														Cursor c = getContentResolver().query(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, null, null, null, null);
-														if(c.moveToFirst())
-														{
-															account = new Account();
-															account.restoreFromCursor(c);
-														}
-
-														if(account != null)
-														{
-															TweetCommonData.setAccount(account);
-															
-															startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
-															
-															finish();
-														}
-													}
-												}
-											}).start();
-										}
-										
-										@Override
-										public void onAddNewUserTaskFailure() 
-										{
-											asyncTaskEventHandler.dismiss();
-											getAddAccountFailedDialog("Adding new user failed").show();
-										}
-										
-										@Override
-										public void onAddNewUserTaskCancelled() {
-											asyncTaskEventHandler.dismiss();
-											
-										}
-									}).execute();
+									addNewUser();
 									
 								}
 							}
@@ -252,12 +151,57 @@ public class FTUNewUserActivity extends ActionBarActivity
 			}
 		});
 	}
-	
-	@Override
-	protected void onDestroy()
+
+	private void addNewUser()
 	{
-		bActvityDestroyed = true;
-		super.onDestroy();
+		new AsyncTask<String, Void, Void>()
+		{
+			AsyncTaskEventHandler asyncTaskEventHandler = new AsyncTaskEventHandler(FTUNewUserActivity.this, "Adding account");;
+			@Override
+			protected Void doInBackground(String... params) {
+				AccountSingleton.INSTANCE.getAccountModel().insertAccountFromServer(params[0], params[1], params[2]);
+				return null;
+			}
+
+			@Override
+			protected void onPreExecute() {
+				asyncTaskEventHandler.onAysncTaskPreExecute(this, new AsyncTaskCancelCallback() {
+					@Override
+					public void onCancelled() {
+						cancel(true);
+					}
+				}, true);
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				startActivity(new Intent(getApplicationContext(), AllInOneActivity.class));
+
+				finish();
+			}
+		}.execute(new String[] { mServerAddress, mUsername.getText().toString(), mAuthToken });
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		// Always call the superclass so it can save the view hierarchy state
+		super.onSaveInstanceState(savedInstanceState);
+
+		// Save the user's current game state
+		savedInstanceState.putString("serverAddress", mServerAddress);
+		savedInstanceState.putString("authToken", mAuthToken);
+		savedInstanceState.putString("passwordFromServer", mPasswordFromServer);
+
+	}
+
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		// Always call the superclass so it can restore the view hierarchy
+		super.onRestoreInstanceState(savedInstanceState);
+
+		// Restore state members from saved instance
+		mServerAddress = savedInstanceState.getString("serverAddress");
+		mAuthToken = savedInstanceState.getString("authToken");
+		mPasswordFromServer = savedInstanceState.getString("passwordFromServer");
 	}
 	
 	private AlertDialog getAddAccountFailedDialog(String errorMessage)
@@ -266,135 +210,4 @@ public class FTUNewUserActivity extends ActionBarActivity
 		return dialog;
 	}
 	
-	public static interface AddNewUserTaskCompletionCallback
-	{
-		public void onAddNewUserTaskSuccess(Uri uri);
-		public void onAddNewUserTaskFailure ();
-		public void onAddNewUserTaskCancelled();
-	}
-	
-	public class AddNewUserTask extends AsyncTask<Void, Void, Uri> 
-	{
-		private AddNewUserTaskCompletionCallback m_completioncallback;
-		private UIEventSink m_uicallback;
-		private Context mContext;
-		private MobileServiceClient mMobileClient;
-		private TweetUser mTweetUser = null;
-		private Account mAccount = null;
-
-		public AddNewUserTask (Context context, MobileServiceClient mobileClient, TweetUser tweetUser, UIEventSink uicallback, AddNewUserTaskCompletionCallback completioncallback)
-		{
-			m_completioncallback = completioncallback;
-			m_uicallback = uicallback; 
-			mContext = context;
-			mMobileClient = mobileClient;
-			mTweetUser = tweetUser;
-		}
-		
-		@Override
-		protected void onPreExecute()
-		{
-			Log.d("tag","onPreExecute");
-			if(m_uicallback!=null)
-			{
-				m_uicallback.onAysncTaskPreExecute(this, new AsyncTaskCancelCallback()
-				{
-					@Override
-					public void onCancelled()
-					{
-						cancel(true);
-						m_completioncallback.onAddNewUserTaskCancelled();
-					}
-				}, true);
-			}
-		}
-
-
-		@Override
-		protected Uri doInBackground(Void... arg0)
-		{
-			final String TAG = "FetchUserInfoTask";
-			final MobileServiceClient client = mMobileClient;
-			JsonObject element = new JsonObject();
-			//TODO Check if the input is email address
-			element.addProperty(ApiInfo.kEmail, mTweetUser.email);
-			element.addProperty(ApiInfo.kApiRequesterKey, mTweetUser.username);
-			element.addProperty(ApiInfo.kPassword, mTweetUser.password);
-			element.addProperty(ApiInfo.kDisplayName, mTweetUser.displayname);
-			client.invokeApi("UserCreateNew", element,new ApiJsonOperationCallback() 
-			{
-
-				@Override
-				public void onCompleted(JsonElement user, Exception exception,
-						ServiceFilterResponse arg2) {
-					if(exception != null)
-					{
-						Log.e(TAG, "Get identitiy failed");
-					}
-					else
-					{
-						Log.d(TAG, "Get identitiy success");
-
-						JsonObject obj = new JsonObject();
-						obj.addProperty(ApiInfo.kApiRequesterKey, mTweetUser.username);
-						client.invokeApi(ApiInfo.GET_USER_INFO, obj, new ApiJsonOperationCallback() {
-
-							@Override
-							public void onCompleted(JsonElement arg0, Exception arg1,
-									ServiceFilterResponse arg2) {
-								if(arg1 == null)
-								{
-									Gson gson = new Gson();
-
-									try
-									{
-										TweetUser[] tweetUser = gson.fromJson(arg0, TweetUser[].class);
-										mAccount = new Account();
-										mAccount.setUsername(tweetUser[0].username);
-										mAccount.followers = tweetUser[0].followers;
-										mAccount.followees = tweetUser[0].followees;
-										mAccount.profileimageurl = tweetUser[0].profileimageurl;
-										mAccount.profilebgurl = tweetUser[0].profilebgurl;
-										mAccount.bookmarkedtweets = tweetUser[0].bookmarkedtweets;
-										mAccount.interesttags = tweetUser[0].interesttags;
-										mAccount.setServerAddress(TweetCo.APP_URL);
-										mAccount.setAuthToken(TweetCo.APP_KEY);
-									}
-									catch(JsonSyntaxException exception)
-									{
-										exception.printStackTrace();
-										Log.e("TweetUserRunnable", "unable to parse tweetUser") ;
-									}
-																
-								}
-								else
-								{
-									Log.e("Item clicked","Exception fetching tweets received") ;
-								}
-
-							}
-						},true);
-						
-
-					}
-				}
-			}, true);
-			
-			return mContext.getContentResolver().insert(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, mAccount.toContentValues());
-		}
-
-		@Override
-		protected void onPostExecute(Uri uri)
-		{
-			if(uri != null)
-			{
-				m_completioncallback.onAddNewUserTaskSuccess(uri);
-			}
-			else
-			{
-				m_completioncallback.onAddNewUserTaskFailure();
-			}
-		}
-
-	}
 }

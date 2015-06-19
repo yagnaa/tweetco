@@ -39,10 +39,16 @@ public class AccountModel extends SimpleObservable<Account> {
 
     public Account getAccountCopy()
     {
-        return account.getCopy();
+        if(account != null) {
+            return account.getCopy();
+        }
+        else {
+            return null;
+        }
+
     }
 
-    public  void  saveAccount(Account account)
+    private void  saveAccount(Account account)
     {
         this.account = account;
         String where = Account.COLUMN_ID + "= ? " ;
@@ -50,15 +56,40 @@ public class AccountModel extends SimpleObservable<Account> {
         this.notifyObservers(this.account);
     }
 
+    private void insertAccount(Account account)
+    {
+        this.account = account;
+        TweetCo.mContext.getContentResolver().insert(TweetCoProviderConstants.ACCOUNT_CONTENT_URI, account.toContentValues());
+        this.notifyObservers(this.account);
+    }
+
+    public void insertAccountFromServer(final String serverAddress, final String username, final String authToken)
+    {
+        Account tempAccount = loadAccountFromServer(serverAddress, username, authToken);
+
+        if(tempAccount != null) {
+            insertAccount(tempAccount);
+        }
+    }
+
     public void refreshAccountFromServer()
     {
+        Account tempAccount = loadAccountFromServer(account.getServerAddress(), account.getUsername(), account.getAuthToken());
+
+        if(tempAccount != null) {
+            saveAccount(tempAccount);
+        }
+    }
+
+    private static Account loadAccountFromServer(final String serverAddress, final String username, final String authToken)
+    {
         try {
-            MobileServiceClient mobileServiceClient = new MobileServiceClient(account.getServerAddress(), account.getAuthToken(), TweetCo.mContext);
+            MobileServiceClient mobileServiceClient = new MobileServiceClient(serverAddress, authToken, TweetCo.mContext);
 
             final Account tempAccount = new Account();
             JsonObject element = new JsonObject();
             JsonObject obj = new JsonObject();
-            obj.addProperty(ApiInfo.kApiRequesterKey, account.getUsername());
+            obj.addProperty(ApiInfo.kApiRequesterKey, username);
             mobileServiceClient.invokeApi(ApiInfo.GET_USER_INFO, obj, new ApiJsonOperationCallback() {
 
                 @Override
@@ -75,8 +106,8 @@ public class AccountModel extends SimpleObservable<Account> {
                             tempAccount.profileimageurl = tweetUser[0].profileimageurl;
                             tempAccount.profilebgurl = tweetUser[0].profilebgurl;
                             tempAccount.bookmarkedtweets = tweetUser[0].bookmarkedtweets;
-                            tempAccount.setServerAddress(account.getServerAddress());
-                            tempAccount.setAuthToken(account.getAuthToken());
+                            tempAccount.setServerAddress(serverAddress);
+                            tempAccount.setAuthToken(authToken);
                         } catch (JsonSyntaxException exception) {
                             exception.printStackTrace();
                             Log.e("TweetUserRunnable", "unable to parse tweetUser");
@@ -89,7 +120,7 @@ public class AccountModel extends SimpleObservable<Account> {
             }, true);
 
             obj = new JsonObject();
-            obj.addProperty(ApiInfo.kApiRequesterKey, account.getUsername());
+            obj.addProperty(ApiInfo.kApiRequesterKey, username);
             mobileServiceClient.invokeApi(ApiInfo.GET_USER_PROFILE_INFO, obj, new ApiJsonOperationCallback() {
 
                 @Override
@@ -128,13 +159,15 @@ public class AccountModel extends SimpleObservable<Account> {
                 }
             },true);
 
-            saveAccount(tempAccount);
+            return tempAccount;
 
         }
         catch (MalformedURLException e)
         {
-
+            e.printStackTrace();
         }
+
+        return null;
     }
 
     public void updateServer(final Account pAccount, BitmapDrawable profilePicDrawable, BitmapDrawable bgPicDrawable)

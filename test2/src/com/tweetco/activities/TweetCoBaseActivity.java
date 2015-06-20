@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -14,9 +13,8 @@ import com.imagedisplay.util.AsyncTask;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.tweetco.TweetCo;
-import com.tweetco.account.AccountSingleton;
+import com.tweetco.datastore.AccountSingleton;
 import com.tweetco.database.dao.Account;
-import com.tweetco.provider.TweetCoProviderConstants;
 import com.tweetco.tweets.TweetCommonData;
 
 public abstract class TweetCoBaseActivity extends ActionBarActivity 

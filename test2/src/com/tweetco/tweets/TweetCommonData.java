@@ -11,7 +11,7 @@ import org.apache.commons.collections4.map.LinkedMap;
 import android.text.TextUtils;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.tweetco.account.AccountSingleton;
+import com.tweetco.datastore.AccountSingleton;
 import com.tweetco.activities.TrendingFragment;
 import com.tweetco.activities.TweetUtils;
 import com.tweetco.dao.Tweet;

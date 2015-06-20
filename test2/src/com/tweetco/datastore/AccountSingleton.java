@@ -1,11 +1,6 @@
-package com.tweetco.account;
+package com.tweetco.datastore;
 
-import android.database.Cursor;
-
-import com.tweetco.TweetCo;
-import com.tweetco.database.dao.Account;
 import com.tweetco.models.AccountModel;
-import com.tweetco.provider.TweetCoProviderConstants;
 
 /**
  * Created by kirankum on 6/13/2015.

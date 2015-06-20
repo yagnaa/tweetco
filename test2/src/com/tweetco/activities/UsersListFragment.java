@@ -1,6 +1,7 @@
 package com.tweetco.activities;
 
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,18 +33,26 @@ import com.microsoft.windowsazure.mobileservices.ApiJsonOperationCallback;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.onefortybytes.R;
+import com.tweetco.account.AccountSingleton;
+import com.tweetco.activities.progress.AsyncTaskEventHandler;
+import com.tweetco.activities.progress.AsyncTaskEventSinks;
+import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
+import com.tweetco.interfaces.OnChangeListener;
+import com.tweetco.models.UsersListModel;
 import com.tweetco.tweets.TweetCommonData;
 
-public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout
+public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout implements OnChangeListener<UsersListModel>
 {
-	List<TweetUser> usersList = new ArrayList<TweetUser>();
+	private UsersListModel userListModel;
 
 	private UserListAdapter userListAdapter = null;
 
 	private String mUserName = null;
-	
+
 	ImageFetcher imageFetcher = null;
+
+	private List<String> mUsersListFilter = new ArrayList<>();
 	
 	public UsersListFragment() {}
 
@@ -51,14 +61,7 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout
 	{
 		super.onCreate(savedInstanceState);
 
-	}
-	
-	
-	@Override
-	public void onResume() 
-	{
-		super.onResume();
-		userListAdapter.notifyDataSetChanged();
+		userListModel = new UsersListModel();
 	}
 
 	public void addUser(String usersListStr)
@@ -66,197 +69,65 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout
 		if(!TextUtils.isEmpty(usersListStr))
 		{
 			String[] list = usersListStr.split(";");
-			for (String username : list) 
+			for (String username : list)
 			{
 				if(!TextUtils.isEmpty(username))
 				{
-					TweetUser user = TweetCommonData.tweetUsers.get(username);
-					usersList.add(user);
+					mUsersListFilter.add(username);
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void onResume() 
+	{
+		super.onResume();
+		userListModel.addListener(this);
+	}
+
+	public void onPause() {
+		super.onPause();
+		userListModel.removeListener(this);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) 
 	{
 		super.onActivityCreated(savedInstanceState);
-		
+
 		imageFetcher = Utils.getImageFetcher(this.getActivity(), 60, 60);
 		
-		userListAdapter = new UserListAdapter(this.getActivity(), R.layout.users_list_row, usersList);
+		this.setListAdapter(null);
 
-		this.setListAdapter(userListAdapter);
-		userListAdapter.notifyDataSetChanged();
-		
-		setOnRefreshListener(new OnRefreshListener() {
-			
-			@Override
-			public void onRefresh() {
-				if(TweetCommonData.mClient != null)
-				{
-					mUserName = TweetCommonData.getUserName();
-					
-					if(usersList == null || usersList.isEmpty())
-					{
-						loadUsers();
-					}
-					else
-					{
-						setRefreshing(false);
-					}
-				}
-				else
-				{
-					Log.e("UsersListFragment", "MobileServiceClient is null");
-				}
-				
-			}
-		});
-		
-		if(TweetCommonData.mClient != null)
+		new AsyncTask<Void, Void, Void>()
 		{
-			mUserName = TweetCommonData.getUserName();
-			
-			if(usersList == null || usersList.isEmpty())
-			{
-				loadUsers();
-			}
-		}
-		else
-		{
-			Log.e("UsersListFragment", "MobileServiceClient is null");
-		}
-		
-	}
-
-	public void loadUsers()
-	{
-		mSwipeRefreshLayout.post(new Runnable() {
-			@Override public void run() {
-			     mSwipeRefreshLayout.setRefreshing(true);
-			}
-			});
-		
-		// Get the items that weren't marked as completed and add them in the adapter
-		new AsyncTask<Void, Void, List<TweetUser>>() {
 			@Override
-			protected List<TweetUser> doInBackground(Void... params) {
-
-
-				// Get the items that weren't marked as completed and add them in the
-				// adapter
-				TweetCommonData.mClient.invokeApi(ApiInfo.GET_USERS, "GET",  new ArrayList<Pair<String, String>>(), new ApiJsonOperationCallback()
+			protected Void doInBackground(Void... params) {
+				try {
+					mUserName = AccountSingleton.INSTANCE.getAccountModel().getAccountCopy().getUsername();
+					userListModel.refreshUsersFromServer();
+				}
+				catch (MalformedURLException e)
 				{
-					@Override
-					public void onCompleted(JsonElement arg0, Exception arg1,
-							ServiceFilterResponse arg2) {
-						 
-						mSwipeRefreshLayout.post(new Runnable() {
-							@Override public void run() {
-							     mSwipeRefreshLayout.setRefreshing(false);
-							}
-							});
-						
-						if(arg1 == null)
-						{
-							Gson gson = new Gson();
-							
-							Type collectionType = new TypeToken<List<TweetUser>>(){}.getType();
-							List<TweetUser> users = gson.fromJson(arg0, collectionType);
-							
-							Log.e("tag", "msg");
-							userListAdapter.clear();
-							for (TweetUser tweetUser : users) 
-							{
-								TweetCommonData.tweetUsers.put(tweetUser.username.toLowerCase(), tweetUser);
-								if(!mUserName.equals(tweetUser.username))
-								{
-									//Don't add the same user
-									userListAdapter.add(tweetUser);
-								}
-							}
-							userListAdapter.notifyDataSetChanged();
-						}
-						else
-						{
-							Log.e("Item clicked","Exception while loading users list") ;
-							arg1.printStackTrace();
-						}
-						
-						
-					}
-				}, false);
-				
-				
+
+				}
 
 				return null;
 			}
+
+			@Override
+			protected void onPreExecute() {
+
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+
+			}
 		}.execute();
+
 	}
-
-	//TODO this is not complete yet
-//	public void loadUser(final TweetUser user)
-//	{
-//		// Get the items that weren't marked as completed and add them in the adapter
-//		new AsyncTask<Void, Void, Void>() {
-//			@Override
-//			protected Void doInBackground(Void... params) {
-//
-//				mTweetUsersTable.where().field("username").eq(user.username).execute(new TableQueryCallback<TweetUser>() 
-//				{
-//
-//					public void onCompleted(List<TweetUser> result, int count, Exception exception, ServiceFilterResponse response) 
-//					{
-//						if (exception == null) 
-//						{
-//							userListAdapter.getPosition(user);
-//							for (TweetUser tweetUser : result) 
-//							{
-//								TweetCommonData.tweetUsers.put(tweetUser.username.toLowerCase(), tweetUser);
-//								if(!mUserName.equals(tweetUser.username))
-//								{
-//									//Don't add the same user
-//									userListAdapter.add(tweetUser);
-//								}
-//							}
-//							userListAdapter.notifyDataSetChanged();
-//						} else 
-//						{
-//							//TODO Do we need to roll back the changes here???
-//						}
-//					}
-//				});
-//				// Get the items that weren't marked as completed and add them in the
-//				// adapter
-//				//				mTweetUsersTable.setQueryText("select * from TweetUsers where username ='"+userName+"'");
-//				//				mTweetUsersTable.execute(new TableQueryCallback<TweetUser>() {
-//				//
-//				//					public void onCompleted(List<TweetUser> result, int count, Exception exception, ServiceFilterResponse response) {
-//				//						if (exception == null) {
-//				//							Log.e("tag", "msg");
-//				//							userListAdapter.clear();
-//				//							for (TweetUser tweetUser : result) 
-//				//							{
-//				//								TweetCommonData.tweetUsers.put(tweetUser.username, tweetUser);
-//				//								if(!mUserName.equals(tweetUser.username))
-//				//								{
-//				//									//Don't add the same user
-//				//									userListAdapter.add(tweetUser);
-//				//								}
-//				//							}
-//				//							userListAdapter.notifyDataSetChanged();
-//				//						} else {
-//				//							//createAndShowDialog(exception, "Error");
-//				//						}
-//				//					}
-//				//				});
-//				//				
-//				return null;
-//			}
-//		}.execute();
-//	}
-
 
 	public void followOrUnfollowUser(final Button followButton,final String userWhomShouldBeFollowed, final boolean requestForFollow)
 	{
@@ -287,8 +158,8 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout
 					if(followButton!=null && userToFollowOrUnFollow.username.equalsIgnoreCase(userWhomShouldBeFollowed))
 					{
 						setFollowButton(followButton, requestForFollow);
-						Log.d("Item clicked","Follow/Unfollow succeeded") ;
-						loadUsers();
+						Log.d("Item clicked", "Follow/Unfollow succeeded") ;
+						//loadUsers();
 					}
 				}
 				else
@@ -332,13 +203,36 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout
 		}
 	}
 
+	@Override
+	public void onChange(UsersListModel model) {
+		this.getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (userListAdapter == null) {
+					userListAdapter = new UserListAdapter(UsersListFragment.this.getActivity(), R.layout.users_list_row, new ArrayList<TweetUser>());
+
+					UsersListFragment.this.setListAdapter(userListAdapter);
+				}
+
+				userListAdapter.getFilter().filter(null);
+			}
+		});
+
+
+	}
+
 
 	private class UserListAdapter extends ArrayAdapter<TweetUser>
 	{
 		Context mContext = null;
+		private List<TweetUser> data;
+		private TweetUserFilter mFilter;
+
 		public UserListAdapter(Context context, int resource,List<TweetUser> objects) {
 			super(context, resource, objects);
 			mContext = context;
+			data = objects;
+			mFilter = new TweetUserFilter();
 		}
 
 		@Override
@@ -406,6 +300,47 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout
 			}
 
 			return convertView;
+		}
+
+		@Override
+		public Filter getFilter() {
+			return mFilter;
+		}
+
+		private class TweetUserFilter extends Filter {
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+
+				FilterResults results = new FilterResults();
+
+				if (mUsersListFilter.size() == 0) {
+					List<TweetUser> list = new ArrayList<TweetUser>(userListModel.getUsersList());
+					results.values = list;
+					results.count = list.size();
+				} else {
+					List<TweetUser> list = new ArrayList<>(mUsersListFilter.size());
+					for (String username : mUsersListFilter) {
+						TweetUser user = userListModel.getUser(username);
+						if (user != null) {
+							list.add(user);
+						}
+					}
+
+					results.values = list;
+					results.count = list.size();
+				}
+				return results;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results) {
+				List<TweetUser> list = (List<TweetUser>) results.values;
+				data.removeAll(list);
+				data.addAll(list);
+				data.retainAll(list);
+				notifyDataSetChanged();
+			}
 		}
 	}
 }

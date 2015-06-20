@@ -16,6 +16,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.tweetco.TweetCo;
 import com.tweetco.activities.ApiInfo;
+import com.tweetco.clients.AccountClient;
 import com.tweetco.dao.Tweet;
 import com.tweetco.dao.TweetUser;
 import com.tweetco.database.dao.Account;
@@ -31,10 +32,12 @@ import java.net.MalformedURLException;
 public class AccountModel extends SimpleObservable<Account> {
 
     private Account account;
+    private AccountClient accountClient;
 
     public  AccountModel()
     {
         account = getAccountInternal();
+        accountClient = new AccountClient();
     }
 
     public Account getAccountCopy()
@@ -65,7 +68,7 @@ public class AccountModel extends SimpleObservable<Account> {
 
     public void insertAccountFromServer(final String serverAddress, final String username, final String authToken)
     {
-        Account tempAccount = loadAccountFromServer(serverAddress, username, authToken);
+        Account tempAccount = accountClient.loadAccountFromServer(serverAddress, username, authToken);
 
         if(tempAccount != null) {
             insertAccount(tempAccount);
@@ -74,201 +77,19 @@ public class AccountModel extends SimpleObservable<Account> {
 
     public void refreshAccountFromServer()
     {
-        Account tempAccount = loadAccountFromServer(account.getServerAddress(), account.getUsername(), account.getAuthToken());
+        Account tempAccount = accountClient.loadAccountFromServer(account.getServerAddress(), account.getUsername(), account.getAuthToken());
 
         if(tempAccount != null) {
             saveAccount(tempAccount);
         }
     }
 
-    private static Account loadAccountFromServer(final String serverAddress, final String username, final String authToken)
-    {
-        try {
-            MobileServiceClient mobileServiceClient = new MobileServiceClient(serverAddress, authToken, TweetCo.mContext);
 
-            final Account tempAccount = new Account();
-            JsonObject element = new JsonObject();
-            JsonObject obj = new JsonObject();
-            obj.addProperty(ApiInfo.kApiRequesterKey, username);
-            mobileServiceClient.invokeApi(ApiInfo.GET_USER_INFO, obj, new ApiJsonOperationCallback() {
-
-                @Override
-                public void onCompleted(JsonElement arg0, Exception arg1,
-                                        ServiceFilterResponse arg2) {
-                    if (arg1 == null) {
-                        Gson gson = new Gson();
-
-                        try {
-                            TweetUser[] tweetUser = gson.fromJson(arg0, TweetUser[].class);
-                            tempAccount.setUsername(tweetUser[0].username);
-                            tempAccount.followers = tweetUser[0].followers;
-                            tempAccount.followees = tweetUser[0].followees;
-                            tempAccount.profileimageurl = tweetUser[0].profileimageurl;
-                            tempAccount.profilebgurl = tweetUser[0].profilebgurl;
-                            tempAccount.bookmarkedtweets = tweetUser[0].bookmarkedtweets;
-                            tempAccount.setServerAddress(serverAddress);
-                            tempAccount.setAuthToken(authToken);
-                        } catch (JsonSyntaxException exception) {
-                            exception.printStackTrace();
-                            Log.e("TweetUserRunnable", "unable to parse tweetUser");
-                        }
-                    } else {
-                        Log.e("Item clicked", "Exception fetching tweets received");
-                    }
-
-                }
-            }, true);
-
-            obj = new JsonObject();
-            obj.addProperty(ApiInfo.kApiRequesterKey, username);
-            mobileServiceClient.invokeApi(ApiInfo.GET_USER_PROFILE_INFO, obj, new ApiJsonOperationCallback() {
-
-                @Override
-                public void onCompleted(JsonElement arg0, Exception arg1,
-                                        ServiceFilterResponse arg2) {
-                    if(arg1 == null)
-                    {
-                        Gson gson = new Gson();
-
-                        try
-                        {
-                            JsonObject jsonObject = arg0.getAsJsonObject().get("profileinfo").getAsJsonArray().get(0).getAsJsonObject();
-                            String contactInfo = GetString(jsonObject, ApiInfo.kContactInfoTags);
-                            String interesttags = GetString(jsonObject, ApiInfo.kInterestTags);
-                            String skilltags = GetString(jsonObject, ApiInfo.kSkillTags);
-                            String personaltags = GetString(jsonObject, ApiInfo.kPersonalTags);
-                            String workinfo = GetString(jsonObject, ApiInfo.kWorkInfo);
-                            //Also Update the Account Table.
-                            tempAccount.contactInfo = contactInfo;
-                            tempAccount.workDetails = workinfo;
-                            tempAccount.interesttags = interesttags;
-                            tempAccount.skillstags = skilltags;
-                            tempAccount.personalInterestTags = personaltags;                        }
-                        catch(JsonSyntaxException exception)
-                        {
-                            exception.printStackTrace();
-                            Log.e("TweetUserRunnable", "unable to parse tweetUser") ;
-                        }
-
-                    }
-                    else
-                    {
-                        Log.e("Item clicked","Exception fetching tweets received") ;
-                    }
-
-                }
-            },true);
-
-            return tempAccount;
-
-        }
-        catch (MalformedURLException e)
-        {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 
     public void updateServer(final Account pAccount, BitmapDrawable profilePicDrawable, BitmapDrawable bgPicDrawable)
     {
         try {
-            MobileServiceClient mobileServiceClient = new MobileServiceClient(account.getServerAddress(), account.getAuthToken(), TweetCo.mContext);
-
-            if(profilePicDrawable != null)
-            {
-                JsonObject element = new JsonObject();
-                element.addProperty(ApiInfo.kApiRequesterKey, pAccount.getUsername());
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-                Bitmap bitmap = profilePicDrawable.getBitmap();
-                bitmap.compress(Bitmap.CompressFormat.JPEG,25,bos);
-                byte[] bb = bos.toByteArray();
-                String image = Base64.encodeToString(bb, 0);
-                element.addProperty(ApiInfo.kBase64ImageStringKey, image);
-
-                mobileServiceClient.invokeApi(ApiInfo.UPDATE_USER_IMAGE, element, new ApiJsonOperationCallback() {
-
-                    @Override
-                    public void onCompleted(JsonElement element, Exception exception, ServiceFilterResponse arg2) {
-                        if (exception == null) {
-                            Log.d("EditProfile", "Profile edit saved");
-                            pAccount.profileimageurl = GetString(element.getAsJsonObject(), "profileimageurl");
-
-                        } else {
-                            Log.e("EditProfile", "Profile edit save failed");
-                        }
-
-                    }
-                }, true);
-            }
-
-            if(bgPicDrawable != null)
-            {
-                JsonObject element = new JsonObject();
-                element.addProperty(ApiInfo.kApiRequesterKey, pAccount.getUsername());
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-                Bitmap bitmap = bgPicDrawable.getBitmap();
-                bitmap.compress(Bitmap.CompressFormat.JPEG,25,bos);
-                byte[] bb = bos.toByteArray();
-                String image = Base64.encodeToString(bb, 0);
-                element.addProperty(ApiInfo.kBase64BGImageStringKey, image);
-
-                mobileServiceClient.invokeApi(ApiInfo.UPDATE_USER_IMAGE, element, new ApiJsonOperationCallback() {
-
-                    @Override
-                    public void onCompleted(JsonElement element, Exception exception, ServiceFilterResponse arg2) {
-                        if (exception == null) {
-                            Log.d("EditProfile", "Profile edit saved");
-                            pAccount.profilebgurl = GetString(element.getAsJsonObject(), "profilebgurl");
-
-                        } else {
-                            Log.e("EditProfile", "Profile edit save failed");
-                        }
-
-                    }
-                }, true);
-            }
-
-            JsonObject element = new JsonObject();
-            element.addProperty(ApiInfo.kApiRequesterKey, pAccount.getUsername());
-            if(!TextUtils.isEmpty(pAccount.interesttags)) {
-                element.addProperty(ApiInfo.kInterestTags, pAccount.interesttags);
-            }
-
-            if(!TextUtils.isEmpty(pAccount.contactInfo)) {
-                element.addProperty(ApiInfo.kContactInfoTags, pAccount.contactInfo);
-            }
-
-
-            if(!TextUtils.isEmpty(pAccount.skillstags)) {
-                element.addProperty(ApiInfo.kSkillTags, pAccount.skillstags);
-            }
-
-            if(!TextUtils.isEmpty(pAccount.personalInterestTags)) {
-                element.addProperty(ApiInfo.kPersonalTags, pAccount.personalInterestTags);
-            }
-
-            if(!TextUtils.isEmpty(pAccount.workDetails)) {
-                element.addProperty(ApiInfo.kWorkInfo, pAccount.workDetails);
-            }
-
-
-
-            mobileServiceClient.invokeApi(ApiInfo.UPDATE_USER_PROFILE_INFO, element, new ApiJsonOperationCallback() {
-
-                @Override
-                public void onCompleted(JsonElement element, Exception exception, ServiceFilterResponse arg2) {
-                    if (exception == null) {
-                        Log.d("EditProfile", "Profile edit saved");
-
-                    } else {
-                        Log.e("EditProfile", "Profile edit save failed");
-                    }
-
-                }
-            }, true);
+            accountClient.updateServer(pAccount, profilePicDrawable, bgPicDrawable);
 
             saveAccount(pAccount);
         }
@@ -277,20 +98,6 @@ public class AccountModel extends SimpleObservable<Account> {
 
         }
     }
-
-    private static String GetString(JsonObject object, String name)
-    {
-        JsonElement element = object.get(name);
-        if(element != null)
-        {
-            return element.getAsString();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
 
     private static Account getAccountInternal()  {
         Account account = null;

@@ -17,4 +17,15 @@ public class TweetUser
 
 	public String interesttags;
 
+
+	@Override
+	public boolean equals(Object o) {
+		boolean isEqual = false;
+		if(o instanceof  TweetUser)
+		{
+			isEqual = username.equals(((TweetUser) o).username);
+		}
+
+		return isEqual;
+	}
 }

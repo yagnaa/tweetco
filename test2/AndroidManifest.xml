@@ -59,6 +59,11 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
         </activity>
         <activity
+            android:name="com.tweetco.activities.UsersListActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
+        </activity>
+        <activity
             android:name="com.tweetco.activities.PostTweetActivity"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" >
@@ -86,10 +91,6 @@
         <activity
             android:name="com.tweetco.activities.TweetDetailActivity"
             android:parentActivityName="com.tweetco.activities.AllInOneActivity"
-            android:windowSoftInputMode="adjustResize" >
-        </activity>
-        <activity
-            android:name="com.tweetco.activities.UsersListActivity"
             android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity

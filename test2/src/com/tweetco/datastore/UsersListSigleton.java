@@ -1,6 +1,7 @@
 package com.tweetco.datastore;
 
 import com.tweetco.dao.TweetUser;
+import com.tweetco.database.dao.Account;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,11 @@ public enum UsersListSigleton {
         return userListMap.get(username);
     }
 
+    public TweetUser getCurrentUser()
+    {
+        return getUser(AccountSingleton.INSTANCE.getUserName());
+    }
+
     public void updateUsersListFromServer(List<TweetUser> list)
     {
         usersList.removeAll(list);
@@ -40,5 +46,41 @@ public enum UsersListSigleton {
         {
             userListMap.put(user.username, user);
         }
+    }
+
+    public void followUser(String username)
+    {
+        TweetUser user = getUser(username);
+        if(user != null)
+        {
+            user.followers += AccountSingleton.INSTANCE.getUserName()+";";
+        }
+
+        TweetUser currentUser = getCurrentUser();
+        currentUser.followees += username + ";";
+    }
+
+    public void unfollowUser(String username)
+    {
+        TweetUser user = getUser(username);
+        if(user != null)
+        {
+            user.followers = removeUsername(user.followers, AccountSingleton.INSTANCE.getUserName());
+        }
+
+        TweetUser currentUser = getCurrentUser();
+        currentUser.followees = removeUsername(currentUser.followees, username);
+    }
+
+    private static String removeUsername(String usernameList, String username)
+    {
+        String[] list = usernameList.split(username+";");
+        StringBuilder builder = new StringBuilder();
+        for(String name: list)
+        {
+            builder.append(name);
+        }
+
+        return builder.toString();
     }
 }

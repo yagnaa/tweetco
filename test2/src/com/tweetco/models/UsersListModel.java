@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import twitter4j.User;
+
 /**
  * Created by kirankumar on 19/06/15.
  */
@@ -40,5 +42,45 @@ public class UsersListModel extends SimpleObservable<UsersListModel> {
         UsersListSigleton.INSTANCE.updateUsersListFromServer(tempUsersList);
 
         notifyObservers(this);
+    }
+
+    public void followUser(String username) throws Exception {
+
+        UsersListSigleton.INSTANCE.followUser(username);
+        notifyObservers(this);
+
+        client.followUser(username, new UsersListClient.IFollowUnfollowStatus() {
+            @Override
+            public void success(String username) {
+                UsersListSigleton.INSTANCE.followUser(username);
+                notifyObservers(UsersListModel.this);
+            }
+
+            @Override
+            public void failed(String username) {
+                UsersListSigleton.INSTANCE.unfollowUser(username);
+                notifyObservers(UsersListModel.this);
+            }
+        });
+    }
+
+    public void unfollowUser(String username) throws Exception {
+
+        UsersListSigleton.INSTANCE.unfollowUser(username);
+        notifyObservers(this);
+
+        client.unfollowUser(username, new UsersListClient.IFollowUnfollowStatus() {
+            @Override
+            public void success(String username) {
+                UsersListSigleton.INSTANCE.unfollowUser(username);
+                notifyObservers(UsersListModel.this);
+            }
+
+            @Override
+            public void failed(String username) {
+                UsersListSigleton.INSTANCE.followUser(username);
+                notifyObservers(UsersListModel.this);
+            }
+        });
     }
 }

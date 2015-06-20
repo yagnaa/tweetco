@@ -122,48 +122,31 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout implem
 
 	}
 
-	public void followOrUnfollowUser(final Button followButton,final String userWhomShouldBeFollowed, final boolean requestForFollow)
+	public void followOrUnfollowUser(final String username, final boolean requestForFollow)
 	{
-		String customApiName = null;
-		MobileServiceClient mClient = TweetCommonData.mClient;
-		JsonObject obj = new JsonObject();
-		obj.addProperty(ApiInfo.kApiRequesterKey, TweetCommonData.getUserName());
-		if(requestForFollow)
-		{
-			obj.addProperty(ApiInfo.kUserToFollowKey, userWhomShouldBeFollowed);
-			customApiName = ApiInfo.FOLLOW_USER;
-		}
-		else
-		{
-			obj.addProperty(ApiInfo.kUserToUnFollowKey, userWhomShouldBeFollowed);
-			customApiName =  ApiInfo.UN_FOLLOW_USER;
-		}
-
-		mClient.invokeApi(customApiName, obj, new ApiJsonOperationCallback() 
-		{	
+		new Thread(new Runnable() {
 			@Override
-			public void onCompleted(JsonElement arg0, Exception arg1, ServiceFilterResponse arg2) 
-			{
-				if(arg1 == null)
+			public void run() {
+				if(requestForFollow)
 				{
-					//TODO update the adapter
-					TweetUser userToFollowOrUnFollow = (TweetUser)followButton.getTag();
-					if(followButton!=null && userToFollowOrUnFollow.username.equalsIgnoreCase(userWhomShouldBeFollowed))
-					{
-						setFollowButton(followButton, requestForFollow);
-						Log.d("Item clicked", "Follow/Unfollow succeeded") ;
-						//loadUsers();
+					try {
+						userListModel.followUser(username);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 				else
 				{
-					setFollowButton(followButton,!requestForFollow);
-					Log.e("Item clicked","Exception upVoting a tweet") ;
-					arg1.printStackTrace();
+					try {
+						userListModel.unfollowUser(username);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-
 			}
-		},false);
+		}).start();
+
+
 	}
 
 	private void setFollowButton(Button followButton,boolean isCurrentUserAFollower)
@@ -284,9 +267,7 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout implem
 					@Override
 					public void onClick(View v) 
 					{
-						setFollowButton((Button)v,!isCurrentUserAFollower);
-
-						followOrUnfollowUser((Button)v, user.username,!isCurrentUserAFollower);				
+						followOrUnfollowUser(user.username,!isCurrentUserAFollower);
 					}
 				});
 

@@ -59,7 +59,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
         </activity>
         <activity
-            android:name="com.tweetco.activities.UsersListActivity"
+            android:name="com.tweetco.activities.UsersLi"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
         </activity>

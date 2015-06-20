@@ -1,5 +1,7 @@
 package com.tweetco.activities;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.imagedisplay.util.AsyncTask;
 import com.imagedisplay.util.ImageFetcher;
 import com.imagedisplay.util.Utils;
 import com.onefortybytes.R;
@@ -22,25 +25,26 @@ import com.tweetco.activities.progress.AsyncTaskEventHandler;
 import com.tweetco.asynctasks.GetLeaderboardTask;
 import com.tweetco.asynctasks.GetLeaderboardTask.GetLeaderboardTaskCompletionCallback;
 import com.tweetco.dao.LeaderboardUser;
+import com.tweetco.dao.TweetUser;
+import com.tweetco.datastore.AccountSingleton;
+import com.tweetco.interfaces.OnChangeListener;
+import com.tweetco.models.LeaderboardListModel;
 import com.tweetco.tweets.TweetCommonData;
 
-public class LeaderboardFragment extends ListFragmentWithSwipeRefreshLayout 
+public class LeaderboardFragment extends ListFragmentWithSwipeRefreshLayout implements OnChangeListener<LeaderboardListModel>
 {
-	private AsyncTaskEventHandler asyncTaskEventHandler = null;
 	private LeaderboardAdapter mAdapter = null;
+	private LeaderboardListModel model;
 	ImageFetcher imageFetcher = null;
-	public LeaderboardFragment()
-	{
-		
-	}
-    
+
+
 	@Override
     public void onCreate(Bundle savedInstanceState) 
 	{
         super.onCreate(savedInstanceState);
         imageFetcher = Utils.getImageFetcher(this.getActivity(), 60, 60);
-		mAdapter = new LeaderboardAdapter(LeaderboardFragment.this.getActivity(), R.layout.leaderview, imageFetcher,onProfileClick);
-    }
+		model = new LeaderboardListModel();
+	}
 	
 	
 	OnProfilePicClick onProfileClick =new OnProfilePicClick() {
@@ -54,14 +58,6 @@ public class LeaderboardFragment extends ListFragmentWithSwipeRefreshLayout
     			String owner = user.username;
     			if(!TextUtils.isEmpty(owner))
         		{
-//        			UserProfileFragment fragment = new UserProfileFragment();
-//        			Bundle bundle = new Bundle();
-//        			bundle.putString("username", owner);
-//        			fragment.setArguments(bundle);
-//                    final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//                    ft.add(android.R.id.content, fragment, TAG);
-//                    ft.commit();
-    				
     				Intent intent = new Intent(LeaderboardFragment.this.getActivity(), UserProfileActivity.class);
 					intent.putExtra(Constants.USERNAME_STR, owner);
 					getActivity().startActivity(intent);
@@ -75,76 +71,78 @@ public class LeaderboardFragment extends ListFragmentWithSwipeRefreshLayout
 	public void onResume() 
 	{
 		super.onResume();
-		mAdapter.notifyDataSetChanged();
+		model.addListener(this);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		model.removeListener(this);
 	}
     
     @Override
 	public void onActivityCreated(Bundle savedInstanceState) 
     {
         super.onActivityCreated(savedInstanceState);
-		
-		asyncTaskEventHandler = new AsyncTaskEventHandler(this.getActivity(), "Getting Leaderboard");
-		this.setListAdapter(mAdapter);
-		
-		setOnRefreshListener(new OnRefreshListener() {
-			
+
+		this.setListAdapter(null);
+
+		new AsyncTask<Void, Void, Void>()
+		{
+			@Override
+			protected Void doInBackground(Void... params) {
+				try {
+					model.loadLeaderboardUsersList();
+				}
+				catch (MalformedURLException e)
+				{
+
+				}
+
+				return null;
+			}
+
+		}.execute();
+
+		setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
 			public void onRefresh() {
-				loadLeaderBoard();				
+				new AsyncTask<Void, Void, Void>() {
+					@Override
+					protected Void doInBackground(Void... params) {
+						try {
+							model.refreshLeaderboardUsersFromServer();
+						} catch (MalformedURLException e) {
+
+						}
+
+						return null;
+					}
+
+					@Override
+					protected void onPostExecute(Void aVoid) {
+						mSwipeRefreshLayout.setRefreshing(false);
+					}
+
+				}.execute();
 			}
 		});
-		
-		loadLeaderBoard();
 	}
-    
-    public void loadLeaderBoard()
-    {		
-    	mSwipeRefreshLayout.post(new Runnable() {
-			@Override public void run() {
-			     mSwipeRefreshLayout.setRefreshing(true);
-			}
-			});
-    	
-		new GetLeaderboardTask(this.getActivity(), null, new GetLeaderboardTaskCompletionCallback() 
-		{	
-			@Override
-			public void onGetLeaderboardTaskSuccess(List<LeaderboardUser> users) 
-			{
-				if(users!=null && !users.isEmpty())
-				{
-					mAdapter.clear();
-					mAdapter.addAll(users);
-					mAdapter.notifyDataSetChanged();
-				}
-				
-				mSwipeRefreshLayout.post(new Runnable() {
-					@Override public void run() {
-					     mSwipeRefreshLayout.setRefreshing(false);
-					}
-					});
-			}
-			
-			@Override
-			public void onGetLeaderboardTaskFailure() 
-			{
-				Log.e("LeaderboardTask", "Failed");
-				mSwipeRefreshLayout.post(new Runnable() {
-					@Override public void run() {
-					     mSwipeRefreshLayout.setRefreshing(false);
-					}
-					});
-			}
-			
-			@Override
-			public void onGetLeaderboardTaskCancelled() 
-			{
-				mSwipeRefreshLayout.post(new Runnable() {
-					@Override public void run() {
-					     mSwipeRefreshLayout.setRefreshing(false);
-					}
-					});
-			}
-		}).execute();
-    }
 
+	@Override
+	public void onChange(LeaderboardListModel model) {
+
+		this.getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (mAdapter == null) {
+					mAdapter = new LeaderboardAdapter(LeaderboardFragment.this.getActivity(), R.layout.leaderview, imageFetcher, onProfileClick);
+
+					LeaderboardFragment.this.setListAdapter(mAdapter);
+				}
+
+				mAdapter.notifyDataSetChanged();
+			}
+		});
+	}
 }

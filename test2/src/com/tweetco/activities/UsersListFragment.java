@@ -30,6 +30,7 @@ import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.onefortybytes.R;
 import com.tweetco.datastore.AccountSingleton;
 import com.tweetco.dao.TweetUser;
+import com.tweetco.datastore.UsersListSigleton;
 import com.tweetco.interfaces.OnChangeListener;
 import com.tweetco.models.UsersListModel;
 import com.tweetco.tweets.TweetCommonData;
@@ -98,7 +99,7 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout implem
 			protected Void doInBackground(Void... params) {
 				try {
 					mUserName = AccountSingleton.INSTANCE.getAccountModel().getAccountCopy().getUsername();
-					userListModel.refreshUsersFromServer();
+					userListModel.loadUsersList();
 				}
 				catch (MalformedURLException e)
 				{
@@ -306,13 +307,13 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout implem
 				FilterResults results = new FilterResults();
 
 				if (mUsersListFilter.size() == 0) {
-					List<TweetUser> list = new ArrayList<TweetUser>(userListModel.getUsersList());
+					List<TweetUser> list = new ArrayList<TweetUser>(UsersListSigleton.INSTANCE.getUsersList());
 					results.values = list;
 					results.count = list.size();
 				} else {
 					List<TweetUser> list = new ArrayList<>(mUsersListFilter.size());
 					for (String username : mUsersListFilter) {
-						TweetUser user = userListModel.getUser(username);
+						TweetUser user = UsersListSigleton.INSTANCE.getUser(username);
 						if (user != null) {
 							list.add(user);
 						}

@@ -7,6 +7,7 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,6 +56,7 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout implem
 		super.onCreate(savedInstanceState);
 
 		userListModel = new UsersListModel();
+
 	}
 
 	public void addUser(String usersListStr)
@@ -109,17 +111,31 @@ public class UsersListFragment extends ListFragmentWithSwipeRefreshLayout implem
 				return null;
 			}
 
-			@Override
-			protected void onPreExecute() {
-
-			}
-
-			@Override
-			protected void onPostExecute(Void aVoid) {
-
-			}
 		}.execute();
 
+		setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				new AsyncTask<Void, Void, Void>() {
+					@Override
+					protected Void doInBackground(Void... params) {
+						try {
+							userListModel.refreshUsersFromServer();
+						} catch (MalformedURLException e) {
+
+						}
+
+						return null;
+					}
+
+					@Override
+					protected void onPostExecute(Void aVoid) {
+						mSwipeRefreshLayout.setRefreshing(false);
+					}
+
+				}.execute();
+			}
+		});
 	}
 
 	public void followOrUnfollowUser(final String username, final boolean requestForFollow)
